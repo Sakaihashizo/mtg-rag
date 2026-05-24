@@ -1,0 +1,48 @@
+MTG Hybrid Search Results
+Model: SMALL_V2  Generated: 20260523_093627
+======================================================================
+
+【純粋に強いカウンター呪文】
+  拡張: counter target spell counter target spell 純粋に強いカウンター呪文
+  hits: vec=10 en=2 ja=5 (1273ms)
+  ------------------------------------------------------------
+  [ 1] 0.1562        en:4 ja:1  Force of Negation (否定の力)
+       Instant  {1}{U}{U}
+       If it's not your turn, you may exile a blue card from your hand rather than pay 
+  [ 2] 0.1335 vec:2       ja:2  Counterspell (対抗呪文)
+       Instant  {U}{U}
+       Counter target spell.
+  [ 3] 0.1213 vec:30       ja:3  Spell Snare (呪文嵌め)
+       Instant  {U}
+       Counter target spell with mana value 2.
+  [ 4] 0.0683        en:22 ja:7  Dovin's Veto (ドビンの拒否権)
+       Instant  {W}{U}
+       This spell can't be countered.
+Counter target noncreature spell.
+  [ 5] 0.0599              ja:4  Force of Will (意志の力)
+       Instant  {3}{U}{U}
+       You may pay 1 life and exile a blue card from your hand rather than pay this spe
+  [ 6] 0.0586        en:13 ja:11  Change the Equation (方程式の改変)
+       Instant  {1}{U}
+       Choose one —
+• Counter target spell with mana value 2 or less.
+• Counter target 
+  [ 7] 0.0545              ja:5  Three Steps Ahead (三歩先)
+       Instant  {U}
+       Spree (Choose one or more additional costs.)
++ {1}{U} — Counter target spell.
++ 
+  [ 8] 0.0533              ja:6  Get Out (今のうちに出よう)
+       Instant  {U}{U}
+       Choose one —
+• Counter target creature or enchantment spell.
+• Return one or two
+  [ 9] 0.0507        en:3 ja:18  Sublime Epiphany (崇高な天啓)
+       Instant  {4}{U}{U}
+       Choose one or more —
+• Counter target spell.
+• Counter target activated or trigg
+  [10] 0.0481        en:27 ja:15  Remand (差し戻し)
+       Instant  {1}{U}
+       Counter target spell. If that spell is countered this way, put it into its owner
+

@@ -1,0 +1,16 @@
+# 環境設定（パスワード・APIキーを含む）
+.env
+*.log
+nohup.out
+
+# Python キャッシュ
+__pycache__/
+*.pyc
+*.pyo
+
+# フラグファイル
+.primary_updating
+
+# 大きなデータファイル
+*.json
+*.zip
