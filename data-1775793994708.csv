@@ -1,5 +1,0 @@
-"table_name","column_name","references_table"
-"mtg_embeddings","card_id","mtg_cards"
-"mtg_embeddings_base","card_id","mtg_cards"
-"mtg_embeddings_small","card_id","mtg_cards"
-"mtg_embeddings_small_v2","card_id","mtg_cards_small_v2"
