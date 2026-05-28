@@ -16,6 +16,7 @@ mtg_hybrid_search_v2.py — ハイブリッド検索 v2（日本語 FTS + フォ
 
 import sys
 import json
+import os
 import time
 import datetime
 import argparse
@@ -23,13 +24,38 @@ from dataclasses import dataclass, asdict
 from typing import Optional
 
 import psycopg2
+import psycopg2.extras
 from sentence_transformers import SentenceTransformer
 from mtg_removal_rules import apply_removal_penalties
+from mtg_counter_rules import apply_counter_penalties
 
-DB_CONFIG = {
+DB_CONFIG_PRIMARY = {
     "host": "localhost", "port": 5435,
     "dbname": "rag_dev", "user": "devuser", "password": "***REMOVED***",
 }
+
+DB_CONFIG_STANDBY = {
+    "host": "localhost", "port": 5436,
+    "dbname": "rag_dev", "user": "devuser", "password": "***REMOVED***",
+}
+
+# reembed・共起集計等の重い更新処理中に作成するフラグファイル
+FLAG_FILE = "/mnt/mtg_rag/.primary_updating"
+
+
+def get_db_config() -> dict:
+    """
+    フラグファイルが存在する場合は Standby（5436）を使用する。
+    reembed や共起集計等の更新処理中に自動的に Standby に切り替わる。
+    """
+    if os.path.exists(FLAG_FILE):
+        print(f"  [INFO] {FLAG_FILE} を検出 → Standby (5436) を使用")
+        return DB_CONFIG_STANDBY
+    return DB_CONFIG_PRIMARY
+
+
+# 後方互換性のために DB_CONFIG も維持
+DB_CONFIG = DB_CONFIG_PRIMARY
 
 MODEL_REGISTRY = {
     "SMALL_V2": {
@@ -92,19 +118,27 @@ REMOVAL_TSQUERY = build_removal_tsquery()
 # extract_keywords() でリストに正規化される
 QUERY_EXPAND = {
     # カウンター系
-    "カウンター呪文":  {"en": "counter target spell",   
-                    "ja": ["呪文１つを対象とする。それを打ち消す",
-                            "呪文１つを対象とし、それを打ち消す",
-                            "を打ち消してもよい"]},
-    "打ち消し":        {"en": "counter target spell",   
-                    "ja": ["呪文１つを対象とする。それを打ち消す",
-                            "呪文１つを対象とし、それを打ち消す"]},
-    "カウンター":      {"en": "counter target spell",   
-                    "ja": ["呪文１つを対象とする。それを打ち消す",
-                            "呪文１つを対象とし、それを打ち消す"]},
-    "対抗呪文":        {"en": "counter target spell",   
-                    "ja": ["呪文１つを対象とする。それを打ち消す",
-                            "呪文１つを対象とし、それを打ち消す"]},
+    "カウンター呪文":  {"en": "counter target spell",
+                       "ja": ["呪文１つを対象とする。それを打ち消す",
+                              "呪文１つを対象とし、それを打ち消す",
+                              "ないかぎり、それを打ち消す",
+                              "を打ち消してもよい"],
+                       "counter_mode": True},
+    "打ち消し":        {"en": "counter target spell",
+                       "ja": ["呪文１つを対象とする。それを打ち消す",
+                              "呪文１つを対象とし、それを打ち消す",
+                              "ないかぎり、それを打ち消す"],
+                       "counter_mode": True},
+    "カウンター":      {"en": "counter target spell",
+                       "ja": ["呪文１つを対象とする。それを打ち消す",
+                              "呪文１つを対象とし、それを打ち消す",
+                              "ないかぎり、それを打ち消す"],
+                       "counter_mode": True},
+    "対抗呪文":        {"en": "counter target spell",
+                       "ja": ["呪文１つを対象とする。それを打ち消す",
+                              "呪文１つを対象とし、それを打ち消す",
+                              "ないかぎり、それを打ち消す"],
+                       "counter_mode": True},
     # ドロー系
     "カードを引く":    {"en": "draw cards",             "ja": ["カードを引く"]},
     "手札補充":        {"en": "draw cards",             "ja": ["カードを引く"]},
@@ -189,16 +223,18 @@ QUERY_EXPAND = {
 }
 
 
-def extract_keywords(query: str) -> tuple[list[str], list[str], Optional[str], bool, bool]:
+def extract_keywords(query: str) -> tuple[list[str], list[str], Optional[str], bool, bool, bool]:
     """
     クエリからキーワードと各フラグを抽出する。
-    戻り値: (英語キーワードリスト, 日本語キーワードリスト, type_filter, tournament_boost, removal_mode)
+    戻り値: (英語キーワードリスト, 日本語キーワードリスト, type_filter,
+             tournament_boost, removal_mode, counter_mode)
     """
     en_keywords: list[str] = []
     ja_keywords: list[str] = []
     type_filter: Optional[str] = None
     tournament_boost: bool = False
     removal_mode: bool = False
+    counter_mode: bool = False
 
     for jp, terms in QUERY_EXPAND.items():
         if jp in query:
@@ -216,12 +252,14 @@ def extract_keywords(query: str) -> tuple[list[str], list[str], Optional[str], b
                 tournament_boost = True
             if terms.get("removal_mode"):
                 removal_mode = True
+            if terms.get("counter_mode"):
+                counter_mode = True
 
-    return en_keywords, ja_keywords, type_filter, tournament_boost, removal_mode
+    return en_keywords, ja_keywords, type_filter, tournament_boost, removal_mode, counter_mode
 
 
 def expand_query(query: str) -> str:
-    en_kws, _, _, _, _ = extract_keywords(query)
+    en_kws, _, _, _, _, _ = extract_keywords(query)
     if en_kws:
         return " ".join(en_kws[:3]) + " " + query
     return query
@@ -294,13 +332,16 @@ class CardResult:
 class MTGHybridSearcherV2:
     def __init__(self, model_key: str = "SMALL_V2", rrf_k: int = 60):
         cfg = MODEL_REGISTRY[model_key]
-        self.cfg        = cfg
-        self.model_key  = model_key
-        self.rrf_k      = rrf_k
+        self.cfg           = cfg
+        self.model_key     = model_key
+        self.rrf_k         = rrf_k
+        self.weight_vector = 1.0  # ベクトル検索の重み
+        self.weight_en_fts = 1.0  # 英語FTSの重み
+        self.weight_ja_fts = 1.0  # 日本語FTSの重み
         self.model      = SentenceTransformer(
             cfg["model_name"], cache_folder="/mnt/new_hdd/hf_cache"
         )
-        self.conn = psycopg2.connect(**DB_CONFIG)
+        self.conn = psycopg2.connect(**get_db_config())
         print(f"[MTGHybridSearcherV2] {model_key} ({cfg['model_name']})")
 
     def _embed(self, text: str) -> list[float]:
@@ -462,8 +503,12 @@ class MTGHybridSearcherV2:
         top_k: int,
         tournament_boost: bool = False,
         removal_mode: bool = False,
+        counter_mode: bool = False,
     ) -> list[CardResult]:
         k      = self.rrf_k
+        w_vec  = self.weight_vector
+        w_en   = self.weight_en_fts
+        w_ja   = self.weight_ja_fts
         scores: dict[str, dict] = {}
 
         for row in v_rows:
@@ -472,7 +517,7 @@ class MTGHybridSearcherV2:
             if name not in scores:
                 scores[name] = {"row": row, "rrf": 0.0,
                                 "vr": None, "er": None, "jr": None}
-            scores[name]["rrf"] += 2.0 / (k + r)
+            scores[name]["rrf"] += w_vec / (k + r)
             scores[name]["vr"]   = r
 
         for row in en_rows:
@@ -481,7 +526,7 @@ class MTGHybridSearcherV2:
             if name not in scores:
                 scores[name] = {"row": row, "rrf": 0.0,
                                 "vr": None, "er": None, "jr": None}
-            scores[name]["rrf"] += 1.5 / (k + r)
+            scores[name]["rrf"] += w_en / (k + r)
             scores[name]["er"]   = r
 
         for row in ja_rows:
@@ -490,11 +535,13 @@ class MTGHybridSearcherV2:
             if name not in scores:
                 scores[name] = {"row": row, "rrf": 0.0,
                                 "vr": None, "er": None, "jr": None}
-            scores[name]["rrf"] += 2.0 / (k + r)
+            scores[name]["rrf"] += w_ja / (k + r)
             scores[name]["jr"]   = r
 
         # 除去ルールのペナルティを適用（removal_mode の場合のみ）
         scores = apply_removal_penalties(scores, removal_mode)
+        # カウンター呪文ルールのペナルティを適用（counter_mode の場合のみ）
+        scores = apply_counter_penalties(scores, counter_mode)
 
         # tournament_score ボーナスを RRF スコアに加算
         # tournament_boost=True の場合（「最強」「環境」等のクエリ）は強く反映
@@ -519,7 +566,7 @@ class MTGHybridSearcherV2:
                 type_line=row.get("type_line") or "",
                 oracle_text=(row.get("oracle_text") or ""),
                 japanese_name=row.get("japanese_name") or "",
-                japanese_oracle_text=(row.get("japanese_oracle_text") or "")[:80],
+                japanese_oracle_text=(row.get("japanese_oracle_text") or ""),
                 mana_cost=row.get("mana_cost") or "",
                 rarity=row.get("rarity") or "",
                 vector_rank=data["vr"],
@@ -529,15 +576,117 @@ class MTGHybridSearcherV2:
             ))
         return results
 
+    def search_with_hyde(
+        self, query: str, hyde_text: str,
+        top_k: int = 10,
+        format: Optional[str] = None,
+        tournament_boost_override: bool = False,
+        removal_mode_override: bool = False,
+        counter_mode_override: bool = False,
+        type_filter_override: Optional[str] = None,
+    ) -> list[CardResult]:
+        """
+        HyDE（Hypothetical Document Embeddings）を使った検索。
+        通常の検索結果と HyDE ベクトル検索結果を RRF でマージする。
+        """
+        # 通常の検索結果を取得
+        normal_results = self.search(
+            query, top_k=top_k * 2, format=format,
+            tournament_boost_override=tournament_boost_override,
+            removal_mode_override=removal_mode_override,
+            counter_mode_override=counter_mode_override,
+            type_filter_override=type_filter_override,
+        )
+
+        # HyDE ベクトル検索（hyde_text を embedding してベクトル検索）
+        fmt_sql  = format_filter_sql(format)
+        type_sql = type_filter_sql(type_filter_override)
+        hyde_vec  = self._embed(hyde_text)
+        hyde_rows = self._vector_search(hyde_vec, top_k * 2, fmt_sql, type_sql)
+
+        # 通常検索結果を dict に変換
+        normal_scores: dict[str, float] = {}
+        for i, r in enumerate(normal_results):
+            normal_scores[r.card_name] = 1.0 / (self.rrf_k + i + 1)
+
+        # HyDE 検索結果を RRF でマージ
+        hyde_scores: dict[str, float] = {}
+        for row in hyde_rows:
+            name = row["card_name"]
+            r    = int(row["rank"])
+            hyde_scores[name] = 1.0 / (self.rrf_k + r)
+
+        # 統合スコア
+        all_names = set(normal_scores) | set(hyde_scores)
+        merged = []
+        for name in all_names:
+            score = normal_scores.get(name, 0) + hyde_scores.get(name, 0)
+            merged.append((name, score))
+
+        merged.sort(key=lambda x: x[1], reverse=True)
+
+        # 通常検索結果から CardResult を取得
+        result_map = {r.card_name: r for r in normal_results}
+
+        # HyDE でのみヒットしたカードを追加取得
+        hyde_only = [n for n, _ in merged[:top_k] if n not in result_map]
+        if hyde_only:
+            placeholders = ",".join(["%s"] * len(hyde_only))
+            with self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                cur.execute(f"""
+                    SELECT card_name, type_line, oracle_text, japanese_name,
+                           japanese_oracle_text, mana_cost, rarity, tournament_score,
+                           colors, keywords
+                    FROM {self.cfg['cards_table']}
+                    WHERE card_name IN ({placeholders})
+                """, hyde_only)
+                for row in cur.fetchall():
+                    result_map[row["card_name"]] = CardResult(
+                        card_name=row["card_name"],
+                        type_line=row.get("type_line") or "",
+                        oracle_text=row.get("oracle_text") or "",
+                        japanese_name=row.get("japanese_name") or "",
+                        japanese_oracle_text=row.get("japanese_oracle_text") or "",
+                        mana_cost=row.get("mana_cost") or "",
+                        rarity=row.get("rarity") or "",
+                        rrf_score=0.0,
+                        vector_rank=None,
+                        en_text_rank=None,
+                        ja_text_rank=None,
+                    )
+
+        # 最終結果を構築
+        final = []
+        for i, (name, score) in enumerate(merged[:top_k]):
+            if name in result_map:
+                r = result_map[name]
+                r.rank      = i + 1
+                r.rrf_score = round(score, 4)
+                final.append(r)
+
+        return final
+
     def search(
         self, query: str, top_k: int = 10,
         format: Optional[str] = None,
+        tournament_boost_override: bool = False,
+        removal_mode_override: bool = False,
+        counter_mode_override: bool = False,
+        type_filter_override: Optional[str] = None,
     ) -> list[CardResult]:
         print(f"\n[{self.model_key}] 検索: 「{query}」"
               + (f" [{format}]" if format else ""))
         t0 = time.perf_counter()
 
-        en_kws, ja_kws, type_filter, tournament_boost, removal_mode = extract_keywords(query)
+        en_kws, ja_kws, type_filter, tournament_boost, removal_mode, counter_mode = extract_keywords(query)
+
+        # override フラグが True の場合は強制的に有効化
+        tournament_boost = tournament_boost or tournament_boost_override
+        removal_mode     = removal_mode     or removal_mode_override
+        counter_mode     = counter_mode     or counter_mode_override
+        # type_filter_override が指定された場合は上書き
+        if type_filter_override:
+            type_filter = type_filter_override
         expanded = expand_query(query)
         if expanded != query:
             print(f"  拡張: {expanded[:80]}")
@@ -549,6 +698,8 @@ class MTGHybridSearcherV2:
             print(f"  tournament_boost: ON（大会実績を強く反映）")
         if removal_mode:
             print(f"  removal_mode: ON（パーマネント除去のみヒット）")
+        if counter_mode:
+            print(f"  counter_mode: ON（護法カードをスコアダウン）")
 
         fmt_sql  = format_filter_sql(format)
         type_sql = type_filter_sql(type_filter)
@@ -565,7 +716,8 @@ class MTGHybridSearcherV2:
 
         return self._rrf_merge(v_rows, en_rows, ja_rows, top_k,
                                tournament_boost=tournament_boost,
-                               removal_mode=removal_mode)
+                               removal_mode=removal_mode,
+                               counter_mode=counter_mode)
 
     def close(self):
         self.conn.close()
@@ -680,7 +832,7 @@ if __name__ == "__main__":
 
         # ファイル出力用データ収集
         if args.output:
-            en_kws, ja_kws, _, _, _ = extract_keywords(q)
+            en_kws, ja_kws, _, _, _, _ = extract_keywords(q)
             all_output.append({
                 "query":          q,
                 "format":         f,

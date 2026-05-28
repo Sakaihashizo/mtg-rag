@@ -215,41 +215,120 @@ def print_summary(all_results: list[HybridQueryResult]):
 
 # ─── メイン ───────────────────────────────────────────────────
 
+# グリッドサーチする重みの組み合わせ
+# (weight_vector, weight_en_fts, weight_ja_fts)
+WEIGHT_GRID = [
+    (2.0, 1.5, 2.0),  # 現在の設定（ベースライン）
+    (1.0, 1.0, 1.0),  # 均等重み（純粋な RRF）
+    (2.0, 1.0, 2.0),  # 英語FTS を下げる
+    (2.0, 2.0, 2.0),  # 全て均等・スケールのみ違う
+    (3.0, 1.5, 2.0),  # ベクトルをさらに重視
+    (2.0, 1.5, 3.0),  # 日本語FTS をさらに重視
+    (1.0, 2.0, 1.0),  # 英語FTS を重視
+    (1.0, 3.0, 1.0),  # 英語FTS をさらに重視
+    (1.0, 4.0, 1.0),  # 英語FTS を最大重視
+    (2.0, 3.0, 2.0),  # 英語FTS を強化・ベースラインと比較
+]
+
+
+def run_benchmark(searcher, model_key, top_k, weight=None) -> list:
+    """指定した重みでベンチマークを実行する"""
+    if weight:
+        w_vec, w_en, w_ja = weight
+        searcher.weight_vector = w_vec
+        searcher.weight_en_fts = w_en
+        searcher.weight_ja_fts = w_ja
+
+    all_results = []
+    for query, fmt, keywords, known_good, label in QUERIES:
+        t0      = time.perf_counter()
+        results = searcher.search(query, top_k=top_k, format=fmt)
+        elapsed = (time.perf_counter() - t0) * 1000
+        qr = evaluate(results, keywords, known_good,
+                      query, fmt, label, model_key, elapsed)
+        all_results.append(qr)
+    return all_results
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model",  default="SMALL_V2",
                         choices=["SMALL_V2", "BASE_V2"])
     parser.add_argument("--top_k", type=int, default=10)
     parser.add_argument("--output", default=None)
+    parser.add_argument("--gridsearch", action="store_true",
+                        help="重みのグリッドサーチを実行する")
     args = parser.parse_args()
 
-    print(f"MTG ハイブリッド検索ベンチマーク")
-    print(f"モデル: {args.model}  top_k: {args.top_k}")
-    print(f"クエリ数: {len(QUERIES)}")
+    searcher = MTGHybridSearcherV2(model_key=args.model)
 
-    searcher    = MTGHybridSearcherV2(model_key=args.model)
-    all_results = []
+    if args.gridsearch:
+        # グリッドサーチモード
+        print(f"MTG ハイブリッド検索 重みグリッドサーチ")
+        print(f"モデル: {args.model}  top_k: {args.top_k}")
+        print(f"クエリ数: {len(QUERIES)}  重み組み合わせ数: {len(WEIGHT_GRID)}")
+        print("═" * 75)
+        print(f"  {'重み (vec/en/ja)':<20} {'avg KW率':>10} {'avg KG率':>10} {'avg時間':>10}")
+        print("  " + "─" * 55)
 
-    for query, fmt, keywords, known_good, label in QUERIES:
-        t0      = time.perf_counter()
-        results = searcher.search(query, top_k=args.top_k, format=fmt)
-        elapsed = (time.perf_counter() - t0) * 1000
+        best_kw = best_kg = 0.0
+        best_kw_weight = best_kg_weight = None
+        grid_results = []
 
-        qr = evaluate(results, keywords, known_good,
-                      query, fmt, label, args.model, elapsed)
-        all_results.append(qr)
-        print_result(qr, top_n=5)
+        for w_vec, w_en, w_ja in WEIGHT_GRID:
+            results = run_benchmark(searcher, args.model, args.top_k,
+                                    weight=(w_vec, w_en, w_ja))
+            n       = len(results)
+            avg_kw  = sum(r.keyword_hit_rate for r in results) / n
+            avg_kg  = sum(r.known_good_hit_rate for r in results) / n
+            avg_ms  = sum(r.elapsed_ms for r in results) / n
+            label   = f"({w_vec:.1f}, {w_en:.1f}, {w_ja:.1f})"
+            marker  = ""
+            if avg_kw > best_kw:
+                best_kw = avg_kw
+                best_kw_weight = (w_vec, w_en, w_ja)
+            if avg_kg > best_kg:
+                best_kg = avg_kg
+                best_kg_weight = (w_vec, w_en, w_ja)
+            grid_results.append({
+                "weights": {"vec": w_vec, "en": w_en, "ja": w_ja},
+                "avg_kw_rate": round(avg_kw, 3),
+                "avg_kg_rate": round(avg_kg, 3),
+                "avg_ms": round(avg_ms, 1),
+            })
+            print(f"  {label:<20} {avg_kw:>10.1%} {avg_kg:>10.1%} {avg_ms:>9.1f}ms")
 
-    print_summary(all_results)
+        print("  " + "─" * 55)
+        print(f"\n  最高 KW率: {best_kw:.1%}  重み: {best_kw_weight}")
+        print(f"  最高 KG率: {best_kg:.1%}  重み: {best_kg_weight}")
+        print("═" * 75)
 
-    if args.output:
-        out_path = args.output
-        if not out_path.endswith(".json"):
-            out_path += ".json"
-        with open(out_path, "w", encoding="utf-8") as f:
-            json.dump([asdict(r) for r in all_results],
-                      f, ensure_ascii=False, indent=2)
-        print(f"\n結果を {out_path} に保存しました")
+        if args.output:
+            out_path = (args.output if args.output.endswith(".json")
+                        else args.output + "_gridsearch.json")
+            with open(out_path, "w", encoding="utf-8") as f:
+                json.dump(grid_results, f, ensure_ascii=False, indent=2)
+            print(f"\n結果を {out_path} に保存しました")
+
+    else:
+        # 通常モード
+        print(f"MTG ハイブリッド検索ベンチマーク")
+        print(f"モデル: {args.model}  top_k: {args.top_k}")
+        print(f"クエリ数: {len(QUERIES)}")
+
+        all_results = run_benchmark(searcher, args.model, args.top_k)
+
+        for qr in all_results:
+            print_result(qr, top_n=5)
+        print_summary(all_results)
+
+        if args.output:
+            out_path = (args.output if args.output.endswith(".json")
+                        else args.output + ".json")
+            with open(out_path, "w", encoding="utf-8") as f:
+                json.dump([asdict(r) for r in all_results],
+                          f, ensure_ascii=False, indent=2)
+            print(f"\n結果を {out_path} に保存しました")
 
     searcher.close()
 

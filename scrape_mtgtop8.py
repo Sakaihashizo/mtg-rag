@@ -166,7 +166,7 @@ def parse_dec(dec_text: str) -> tuple[str, str, list[tuple[str, int, str]]]:
             board = "main"
 
         # "4 [MR] Counterspell" または "4 Counterspell"
-        m = re.match(r'^(\d+)\s+(?:\[[^\]]*\]\s+)?(.+)$', line)
+        m = re.match(r'^(\d+)\s+(?:\[[^\]]+\]\s+)?(.+)$', line)
         if m:
             count     = int(m.group(1))
             card_name = m.group(2).strip()
@@ -217,7 +217,8 @@ def ensure_columns(conn):
 
 def save_deck(conn, event_id: int, event_name: str,
               deck_id: int, deck_name: str, player_name: str,
-              format_code: str, cards: list[tuple[str, int, str]]) -> bool:
+              format_code: str, cards: list[tuple[str, int, str]],
+              archetype: str = "") -> bool:
     """デッキを DB に保存する。重複の場合は False を返す"""
     unique_name = f"mtgtop8_{event_id}_{deck_id}"
     source_url  = f"{BASE_URL}/event?e={event_id}&d={deck_id}&f={format_code}"
@@ -226,13 +227,14 @@ def save_deck(conn, event_id: int, event_name: str,
         cur.execute("""
             INSERT INTO deck_list
                 (deck_name, set_code, source, tournament_name,
-                 player_name, format_name, source_url, tournament_event_id)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                 player_name, format_name, source_url, tournament_event_id,
+                 archetype)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (deck_name) DO NOTHING
             RETURNING id;
         """, (unique_name, format_code, SOURCE, event_name,
               player_name, FORMAT_NAMES.get(format_code, format_code),
-              source_url, event_id))
+              source_url, event_id, archetype or None))
         result = cur.fetchone()
 
     if result is None:
@@ -283,15 +285,16 @@ def scrape(format_code: str, meta: int, year: int):
 
         event_name = f"MTGTop8 Event {event_id} ({year} {format_code})"
 
-        for deck_id, deck_name, player_name in deck_infos:
+        for deck_id, archetype, player_name in deck_infos:
             cards = get_deck_cards(deck_id)
             if not cards:
                 continue
 
             saved = save_deck(
                 conn, event_id, event_name,
-                deck_id, deck_name, player_name,
+                deck_id, archetype, player_name,
                 format_code, cards,
+                archetype=archetype,
             )
             if saved:
                 total_decks += 1

@@ -1,16 +1,9 @@
-# 環境設定（パスワード・APIキーを含む）
-.env
+*.json
 *.log
 nohup.out
-
-# Python キャッシュ
+.env
 __pycache__/
 *.pyc
-*.pyo
-
-# フラグファイル
 .primary_updating
-
-# 大きなデータファイル
-*.json
+*.txt
 *.zip
