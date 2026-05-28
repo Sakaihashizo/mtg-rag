@@ -335,8 +335,21 @@ def ask_gemini(question, context, api_key):
         except requests.exceptions.HTTPError as e:
             if resp.status_code == 403:
                 return "エラー: API キーが無効か権限がありません。"
+            if resp.status_code == 400:
+                return "エラー: リクエストが不正です。プロンプトを確認してください。"
             if resp.status_code not in (429, 503):
-                return f"エラー: {e}"
+                # URL（APIキー含む可能性）をログに出さない
+                return f"エラー: HTTP {resp.status_code}"
+        except requests.exceptions.Timeout:
+            if attempt < RETRY_COUNT - 1:
+                wait = min(
+                    RETRY_WAIT_BASE * (2 ** attempt) + random.uniform(0, 1),
+                    RETRY_WAIT_MAX
+                )
+                print(f"  タイムアウト。{wait:.1f}秒後にリトライ ({attempt+1}/{RETRY_COUNT})...")
+                time.sleep(wait)
+                continue
+            return "エラー: タイムアウトが続いています。"
         except Exception as e:
             if attempt < RETRY_COUNT - 1:
                 wait = min(
@@ -346,7 +359,7 @@ def ask_gemini(question, context, api_key):
                 print(f"  通信エラー。{wait:.1f}秒後にリトライ ({attempt+1}/{RETRY_COUNT})...")
                 time.sleep(wait)
                 continue
-            return f"エラー: {e}"
+            return "エラー: 予期しないエラーが発生しました。"
 
     return "エラー: リトライ上限に達しました。"
 
@@ -471,30 +484,26 @@ def main():
             print(f"質問ファイル: {args.question_file}（{len(questions)}件）")
             print("=" * 60)
             # 出力ファイルパスを決定
-        output_file = args.output
-        if not output_file and args.question_file:
-            ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-            output_file = f"rag_answers_{ts}.txt"
-
-        if output_file:
-            # ヘッダーを書く
-            with open(output_file, "w", encoding="utf-8") as f:
-                f.write(f"MTG RAG エージェント 回答ログ\n")
-                f.write(f"生成日時: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-                f.write(f"モデル: {args.model} / Gemini: {GEMINI_MODEL}\n")
-                f.write(f"質問ファイル: {args.question_file}\n")
-            print(f"回答を {output_file} に保存します")
-
-        for i, (q, fmt) in enumerate(questions):
+            output_file = args.output
+            if not output_file:
+                ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                output_file = f"rag_answers_{ts}.txt"
+            if output_file:
+                with open(output_file, "w", encoding="utf-8") as f:
+                    f.write(f"MTG RAG エージェント 回答ログ\n")
+                    f.write(f"生成日時: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+                    f.write(f"モデル: {args.model} / Gemini: {GEMINI_MODEL}\n")
+                    f.write(f"質問ファイル: {args.question_file}\n")
+                print(f"回答を {output_file} に保存します")
+            for i, (q, fmt) in enumerate(questions):
                 process_question(searcher, q, fmt or args.format,
                                  args.top_k, api_key, output_file=output_file,
                                  use_rewrite=not args.no_rewrite)
                 if i < len(questions) - 1:
                     print("  15秒待機中...")
                     time.sleep(15)
-
-        if output_file:
-            print(f"\n完了。回答を {output_file} に保存しました。")
+            if output_file:
+                print(f"\n完了。回答を {output_file} に保存しました。")
 
         # 1件だけ質問
         elif args.question:

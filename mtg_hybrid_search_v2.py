@@ -24,7 +24,6 @@ from dataclasses import dataclass, asdict
 from typing import Optional
 
 import psycopg2
-import psycopg2.extras
 from sentence_transformers import SentenceTransformer
 from mtg_removal_rules import apply_removal_penalties
 from mtg_counter_rules import apply_counter_penalties
@@ -276,11 +275,20 @@ def format_filter_sql(fmt: Optional[str]) -> str:
     return f"AND c.legalities->>'{fmt}' = 'legal'"
 
 
+VALID_TYPE_FILTERS = {
+    "Creature", "Instant", "Sorcery",
+    "Enchantment", "Artifact", "Land", "Planeswalker", "Battle",
+}
+
 def type_filter_sql(type_filter: Optional[str]) -> str:
     """type_line フィルタの SQL 断片を生成する"""
     if not type_filter:
         return ""
-    return f"AND c.type_line LIKE '%{type_filter}%'"
+    # バリデーション: 既知のタイプ以外は無視
+    if type_filter not in VALID_TYPE_FILTERS:
+        print(f"  [WARN] 無効な type_filter: '{type_filter}' → 無視します")
+        return ""
+    return f"AND c.type_line LIKE '%%{type_filter}%%'"
 
 
 # ─── 結果データクラス ─────────────────────────────────────────
@@ -373,6 +381,8 @@ class MTGHybridSearcherV2:
         """
         with self.conn.cursor() as cur:
             cur.execute(sql)
+            if cur.description is None:
+                return []
             cols = [d[0] for d in cur.description]
             return [dict(zip(cols, row)) for row in cur.fetchall()]
 
@@ -419,6 +429,8 @@ class MTGHybridSearcherV2:
                         sql.replace("$tsq$", "%s"),
                         (tsquery, tsquery, tsquery)
                     )
+                    if cur.description is None:
+                        return []
                     cols = [d[0] for d in cur.description]
                     return [dict(zip(cols, row)) for row in cur.fetchall()]
             except Exception as e:
@@ -452,6 +464,8 @@ class MTGHybridSearcherV2:
             try:
                 with self.conn.cursor() as cur:
                     cur.execute(sql)
+                    if cur.description is None:
+                        return []
                     cols = [d[0] for d in cur.description]
                     return [dict(zip(cols, row)) for row in cur.fetchall()]
             except Exception as e:
@@ -490,6 +504,8 @@ class MTGHybridSearcherV2:
         try:
             with self.conn.cursor() as cur:
                 cur.execute(sql, params)
+                if cur.description is None:
+                    return []
                 cols = [d[0] for d in cur.description]
                 return [dict(zip(cols, row)) for row in cur.fetchall()]
         except Exception as e:
@@ -642,6 +658,7 @@ class MTGHybridSearcherV2:
                 """, hyde_only)
                 for row in cur.fetchall():
                     result_map[row["card_name"]] = CardResult(
+                        rank=0,
                         card_name=row["card_name"],
                         type_line=row.get("type_line") or "",
                         oracle_text=row.get("oracle_text") or "",
