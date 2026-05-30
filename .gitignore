@@ -7,3 +7,8 @@ __pycache__/
 .primary_updating
 *.txt
 *.zip
+
+# AI 引き継ぎ用の内部資料（公開不要・SSH/VM/旧パスワード等の内部情報を含むため push しない）
+docs/ai/
+# 評価の候補プール（再生成可能な生成物）
+eval_pool_*.csv
