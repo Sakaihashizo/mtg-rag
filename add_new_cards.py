@@ -20,13 +20,7 @@ import re
 import psycopg2
 from tqdm import tqdm
 
-DB_CONFIG = {
-    "dbname": "rag_dev",
-    "user": "devuser",
-    "password": "***REMOVED***",
-    "host": "localhost",
-    "port": 5435,
-}
+from db_config import DB_CONFIG
 
 ORACLE_JSON = "/mnt/new_hdd/oracle_cards.json"
 

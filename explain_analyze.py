@@ -21,7 +21,7 @@ from sentence_transformers import SentenceTransformer
 
 sys.path.insert(0, '/mnt/mtg_rag')
 from mtg_hybrid_search_v2 import (
-    DB_CONFIG, MODEL_REGISTRY, REMOVAL_TSQUERY, expand_query
+    get_db_config, MODEL_REGISTRY, REMOVAL_TSQUERY, expand_query
 )
 
 # ─── 設定 ─────────────────────────────────────────────────────
@@ -150,7 +150,7 @@ def main():
     args = parser.parse_args()
 
     cfg   = MODEL_REGISTRY[args.model]
-    conn  = psycopg2.connect(**DB_CONFIG)
+    conn  = psycopg2.connect(**get_db_config())
     model = SentenceTransformer(
         cfg["model_name"], cache_folder="/mnt/new_hdd/hf_cache"
     )

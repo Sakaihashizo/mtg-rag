@@ -19,13 +19,8 @@ import psycopg2
 from sentence_transformers import SentenceTransformer
 
 # ─── 接続設定 ────────────────────────────────────────────────
-DB_CONFIG = {
-    "host": "localhost",
-    "port": 5436,
-    "dbname": "rag_dev",
-    "user": "devuser",
-    "password": "***REMOVED***",
-}
+# 読み取り専用のため、reembed 中はフラグファイルで Standby へ自動切替する。
+from db_config import get_db_config
 
 # ─── モデル定義 ───────────────────────────────────────────────
 @dataclass
@@ -298,7 +293,7 @@ def main():
     print(f"対象モデル: {[m.key for m in target_models]}")
     print(f"クエリ数: {len(QUERIES)}  |  top_k: {args.top_k}")
 
-    conn = psycopg2.connect(**DB_CONFIG)
+    conn = psycopg2.connect(**get_db_config())
     all_results: list[QueryResult] = []
 
     for cfg in target_models:

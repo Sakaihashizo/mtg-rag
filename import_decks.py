@@ -24,13 +24,7 @@ import psycopg2
 import psycopg2.extras
 from tqdm import tqdm
 
-DB_CONFIG = {
-    "dbname": "rag_dev",
-    "user": "devuser",
-    "password": "***REMOVED***",
-    "host": "localhost",
-    "port": 5435,
-}
+from db_config import DB_CONFIG
 
 DECK_DIR = Path("/mnt/new_hdd/AllDecks/AllDeckFiles")
 SOURCE   = "mtgjson_precon"

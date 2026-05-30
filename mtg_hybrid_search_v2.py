@@ -28,33 +28,15 @@ from sentence_transformers import SentenceTransformer
 from mtg_removal_rules import apply_removal_penalties
 from mtg_counter_rules import apply_counter_penalties
 
-DB_CONFIG_PRIMARY = {
-    "host": "localhost", "port": 5435,
-    "dbname": "rag_dev", "user": "devuser", "password": "***REMOVED***",
-}
-
-DB_CONFIG_STANDBY = {
-    "host": "localhost", "port": 5436,
-    "dbname": "rag_dev", "user": "devuser", "password": "***REMOVED***",
-}
-
-# reembed・共起集計等の重い更新処理中に作成するフラグファイル
-FLAG_FILE = "/mnt/mtg_rag/.primary_updating"
-
-
-def get_db_config() -> dict:
-    """
-    フラグファイルが存在する場合は Standby（5436）を使用する。
-    reembed や共起集計等の更新処理中に自動的に Standby に切り替わる。
-    """
-    if os.path.exists(FLAG_FILE):
-        print(f"  [INFO] {FLAG_FILE} を検出 → Standby (5436) を使用")
-        return DB_CONFIG_STANDBY
-    return DB_CONFIG_PRIMARY
-
-
-# 後方互換性のために DB_CONFIG も維持
-DB_CONFIG = DB_CONFIG_PRIMARY
+# DB 接続設定は db_config.py に一元化（.env から読み込む）。
+# 既存の import 互換のためここで再エクスポートする。
+from db_config import (
+    DB_CONFIG,
+    DB_CONFIG_PRIMARY,
+    DB_CONFIG_STANDBY,
+    FLAG_FILE,
+    get_db_config,
+)
 
 MODEL_REGISTRY = {
     "SMALL_V2": {

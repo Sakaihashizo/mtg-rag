@@ -30,13 +30,7 @@ import psycopg2
 import psycopg2.extras
 from tqdm import tqdm
 
-DB_CONFIG = {
-    "dbname": "rag_dev",
-    "user": "devuser",
-    "password": "***REMOVED***",
-    "host": "localhost",
-    "port": 5435,
-}
+from db_config import DB_CONFIG
 
 JSON_FILE    = "/mnt/new_hdd/all_cards.json"
 BATCH_COMMIT = 500

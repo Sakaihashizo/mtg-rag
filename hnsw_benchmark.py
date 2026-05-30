@@ -18,7 +18,7 @@ from dataclasses import dataclass, field
 import psycopg2
 
 sys.path.insert(0, '/mnt/mtg_rag')
-from mtg_hybrid_search_v2 import MTGHybridSearcherV2, DB_CONFIG_PRIMARY
+from mtg_hybrid_search_v2 import MTGHybridSearcherV2
 
 # ─── 評価クエリ（hybrid_benchmark.py と同じ known_good）──────
 

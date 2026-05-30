@@ -31,13 +31,7 @@ import psycopg2.extras
 from tqdm import tqdm
 from sentence_transformers import SentenceTransformer
 
-DB_CONFIG = {
-    "dbname": "rag_dev",
-    "user": "devuser",
-    "password": "***REMOVED***",
-    "host": "localhost",
-    "port": 5435,
-}
+from db_config import DB_CONFIG
 
 HF_CACHE   = "/mnt/new_hdd/hf_cache"
 BATCH_SIZE = 64
