@@ -273,6 +273,45 @@ def type_filter_sql(type_filter: Optional[str]) -> str:
     return f"AND c.type_line LIKE '%%{type_filter}%%'"
 
 
+def _safe_int(v, lo: int = 0, hi: int = 99):
+    """外部入力（LLM 等）を安全に int 化する。非整数・範囲外は None を返す。"""
+    try:
+        n = int(v)
+    except (ValueError, TypeError):
+        return None
+    return n if lo <= n <= hi else None
+
+
+def attr_filter_sql(cmc_min=None, cmc_max=None,
+                    power_min=None, power_max=None,
+                    toughness_min=None, toughness_max=None) -> str:
+    """数値属性（マナ総量 cmc・パワー・タフネス）の SQL 断片を生成する。
+
+    cmc は numeric カラムなので直接比較できる。power / toughness は '*' や 'X' 等の
+    特殊値を含む text カラムなので、正規表現で「純粋な整数の行」だけを漉してから
+    数値比較する（特殊値は数値フィルタの対象外＝正しい挙動）。
+    値はすべて _safe_int で整数検証済みなので、f 文字列に埋めても SQL インジェクションは
+    起きない（型で保証される）。断片に % を含まないため param/no-param どちらの実行でも安全。
+    """
+    frags: list[str] = []
+    cmn, cmx = _safe_int(cmc_min), _safe_int(cmc_max)
+    if cmn is not None:
+        frags.append(f"AND c.cmc >= {cmn}")
+    if cmx is not None:
+        frags.append(f"AND c.cmc <= {cmx}")
+    for col, vmin, vmax in (("power", power_min, power_max),
+                            ("toughness", toughness_min, toughness_max)):
+        lo, hi = _safe_int(vmin), _safe_int(vmax)
+        if lo is None and hi is None:
+            continue
+        frags.append(f"AND c.{col} ~ '^[0-9]+$'")  # '*' や 'X' 等の特殊値を除外
+        if lo is not None:
+            frags.append(f"AND CAST(c.{col} AS INTEGER) >= {lo}")
+        if hi is not None:
+            frags.append(f"AND CAST(c.{col} AS INTEGER) <= {hi}")
+    return (" " + " ".join(frags)) if frags else ""
+
+
 # ─── 結果データクラス ─────────────────────────────────────────
 
 @dataclass
@@ -332,6 +371,16 @@ class MTGHybridSearcherV2:
             cfg["model_name"], cache_folder="/mnt/new_hdd/hf_cache"
         )
         self.conn = psycopg2.connect(**get_db_config())
+        # HNSW 近似検索 + 構造化フィルタ併用時の取りこぼし対策（pgvector 0.8+）。
+        # 既定の近似スキャンだと ef_search 件の近傍を見てから WHERE で絞るため、
+        # cmc=1 等の選択的フィルタでは候補がほぼ脱落して数件しか残らない。
+        # iterative_scan を有効化し、フィルタを満たす件数が揃うまで反復スキャンさせる。
+        try:
+            with self.conn.cursor() as _cur:
+                _cur.execute("SET hnsw.iterative_scan = relaxed_order")
+            self.conn.commit()
+        except Exception:
+            self.conn.rollback()  # pgvector < 0.8 では未対応 → 無視
         print(f"[MTGHybridSearcherV2] {model_key} ({cfg['model_name']})")
 
     def _embed(self, text: str) -> list[float]:
@@ -342,7 +391,7 @@ class MTGHybridSearcherV2:
 
     def _vector_search(
         self, query_vec: list[float], top_k: int,
-        fmt_sql: str, type_sql: str,
+        fmt_sql: str, type_sql: str, attr_sql: str = "",
     ) -> list[dict]:
         cfg     = self.cfg
         vec_str = "[" + ",".join(f"{v:.8f}" for v in query_vec) + "]"
@@ -357,7 +406,7 @@ class MTGHybridSearcherV2:
                 ) AS rank
             FROM {cfg['embeddings_table']} e
             JOIN {cfg['cards_table']} c ON e.card_id = c.id
-            WHERE 1=1 {fmt_sql} {type_sql}
+            WHERE 1=1 {fmt_sql} {type_sql} {attr_sql}
             ORDER BY e.embedding <=> '{vec_str}'::vector
             LIMIT {top_k * 3};
         """
@@ -370,7 +419,7 @@ class MTGHybridSearcherV2:
 
     def _en_text_search(
         self, en_keywords: list[str], top_k: int,
-        fmt_sql: str, type_sql: str,
+        fmt_sql: str, type_sql: str, attr_sql: str = "",
         removal_mode: bool = False,
     ) -> list[dict]:
         """
@@ -400,7 +449,7 @@ class MTGHybridSearcherV2:
                 FROM {cfg['cards_table']} c
                 WHERE to_tsvector('english', COALESCE(c.oracle_text, ''))
                       @@ to_tsquery('english', $tsq$)
-                  {fmt_sql} {type_sql}
+                  {fmt_sql} {type_sql} {attr_sql}
                 ORDER BY text_score DESC
                 LIMIT {top_k * 3};
             """
@@ -439,7 +488,7 @@ class MTGHybridSearcherV2:
                 FROM {cfg['cards_table']} c
                 WHERE to_tsvector('english', COALESCE(c.oracle_text, ''))
                       @@ plainto_tsquery('english', '{primary}')
-                  {fmt_sql} {type_sql}
+                  {fmt_sql} {type_sql} {attr_sql}
                 ORDER BY text_score DESC
                 LIMIT {top_k * 3};
             """
@@ -457,7 +506,7 @@ class MTGHybridSearcherV2:
 
     def _ja_text_search(
         self, ja_keywords: list[str], top_k: int,
-        fmt_sql: str, type_sql: str,
+        fmt_sql: str, type_sql: str, attr_sql: str = "",
     ) -> list[dict]:
         if not ja_keywords:
             return []
@@ -480,7 +529,7 @@ class MTGHybridSearcherV2:
             FROM {cfg['cards_table']} c
             WHERE c.japanese_oracle_text IS NOT NULL
               AND ({placeholders})
-              {fmt_sql} {type_sql}
+              {fmt_sql} {type_sql} {attr_sql}
             LIMIT {top_k * 3};
         """
         try:
@@ -582,6 +631,9 @@ class MTGHybridSearcherV2:
         removal_mode_override: bool = False,
         counter_mode_override: bool = False,
         type_filter_override: Optional[str] = None,
+        cmc_min=None, cmc_max=None,
+        power_min=None, power_max=None,
+        toughness_min=None, toughness_max=None,
     ) -> list[CardResult]:
         """
         HyDE（Hypothetical Document Embeddings）を使った検索。
@@ -594,13 +646,19 @@ class MTGHybridSearcherV2:
             removal_mode_override=removal_mode_override,
             counter_mode_override=counter_mode_override,
             type_filter_override=type_filter_override,
+            cmc_min=cmc_min, cmc_max=cmc_max,
+            power_min=power_min, power_max=power_max,
+            toughness_min=toughness_min, toughness_max=toughness_max,
         )
 
         # HyDE ベクトル検索（hyde_text を embedding してベクトル検索）
         fmt_sql  = format_filter_sql(format)
         type_sql = type_filter_sql(type_filter_override)
+        attr_sql = attr_filter_sql(cmc_min, cmc_max,
+                                   power_min, power_max,
+                                   toughness_min, toughness_max)
         hyde_vec  = self._embed(hyde_text)
-        hyde_rows = self._vector_search(hyde_vec, top_k * 2, fmt_sql, type_sql)
+        hyde_rows = self._vector_search(hyde_vec, top_k * 2, fmt_sql, type_sql, attr_sql)
 
         # 通常検索結果を dict に変換
         normal_scores: dict[str, float] = {}
@@ -672,6 +730,9 @@ class MTGHybridSearcherV2:
         removal_mode_override: bool = False,
         counter_mode_override: bool = False,
         type_filter_override: Optional[str] = None,
+        cmc_min=None, cmc_max=None,
+        power_min=None, power_max=None,
+        toughness_min=None, toughness_max=None,
     ) -> list[CardResult]:
         print(f"\n[{self.model_key}] 検索: 「{query}」"
               + (f" [{format}]" if format else ""))
@@ -702,12 +763,17 @@ class MTGHybridSearcherV2:
 
         fmt_sql  = format_filter_sql(format)
         type_sql = type_filter_sql(type_filter)
+        attr_sql = attr_filter_sql(cmc_min, cmc_max,
+                                   power_min, power_max,
+                                   toughness_min, toughness_max)
+        if attr_sql:
+            print(f"  構造化フィルタ:{attr_sql}")
 
         vec     = self._embed(expanded)
-        v_rows  = self._vector_search(vec, top_k, fmt_sql, type_sql)
-        en_rows = self._en_text_search(en_kws, top_k, fmt_sql, type_sql,
+        v_rows  = self._vector_search(vec, top_k, fmt_sql, type_sql, attr_sql)
+        en_rows = self._en_text_search(en_kws, top_k, fmt_sql, type_sql, attr_sql,
                                           removal_mode=removal_mode)
-        ja_rows = self._ja_text_search(ja_kws, top_k, fmt_sql, type_sql)
+        ja_rows = self._ja_text_search(ja_kws, top_k, fmt_sql, type_sql, attr_sql)
 
         elapsed = (time.perf_counter() - t0) * 1000
         print(f"  vec:{len(v_rows)} en_fts:{len(en_rows)} "
