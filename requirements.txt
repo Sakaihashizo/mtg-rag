@@ -1,0 +1,10 @@
+# MTG RAG System — direct Python dependencies
+# Pinned to the development environment (Python 3.12).
+# Note: sentence-transformers pulls in torch and transformers (large downloads).
+# pgvector is a PostgreSQL extension, not a Python package.
+
+psycopg2-binary==2.9.11
+sentence-transformers==5.3.0
+requests==2.33.1
+tqdm==4.67.3
+beautifulsoup4==4.14.3

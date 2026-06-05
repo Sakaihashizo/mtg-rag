@@ -6,6 +6,7 @@ __pycache__/
 *.pyc
 .primary_updating
 *.txt
+!requirements.txt
 *.zip
 
 # AI 引き継ぎ用の内部資料（公開不要・SSH/VM/旧パスワード等の内部情報を含むため push しない）
