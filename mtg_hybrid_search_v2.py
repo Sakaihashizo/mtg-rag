@@ -453,12 +453,12 @@ class MTGHybridSearcherV2:
                     ROW_NUMBER() OVER (ORDER BY ts_rank(
                         to_tsvector('english', COALESCE(c.oracle_text, '')),
                         to_tsquery('english', $tsq$)
-                    ) DESC) AS rank
+                    ) DESC, c.id) AS rank
                 FROM {cfg['cards_table']} c
                 WHERE to_tsvector('english', COALESCE(c.oracle_text, ''))
                       @@ to_tsquery('english', $tsq$)
                   {fmt_sql} {type_sql} {attr_sql}
-                ORDER BY text_score DESC
+                ORDER BY text_score DESC, c.id
                 LIMIT {top_k * 3};
             """
             try:
@@ -492,12 +492,12 @@ class MTGHybridSearcherV2:
                     ROW_NUMBER() OVER (ORDER BY ts_rank(
                         to_tsvector('english', COALESCE(c.oracle_text, '')),
                         plainto_tsquery('english', '{primary}')
-                    ) DESC) AS rank
+                    ) DESC, c.id) AS rank
                 FROM {cfg['cards_table']} c
                 WHERE to_tsvector('english', COALESCE(c.oracle_text, ''))
                       @@ plainto_tsquery('english', '{primary}')
                   {fmt_sql} {type_sql} {attr_sql}
-                ORDER BY text_score DESC
+                ORDER BY text_score DESC, c.id
                 LIMIT {top_k * 3};
             """
             try:
@@ -528,16 +528,22 @@ class MTGHybridSearcherV2:
         )
         params = [f"%{kw}%" for kw in kws]
 
+        # tournament_score は同点（0/NULL）が大半なので c.id をタイブレーカーに置く。
+        # これが無いと同点の順序と LIMIT で拾う集合がヒープ順（物理配置）依存になり、
+        # バルク UPDATE のたびに検索結果＝評価数値が変わってしまう（再現性バグ）。
         sql = f"""
             SELECT
                 c.card_name, c.type_line, c.oracle_text,
                 c.japanese_name, c.japanese_oracle_text,
                 c.mana_cost, c.rarity, c.tournament_score,
-                ROW_NUMBER() OVER (ORDER BY c.tournament_score DESC NULLS LAST) AS rank
+                ROW_NUMBER() OVER (
+                    ORDER BY c.tournament_score DESC NULLS LAST, c.id
+                ) AS rank
             FROM {cfg['cards_table']} c
             WHERE c.japanese_oracle_text IS NOT NULL
               AND ({placeholders})
               {fmt_sql} {type_sql} {attr_sql}
+            ORDER BY c.tournament_score DESC NULLS LAST, c.id
             LIMIT {top_k * 3};
         """
         try:
@@ -699,17 +705,17 @@ class MTGHybridSearcherV2:
         hyde_only = [n for n, _ in merged[:top_k] if n not in result_map]
         if hyde_only:
             placeholders = ",".join(["%s"] * len(hyde_only))
-            with self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            with self.conn.cursor() as cur:
                 cur.execute(f"""
                     SELECT card_name, type_line, oracle_text, japanese_name,
-                           japanese_oracle_text, mana_cost, rarity, tournament_score,
-                           colors, keywords
+                           japanese_oracle_text, mana_cost, rarity
                     FROM {self.cfg['cards_table']}
                     WHERE card_name IN ({placeholders})
                 """, hyde_only)
-                for row in cur.fetchall():
+                cols = [d[0] for d in cur.description]
+                for row_t in cur.fetchall():
+                    row = dict(zip(cols, row_t))
                     result_map[row["card_name"]] = CardResult(
-                        rank=0,
                         card_name=row["card_name"],
                         type_line=row.get("type_line") or "",
                         oracle_text=row.get("oracle_text") or "",
