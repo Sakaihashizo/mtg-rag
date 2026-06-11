@@ -284,16 +284,24 @@ def _safe_int(v, lo: int = 0, hi: int = 99):
 
 def attr_filter_sql(cmc_min=None, cmc_max=None,
                     power_min=None, power_max=None,
-                    toughness_min=None, toughness_max=None) -> str:
-    """数値属性（マナ総量 cmc・パワー・タフネス）の SQL 断片を生成する。
+                    toughness_min=None, toughness_max=None,
+                    mana_producer: bool = False) -> str:
+    """数値属性（マナ総量 cmc・パワー・タフネス）と構造化フラグの SQL 断片を生成する。
 
     cmc は numeric カラムなので直接比較できる。power / toughness は '*' や 'X' 等の
     特殊値を含む text カラムなので、正規表現で「純粋な整数の行」だけを漉してから
     数値比較する（特殊値は数値フィルタの対象外＝正しい挙動）。
     値はすべて _safe_int で整数検証済みなので、f 文字列に埋めても SQL インジェクションは
     起きない（型で保証される）。断片に % を含まないため param/no-param どちらの実行でも安全。
+
+    mana_producer=True のときは Scryfall の produced_mana（マナ生成色の配列）が空でない
+    行＝実際にマナを生むカードだけに絞る。意味検索や手書きルールに頼らず、構造化データで
+    「マナを生むか」を厳密判定する（NULL・空配列はどちらも array_length が NULL になり除外）。
     """
     frags: list[str] = []
+    if mana_producer:
+        frags.append("AND c.produced_mana IS NOT NULL "
+                     "AND array_length(c.produced_mana, 1) > 0")
     cmn, cmx = _safe_int(cmc_min), _safe_int(cmc_max)
     if cmn is not None:
         frags.append(f"AND c.cmc >= {cmn}")
@@ -634,6 +642,7 @@ class MTGHybridSearcherV2:
         cmc_min=None, cmc_max=None,
         power_min=None, power_max=None,
         toughness_min=None, toughness_max=None,
+        mana_producer: bool = False,
     ) -> list[CardResult]:
         """
         HyDE（Hypothetical Document Embeddings）を使った検索。
@@ -649,6 +658,7 @@ class MTGHybridSearcherV2:
             cmc_min=cmc_min, cmc_max=cmc_max,
             power_min=power_min, power_max=power_max,
             toughness_min=toughness_min, toughness_max=toughness_max,
+            mana_producer=mana_producer,
         )
 
         # HyDE ベクトル検索（hyde_text を embedding してベクトル検索）
@@ -656,7 +666,8 @@ class MTGHybridSearcherV2:
         type_sql = type_filter_sql(type_filter_override)
         attr_sql = attr_filter_sql(cmc_min, cmc_max,
                                    power_min, power_max,
-                                   toughness_min, toughness_max)
+                                   toughness_min, toughness_max,
+                                   mana_producer=mana_producer)
         hyde_vec  = self._embed(hyde_text)
         hyde_rows = self._vector_search(hyde_vec, top_k * 2, fmt_sql, type_sql, attr_sql)
 
@@ -733,6 +744,7 @@ class MTGHybridSearcherV2:
         cmc_min=None, cmc_max=None,
         power_min=None, power_max=None,
         toughness_min=None, toughness_max=None,
+        mana_producer: bool = False,
     ) -> list[CardResult]:
         print(f"\n[{self.model_key}] 検索: 「{query}」"
               + (f" [{format}]" if format else ""))
@@ -765,7 +777,8 @@ class MTGHybridSearcherV2:
         type_sql = type_filter_sql(type_filter)
         attr_sql = attr_filter_sql(cmc_min, cmc_max,
                                    power_min, power_max,
-                                   toughness_min, toughness_max)
+                                   toughness_min, toughness_max,
+                                   mana_producer=mana_producer)
         if attr_sql:
             print(f"  構造化フィルタ:{attr_sql}")
 
