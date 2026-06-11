@@ -18,6 +18,12 @@ eval_framework.py — MTG RAG 評価フレームワーク v2
   # 編集済みCSVを読んで指標計算 → eval_runs に保存
   python eval_framework.py --run --gt eval_groundtruth.csv --note "baseline"
 
+  # ルーター/エージェント経路で評価（要: build_router_cache.py で生成したキャッシュ）
+  python eval_framework.py --run --router-cache eval_router_cache.json --note "router baseline"
+
+  # ルーター経路の候補プール出力（GT 未ラベルの新カードを洗い出してラベル拡張する用）
+  python eval_framework.py --pool --router-cache eval_router_cache.json
+
   # 実行結果一覧
   python eval_framework.py --show
 """
@@ -82,7 +88,7 @@ def is_vintage_legal(conn, card_name: str) -> bool:
     return row[0] in ("legal", "restricted")
 
 
-def search_legal(searcher, conn, query, fmt, top_k: int):
+def search_legal(searcher, conn, query, fmt, top_k: int, router_entry: dict = None):
     """ハイブリッド検索結果から Vintage リーガルなカードを上位 top_k 件返す。
 
     pool 収集（ラベル付け候補）と run 評価で **同じ集合・同じ順序** を使うための
@@ -90,10 +96,34 @@ def search_legal(searcher, conn, query, fmt, top_k: int):
     評価する」という不整合（ラベルと評価対象のズレ）が起きる。
     フィルタ後に top_k 件を確保できるよう内部では多めに取得する。
 
+    router_entry が与えられた場合はルーター/エージェント経路を再現する:
+    キャッシュ済みのルーター出力（search_query / hyde_text / フラグ / filters）で
+    mtg_rag_agent.search_cards と同じ呼び方をする。評価中に LLM は呼ばない
+    （毎回 Gemini を呼ぶと出力が揺れて A/B 比較にならないため、キャッシュで固定する）。
+    なお format はキャッシュの抽出値ではなく GT 側の値（引数 fmt）を使う。
+    GT ラベルはその format 前提で付けられており、両経路を同条件で比較するため。
+
     返り値: (legal_results, skipped_count)
     """
     fetch_k = top_k * 2
-    results = searcher.search(query, top_k=fetch_k, format=fmt)
+    if router_entry is None:
+        results = searcher.search(query, top_k=fetch_k, format=fmt)
+    else:
+        e = router_entry
+        kwargs = dict(
+            top_k=fetch_k, format=fmt,
+            tournament_boost_override=bool(e.get("tournament_boost")),
+            removal_mode_override=bool(e.get("removal_mode")),
+            counter_mode_override=bool(e.get("counter_mode")),
+            type_filter_override=e.get("type_filter"),
+            **(e.get("filters") or {}),
+        )
+        sq   = e.get("search_query") or query
+        hyde = e.get("hyde_text") or ""
+        if hyde:
+            results = searcher.search_with_hyde(query=sq, hyde_text=hyde, **kwargs)
+        else:
+            results = searcher.search(sq, **kwargs)
     legal = []
     skipped = 0
     for r in results:
@@ -106,26 +136,48 @@ def search_legal(searcher, conn, query, fmt, top_k: int):
     return legal, skipped
 
 
+def load_router_cache(path: str) -> dict:
+    """build_router_cache.py が出力したルーター出力キャッシュを読み込む。"""
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    meta = data.get("meta", {})
+    print(f"ルーターキャッシュ: {path}")
+    print(f"  生成: {meta.get('created_at')} / Gemini: {meta.get('gemini_model')}"
+          f" / prompt_sha: {meta.get('prompt_sha')} / {len(data.get('entries', {}))} クエリ")
+    return data
+
+
 # ─── 候補CSV出力 ──────────────────────────────────────────────
 
 def collect_pool(conn, model_key: str = "SMALL_V2", top_k: int = TOP_K,
-                 queries_json: str = QUERIES_JSON):
+                 queries_json: str = QUERIES_JSON, router_cache: dict = None):
     """
     全クエリに対してハイブリッド検索を実行し、
     候補カード一覧をCSVに出力する。human_rank は空欄。
     Vintage でリーガルでないカードを除外した後に top_k 件になるよう多めに取得する。
+    router_cache 指定時はルーター経路で収集する（GT 未ラベルの新カードを洗い出す用）。
     """
     with open(queries_json, "r", encoding="utf-8") as f:
         queries = json.load(f)
 
+    entries = (router_cache or {}).get("entries", {})
+    if router_cache is not None:
+        missing = [q["query"] for q in queries if q["query"] not in entries]
+        if missing:
+            print(f"エラー: ルーターキャッシュに無いクエリが {len(missing)} 件: {missing}")
+            print("build_router_cache.py を再実行してください（経路の混在は不可）。")
+            return
+
     date_str  = datetime.now().strftime("%Y%m%d_%H%M")
-    out_path  = f"eval_pool_{date_str}.csv"
+    suffix    = "_routed" if router_cache is not None else ""
+    out_path  = f"eval_pool_{date_str}{suffix}.csv"
 
     # フィルタ後に top_k 件確保できるよう多めに取得（最大2倍）
     fetch_k = top_k * 2
 
+    route_label = "ルーター経路（キャッシュ）" if router_cache is not None else "searcher 直呼び"
     print(f"候補プール収集: {len(queries)} クエリ × top_{top_k}（内部取得: {fetch_k}件）")
-    print(f"モデル: {model_key}  Vintage非リーガル除外後に{top_k}件に絞る")
+    print(f"モデル: {model_key}  経路: {route_label}  Vintage非リーガル除外後に{top_k}件に絞る")
     searcher  = MTGHybridSearcherV2(model_key=model_key)
 
     rows = []
@@ -133,7 +185,9 @@ def collect_pool(conn, model_key: str = "SMALL_V2", top_k: int = TOP_K,
         query  = q["query"]
         fmt    = q.get("format")
         cat    = q["category"]
-        legal, skipped = search_legal(searcher, conn, query, fmt, top_k)
+        entry  = entries[query] if router_cache is not None else None
+        legal, skipped = search_legal(searcher, conn, query, fmt, top_k,
+                                      router_entry=entry)
 
         for system_rank, r in enumerate(legal, start=1):
             # 日本語テキスト全文をDBから取得
@@ -242,9 +296,15 @@ def compute_metrics(system_results: list, gt: dict) -> dict:
 
 # ─── 評価実行 ─────────────────────────────────────────────────
 
-def run_eval(conn, gt_path: str, model_key: str, note: str = ""):
+def run_eval(conn, gt_path: str, model_key: str, note: str = "",
+             router_cache: dict = None, allow_partial: bool = False):
     """
     編集済みGT CSVを読んで指標を計算し、eval_runs に保存する。
+    router_cache 指定時はルーター/エージェント経路で検索する（キャッシュ利用・決定的）。
+    経路は config_json に記録される。searcher 直呼びの数値と混ぜて比較しないこと。
+    allow_partial=True のときだけ、キャッシュ未取得のクエリを除外して部分評価できる
+    （クォータ等でキャッシュが未完成な場合の速報用。除外リストは config_json に記録。
+    部分評価の数値は n が違うため、全クエリの run と直接比較しないこと）。
     """
     # GT CSV を読み込む
     gt_by_query: dict[str, dict] = {}   # query → {card_name: human_rank}
@@ -270,22 +330,49 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = ""):
         print("GT に human_rank が記入されていません。")
         return
 
-    print(f"評価実行: {len(gt_by_query)} クエリ / モデル: {model_key}")
+    entries = (router_cache or {}).get("entries", {})
+    partial_missing: list = []
+    if router_cache is not None:
+        missing = [q for q in gt_by_query if q not in entries]
+        if missing and not allow_partial:
+            print(f"エラー: ルーターキャッシュに無いクエリが {len(missing)} 件: {missing}")
+            print("build_router_cache.py を再実行するか、--partial で部分評価してください"
+                  "（経路の混在は不可）。")
+            return
+        if missing:
+            partial_missing = missing
+            for q in missing:
+                gt_by_query.pop(q)
+            print(f"部分評価モード: キャッシュ未取得の {len(missing)} クエリを除外"
+                  f" → n={len(gt_by_query)}")
+            for q in missing:
+                print(f"  除外: {q}")
+
+    route_label = "ルーター経路（キャッシュ）" if router_cache is not None else "searcher 直呼び"
+    print(f"評価実行: {len(gt_by_query)} クエリ / モデル: {model_key} / 経路: {route_label}")
     searcher = MTGHybridSearcherV2(model_key=model_key)
 
     all_metrics = []
     for query, gt in gt_by_query.items():
         fmt = fmt_by_query.get(query)
+        entry = entries[query] if router_cache is not None else None
         # pool 収集と同じ Vintage リーガルフィルタを通す（ラベルと評価対象を揃える）
-        legal, _ = search_legal(searcher, conn, query, fmt, TOP_K)
+        legal, _ = search_legal(searcher, conn, query, fmt, TOP_K,
+                                router_entry=entry)
         system_results = [(r.card_name, i + 1) for i, r in enumerate(legal)]
         m = compute_metrics(system_results, gt)
+        # GT に存在しないカード（ラベル付けプール外）の混入率。grade 0 扱いになるため、
+        # これが高いクエリは「悪い」のではなく「未採点」の可能性がある（ラベル拡張の目印）。
+        top10 = [name for name, _ in system_results[:10]]
+        m["unlabeled_10"] = (sum(1 for name in top10 if name not in gt)
+                             / max(len(top10), 1))
         m["query"] = query
         all_metrics.append(m)
+        unl = f"  未ラベル={m['unlabeled_10']:.0%}" if m["unlabeled_10"] > 0 else ""
         print(
             f"  「{query[:28]}」"
             f"  R@5={m['recall_5']:.2f} P@5={m['precision_5']:.2f}"
-            f"  MRR={m['mrr']:.2f} NDCG={m['ndcg_10']:.2f}"
+            f"  MRR={m['mrr']:.2f} NDCG={m['ndcg_10']:.2f}{unl}"
         )
 
     searcher.close()
@@ -295,13 +382,22 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = ""):
            for k in ["recall_5","recall_10","precision_5","precision_10","mrr","ndcg_10"]}
     gt_count = sum(len(gt) for gt in gt_by_query.values())
 
+    avg_unlabeled = sum(m["unlabeled_10"] for m in all_metrics) / n
+
     config = {
         "model_key": model_key,
         "top_k": TOP_K,
         "gt_path": gt_path,
         "run_date": datetime.now().isoformat(),
+        # 検索経路。searcher 直呼びとルーター経由の数値は条件が違うので比較しない
+        "route": "router" if router_cache is not None else "searcher",
+        "avg_unlabeled_10": avg_unlabeled,
         "per_query": all_metrics,
     }
+    if router_cache is not None:
+        config["router_meta"] = router_cache.get("meta", {})
+    if partial_missing:
+        config["partial_missing"] = partial_missing
 
     setup(conn)
     with conn.cursor() as cur:
@@ -332,8 +428,14 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = ""):
     print(f"  precision@10: {avg['precision_10']:.3f}")
     print(f"  MRR:          {avg['mrr']:.3f}")
     print(f"  NDCG@10:      {avg['ndcg_10']:.3f}")
+    print(f"  経路: {'router' if router_cache is not None else 'searcher'}"
+          f"  平均未ラベル混入率(top10): {avg_unlabeled:.1%}")
     print("=" * 60)
     print(f"eval_runs に保存しました（id={run_id}）")
+    if router_cache is not None and avg_unlabeled > 0.2:
+        print("注意: 未ラベル混入率が高めです。ルーター経路の結果に GT 未採点カードが")
+        print("多く含まれており、指標が実態より低く出ている可能性があります。")
+        print("--pool --router-cache で候補を出力し、ラベル拡張を検討してください。")
 
 
 # ─── 結果表示 ─────────────────────────────────────────────────
@@ -379,15 +481,24 @@ def main():
     parser.add_argument("--queries_json", default=QUERIES_JSON)
     parser.add_argument("--top_k",  type=int, default=TOP_K)
     parser.add_argument("--note",   default="", help="実行結果のメモ")
+    parser.add_argument("--router-cache", default=None, dest="router_cache",
+                        help="build_router_cache.py が出力したキャッシュJSON。"
+                             "指定するとルーター/エージェント経路で検索する")
+    parser.add_argument("--partial", action="store_true",
+                        help="キャッシュ未取得のクエリを除外して部分評価する"
+                             "（キャッシュ未完成時の速報用）")
     args = parser.parse_args()
 
     conn = psycopg2.connect(**DB_CONFIG)
 
+    router_cache = load_router_cache(args.router_cache) if args.router_cache else None
+
     if args.pool:
         collect_pool(conn, model_key=args.model, top_k=args.top_k,
-                     queries_json=args.queries_json)
+                     queries_json=args.queries_json, router_cache=router_cache)
     elif args.run:
-        run_eval(conn, gt_path=args.gt, model_key=args.model, note=args.note)
+        run_eval(conn, gt_path=args.gt, model_key=args.model, note=args.note,
+                 router_cache=router_cache, allow_partial=args.partial)
     elif args.show:
         show_runs(conn)
     else:
