@@ -90,8 +90,8 @@ flowchart TB
         lam --> proxy["RDS Proxy"]
         proxy --> aurora[("Aurora Serverless v2 / PostgreSQL pgvector")]
     end
-    lam -->|VPCエンドポイント(想定)| bedrock["Bedrock / 回答生成"]
-    lam -->|VPCエンドポイント(想定)| secrets["Secrets Manager"]
+    lam -->|"VPCエンドポイント(想定)"| bedrock["Bedrock / 回答生成"]
+    lam -->|"VPCエンドポイント(想定)"| secrets["Secrets Manager"]
     lam -.ログ/トレース.-> cw["CloudWatch / X-Ray"]
 
     subgraph refresh["メタデータ更新パイプライン（構想・未実装）"]
