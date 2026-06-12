@@ -7,22 +7,28 @@ eval_framework.py — MTG RAG 評価フレームワーク v2
   - eval_queries / eval_pool / eval_groundtruth はCSVで管理
 
 ファイル構成:
-  eval_queries.json       クエリセット定義
-  eval_pool_{date}.csv    候補カード一覧（human_rankは空欄で出力）
-  eval_groundtruth.csv    編集済みGT（human_rankを手入力したもの）
+  eval_queries.json         クエリセット定義
+  eval_pool_{date}.csv      候補カード一覧（human_gradeは空欄で出力）
+  eval_groundtruth_v2.csv   編集済みGT（human_gradeを手入力したもの）
+
+ラベル方式（2026-06-12 に10段階相対ランクから移行）:
+  human_grade: 2 = クエリのど真ん中 / 1 = 関連はある / 0 = 的外れ
+  カード単体の絶対評価。候補プールが変わっても既存ラベルは無効にならない。
+  旧 eval_groundtruth.csv（human_rank 10段階・1が最良）からは
+  rank 1〜3 → 2 / 4〜10 → 1 / 0 → 0 で機械変換済み。列名を変えて誤読を遮断。
 
 使い方:
-  # 候補CSV出力（Excelで human_rank を埋める）
+  # 候補CSV出力（Excelで human_grade を埋める）
   python eval_framework.py --pool
 
   # 編集済みCSVを読んで指標計算 → eval_runs に保存
-  python eval_framework.py --run --gt eval_groundtruth.csv --note "baseline"
+  python eval_framework.py --run --gt eval_groundtruth_v2.csv --note "baseline"
 
   # ルーター/エージェント経路で評価（要: build_router_cache.py で生成したキャッシュ）
   python eval_framework.py --run --router-cache eval_router_cache.json --note "router baseline"
 
   # ルーター経路の候補プール出力（GT 未ラベルの新カードを洗い出してラベル拡張する用）
-  # 既存 GT（--gt、既定 eval_groundtruth.csv）のラベルは human_rank にプリフィルされ、
+  # 既存 GT（--gt、既定 eval_groundtruth_v2.csv）のラベルは human_grade にプリフィルされ、
   # 空欄＝新規カードだけ記入すればよい
   python eval_framework.py --pool --router-cache eval_router_cache.json
 
@@ -152,10 +158,11 @@ def load_router_cache(path: str) -> dict:
 # ─── 候補CSV出力 ──────────────────────────────────────────────
 
 def load_gt_labels(gt_path: str) -> dict:
-    """既存 GT CSV から (query, card_name) → human_rank の対応表を作る。
+    """既存 GT CSV から (query, card_name) → human_grade の対応表を作る。
 
     pool 出力のプリフィル用。0（的外れ）も有効なラベルとして含める。
-    human_rank が未記入・非整数の行はラベル無しとして無視する。
+    human_grade が未記入・非整数の行はラベル無しとして無視する。
+    0/1/2 以外の整数は旧10段階ランクの混入を疑い、警告してスキップする。
     ファイルが無ければ空 dict を返す（プリフィルなしで続行）。
     """
     labels = {}
@@ -163,14 +170,18 @@ def load_gt_labels(gt_path: str) -> dict:
         with open(gt_path, "r", encoding="utf-8-sig") as f:
             reader = csv.DictReader(f)
             for row in reader:
-                hr_str = (row.get("human_rank") or "").strip()
-                if not hr_str:
+                hg_str = (row.get("human_grade") or "").strip()
+                if not hg_str:
                     continue
                 try:
-                    hr = int(hr_str)
+                    hg = int(hg_str)
                 except ValueError:
                     continue
-                labels[(row["query"], row["card_name"])] = hr
+                if hg not in (0, 1, 2):
+                    print(f"警告: human_grade={hg} は不正（0/1/2のみ）。旧ランク値の混入？ "
+                          f"スキップ: 「{row['query']}」{row['card_name']}")
+                    continue
+                labels[(row["query"], row["card_name"])] = hg
     except FileNotFoundError:
         print(f"GT ファイルが見つかりません（プリフィルなしで続行）: {gt_path}")
     return labels
@@ -181,10 +192,10 @@ def collect_pool(conn, model_key: str = "SMALL_V2", top_k: int = TOP_K,
                  gt_path: str = None):
     """
     全クエリに対してハイブリッド検索を実行し、
-    候補カード一覧をCSVに出力する。human_rank は空欄。
+    候補カード一覧をCSVに出力する。human_grade は空欄。
     Vintage でリーガルでないカードを除外した後に top_k 件になるよう多めに取得する。
     router_cache 指定時はルーター経路で収集する（GT 未ラベルの新カードを洗い出す用）。
-    gt_path 指定時は既存 GT のラベルを human_rank にプリフィルし、
+    gt_path 指定時は既存 GT のラベルを human_grade にプリフィルし、
     未ラベルの新カードだけ空欄で出力する（ラベル拡張の作業量を最小化）。
     """
     with open(queries_json, "r", encoding="utf-8") as f:
@@ -238,8 +249,8 @@ def collect_pool(conn, model_key: str = "SMALL_V2", top_k: int = TOP_K,
             en_text = db_row[1] if db_row and db_row[1] else ""
 
             # 既存 GT にラベルがあればプリフィル（0=的外れ も有効ラベル）
-            hr_known = gt_labels.get((query, r.card_name))
-            if hr_known is not None:
+            hg_known = gt_labels.get((query, r.card_name))
+            if hg_known is not None:
                 n_prefilled += 1
             else:
                 total_new += 1
@@ -254,7 +265,7 @@ def collect_pool(conn, model_key: str = "SMALL_V2", top_k: int = TOP_K,
                 "type_line":   r.type_line or "",
                 "japanese_oracle_text": ja_text,
                 "oracle_text": en_text,
-                "human_rank":  hr_known if hr_known is not None else "",  # 未ラベルのみExcelで記入
+                "human_grade": hg_known if hg_known is not None else "",  # 未ラベルのみExcelで記入
                 "note":        "",   # ← 任意
             })
 
@@ -270,7 +281,7 @@ def collect_pool(conn, model_key: str = "SMALL_V2", top_k: int = TOP_K,
         "query", "format", "category",
         "system_rank", "card_name", "japanese_name", "type_line",
         "japanese_oracle_text", "oracle_text",
-        "human_rank", "note",
+        "human_grade", "note",
     ]
     with open(out_path, "w", encoding="utf-8-sig", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -280,10 +291,10 @@ def collect_pool(conn, model_key: str = "SMALL_V2", top_k: int = TOP_K,
     print(f"\nCSV出力完了: {out_path}  ({len(rows)} 件)")
     if gt_labels:
         print(f"プリフィル済み: {total_prefilled} 件 / 要記入（新規）: {total_new} 件")
-        print("Excel で human_rank が空欄の行だけ記入してください。")
+        print("Excel で human_grade が空欄の行だけ記入してください。")
     else:
-        print("Excel で human_rank 列を記入してください。")
-    print("  0 = 的外れ / 1〜10 = 良い順の相対順位（候補集合内）")
+        print("Excel で human_grade 列を記入してください。")
+    print("  2 = クエリのど真ん中 / 1 = 関連はある / 0 = 的外れ（カード単体の絶対評価）")
     return out_path
 
 
@@ -307,9 +318,9 @@ def ndcg(grades_in_order: list, ideal_grades: list, k: int) -> float:
 def compute_metrics(system_results: list, gt: dict) -> dict:
     """
     system_results: [(card_name, system_rank), ...] system_rank順
-    gt: {card_name: human_rank}  human_rank=0は無関連
+    gt: {card_name: human_grade}  human_grade: 2=ど真ん中 / 1=関連あり / 0=無関連
     """
-    relevant = {name for name, hr in gt.items() if hr > 0}
+    relevant = {name for name, g in gt.items() if g > 0}
     n_relevant = len(relevant)
 
     # recall@k / precision@k
@@ -328,18 +339,12 @@ def compute_metrics(system_results: list, gt: dict) -> dict:
             break
     metrics["mrr"] = mrr
 
-    # NDCG@10: human_rank を relevance grade に変換して使用。
-    # human_rank は 1 が最良（小さいほど良い順位）なので、max から引いて反転し
-    # 「grade が大きいほど良い」形にする（rank1 -> 最大 grade、0/未記入 -> 0）。
-    max_hr = max((hr for hr in gt.values() if hr > 0), default=1)
-    grades_in_order = []
-    for name, _ in system_results[:10]:
-        hr = gt.get(name, 0)
-        grade = (max_hr - hr + 1) if hr > 0 else 0
-        grades_in_order.append(grade)
+    # NDCG@10: human_grade（2/1/0 の絶対段階評価）をそのまま gain に使う。
+    # 旧10段階ランク時代の反転変換（max_hr - hr + 1）は廃止。grade は大きいほど良い。
+    grades_in_order = [gt.get(name, 0) for name, _ in system_results[:10]]
 
     # ideal は GT 全体の grade（システムが取得できなかった良カードも含む）を基準にする
-    ideal_grades = [(max_hr - hr + 1) for hr in gt.values() if hr > 0]
+    ideal_grades = [g for g in gt.values() if g > 0]
     metrics["ndcg_10"] = ndcg(grades_in_order, ideal_grades, 10)
 
     return metrics
@@ -358,27 +363,31 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
     部分評価の数値は n が違うため、全クエリの run と直接比較しないこと）。
     """
     # GT CSV を読み込む
-    gt_by_query: dict[str, dict] = {}   # query → {card_name: human_rank}
+    gt_by_query: dict[str, dict] = {}   # query → {card_name: human_grade}
     fmt_by_query: dict[str, str] = {}
 
     with open(gt_path, "r", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         for row in reader:
             query = row["query"]
-            hr_str = row["human_rank"].strip()
-            if not hr_str:
-                continue   # human_rank 未記入はスキップ
+            hg_str = row["human_grade"].strip()
+            if not hg_str:
+                continue   # human_grade 未記入はスキップ
             try:
-                hr = int(hr_str)
+                hg = int(hg_str)
             except ValueError:
+                continue
+            if hg not in (0, 1, 2):
+                print(f"警告: human_grade={hg} は不正（0/1/2のみ）。旧ランク値の混入？ "
+                      f"スキップ: 「{query}」{row['card_name']}")
                 continue
             if query not in gt_by_query:
                 gt_by_query[query] = {}
                 fmt_by_query[query] = row.get("format", "") or None
-            gt_by_query[query][row["card_name"]] = hr
+            gt_by_query[query][row["card_name"]] = hg
 
     if not gt_by_query:
-        print("GT に human_rank が記入されていません。")
+        print("GT に human_grade が記入されていません。")
         return
 
     entries = (router_cache or {}).get("entries", {})
@@ -520,16 +529,18 @@ def show_runs(conn):
 def main():
     parser = argparse.ArgumentParser(description="MTG RAG 評価フレームワーク v2")
     parser.add_argument("--pool",   action="store_true",
-                        help="候補CSV出力（Excelで human_rank を記入する）")
+                        help="候補CSV出力（Excelで human_grade を記入する）")
     parser.add_argument("--run",    action="store_true",
                         help="編集済みGT CSVを読んで指標計算・eval_runsに保存")
     parser.add_argument("--show",   action="store_true",
                         help="実行結果一覧")
     parser.add_argument("--model",  default="SMALL_V2",
                         choices=["SMALL_V2", "BASE_V2"])
-    parser.add_argument("--gt",     default="eval_groundtruth.csv",
+    parser.add_argument("--gt",     default="eval_groundtruth_v2.csv",
                         help="編集済みGT CSVのパス（--run の評価対象、"
-                             "--pool ではプリフィル元として使用）")
+                             "--pool ではプリフィル元として使用）。"
+                             "v2 = human_grade（0/1/2 絶対段階）方式。"
+                             "旧 human_rank（10段階）ファイルは読めない（列名で遮断）")
     parser.add_argument("--queries_json", default=QUERIES_JSON)
     parser.add_argument("--top_k",  type=int, default=TOP_K)
     parser.add_argument("--note",   default="", help="実行結果のメモ")
