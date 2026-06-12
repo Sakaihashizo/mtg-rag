@@ -22,6 +22,8 @@ eval_framework.py — MTG RAG 評価フレームワーク v2
   python eval_framework.py --run --router-cache eval_router_cache.json --note "router baseline"
 
   # ルーター経路の候補プール出力（GT 未ラベルの新カードを洗い出してラベル拡張する用）
+  # 既存 GT（--gt、既定 eval_groundtruth.csv）のラベルは human_rank にプリフィルされ、
+  # 空欄＝新規カードだけ記入すればよい
   python eval_framework.py --pool --router-cache eval_router_cache.json
 
   # 実行結果一覧
@@ -149,16 +151,48 @@ def load_router_cache(path: str) -> dict:
 
 # ─── 候補CSV出力 ──────────────────────────────────────────────
 
+def load_gt_labels(gt_path: str) -> dict:
+    """既存 GT CSV から (query, card_name) → human_rank の対応表を作る。
+
+    pool 出力のプリフィル用。0（的外れ）も有効なラベルとして含める。
+    human_rank が未記入・非整数の行はラベル無しとして無視する。
+    ファイルが無ければ空 dict を返す（プリフィルなしで続行）。
+    """
+    labels = {}
+    try:
+        with open(gt_path, "r", encoding="utf-8-sig") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                hr_str = (row.get("human_rank") or "").strip()
+                if not hr_str:
+                    continue
+                try:
+                    hr = int(hr_str)
+                except ValueError:
+                    continue
+                labels[(row["query"], row["card_name"])] = hr
+    except FileNotFoundError:
+        print(f"GT ファイルが見つかりません（プリフィルなしで続行）: {gt_path}")
+    return labels
+
+
 def collect_pool(conn, model_key: str = "SMALL_V2", top_k: int = TOP_K,
-                 queries_json: str = QUERIES_JSON, router_cache: dict = None):
+                 queries_json: str = QUERIES_JSON, router_cache: dict = None,
+                 gt_path: str = None):
     """
     全クエリに対してハイブリッド検索を実行し、
     候補カード一覧をCSVに出力する。human_rank は空欄。
     Vintage でリーガルでないカードを除外した後に top_k 件になるよう多めに取得する。
     router_cache 指定時はルーター経路で収集する（GT 未ラベルの新カードを洗い出す用）。
+    gt_path 指定時は既存 GT のラベルを human_rank にプリフィルし、
+    未ラベルの新カードだけ空欄で出力する（ラベル拡張の作業量を最小化）。
     """
     with open(queries_json, "r", encoding="utf-8") as f:
         queries = json.load(f)
+
+    gt_labels = load_gt_labels(gt_path) if gt_path else {}
+    if gt_labels:
+        print(f"プリフィル: 既存 GT {gt_path} から {len(gt_labels)} ペアのラベルを読み込み")
 
     entries = (router_cache or {}).get("entries", {})
     if router_cache is not None:
@@ -181,6 +215,8 @@ def collect_pool(conn, model_key: str = "SMALL_V2", top_k: int = TOP_K,
     searcher  = MTGHybridSearcherV2(model_key=model_key)
 
     rows = []
+    total_prefilled = 0
+    total_new       = 0
     for q in queries:
         query  = q["query"]
         fmt    = q.get("format")
@@ -189,6 +225,7 @@ def collect_pool(conn, model_key: str = "SMALL_V2", top_k: int = TOP_K,
         legal, skipped = search_legal(searcher, conn, query, fmt, top_k,
                                       router_entry=entry)
 
+        n_prefilled = 0
         for system_rank, r in enumerate(legal, start=1):
             # 日本語テキスト全文をDBから取得
             with conn.cursor() as cur:
@@ -200,6 +237,13 @@ def collect_pool(conn, model_key: str = "SMALL_V2", top_k: int = TOP_K,
             ja_text = db_row[0] if db_row and db_row[0] else ""
             en_text = db_row[1] if db_row and db_row[1] else ""
 
+            # 既存 GT にラベルがあればプリフィル（0=的外れ も有効ラベル）
+            hr_known = gt_labels.get((query, r.card_name))
+            if hr_known is not None:
+                n_prefilled += 1
+            else:
+                total_new += 1
+
             rows.append({
                 "query":       query,
                 "format":      fmt or "",
@@ -210,12 +254,15 @@ def collect_pool(conn, model_key: str = "SMALL_V2", top_k: int = TOP_K,
                 "type_line":   r.type_line or "",
                 "japanese_oracle_text": ja_text,
                 "oracle_text": en_text,
-                "human_rank":  "",   # ← Excelで記入
+                "human_rank":  hr_known if hr_known is not None else "",  # 未ラベルのみExcelで記入
                 "note":        "",   # ← 任意
             })
 
+        total_prefilled += n_prefilled
         skip_str = f"  (Vintage非リーガル除外: {skipped}件)" if skipped else ""
-        print(f"  「{query}」→ {len(legal)} 件{skip_str}")
+        label_str = (f"  [既ラベル {n_prefilled} / 新規 {len(legal) - n_prefilled}]"
+                     if gt_labels else "")
+        print(f"  「{query}」→ {len(legal)} 件{skip_str}{label_str}")
 
     searcher.close()
 
@@ -231,7 +278,11 @@ def collect_pool(conn, model_key: str = "SMALL_V2", top_k: int = TOP_K,
         writer.writerows(rows)
 
     print(f"\nCSV出力完了: {out_path}  ({len(rows)} 件)")
-    print("Excel で human_rank 列を記入してください。")
+    if gt_labels:
+        print(f"プリフィル済み: {total_prefilled} 件 / 要記入（新規）: {total_new} 件")
+        print("Excel で human_rank が空欄の行だけ記入してください。")
+    else:
+        print("Excel で human_rank 列を記入してください。")
     print("  0 = 的外れ / 1〜10 = 良い順の相対順位（候補集合内）")
     return out_path
 
@@ -477,7 +528,8 @@ def main():
     parser.add_argument("--model",  default="SMALL_V2",
                         choices=["SMALL_V2", "BASE_V2"])
     parser.add_argument("--gt",     default="eval_groundtruth.csv",
-                        help="編集済みGT CSVのパス（--run 時に使用）")
+                        help="編集済みGT CSVのパス（--run の評価対象、"
+                             "--pool ではプリフィル元として使用）")
     parser.add_argument("--queries_json", default=QUERIES_JSON)
     parser.add_argument("--top_k",  type=int, default=TOP_K)
     parser.add_argument("--note",   default="", help="実行結果のメモ")
@@ -495,7 +547,8 @@ def main():
 
     if args.pool:
         collect_pool(conn, model_key=args.model, top_k=args.top_k,
-                     queries_json=args.queries_json, router_cache=router_cache)
+                     queries_json=args.queries_json, router_cache=router_cache,
+                     gt_path=args.gt)
     elif args.run:
         run_eval(conn, gt_path=args.gt, model_key=args.model, note=args.note,
                  router_cache=router_cache, allow_partial=args.partial)
