@@ -1,7 +1,7 @@
 """
 MTG RAG System — モデル精度比較スクリプト
 =========================================
-SMALL (384d) / BASE (768d) / LARGE (1024d) の3モデルを
+SMALL (384d) / BASE (768d) の2モデルを
 複数クエリで公平に比較し、結果をターミナルと JSON に出力します。
 
 使い方:
@@ -47,15 +47,6 @@ MODELS = [
         dim=768,
         cards_table="mtg_cards_v2",
         embeddings_table="mtg_embeddings_base_v2",
-    ),
-    ModelConfig(
-        key="LARGE",
-        model_name="intfloat/multilingual-e5-large-instruct",
-        dim=1024,
-        cards_table="mtg_cards",
-        embeddings_table="mtg_embeddings",
-        instruct=True,
-        instruct_prefix="Instruct: Retrieve Magic: The Gathering cards that match the query\nQuery: ",
     ),
 ]
 
@@ -265,7 +256,7 @@ def print_summary(all_results: list[QueryResult]):
     for qr in all_results:
         stats[qr.model_key].append(qr)
 
-    for key in ["SMALL", "BASE", "LARGE"]:
+    for key in ["SMALL", "BASE"]:
         qs = stats.get(key, [])
         if not qs:
             continue
@@ -283,8 +274,8 @@ def main():
     parser = argparse.ArgumentParser(description="MTG RAG モデル比較ベンチマーク")
     parser.add_argument("--top_k",  type=int, default=10)
     parser.add_argument("--output", type=str, default="benchmark_results.json")
-    parser.add_argument("--models", nargs="+", choices=["SMALL","BASE","LARGE"],
-                        default=["SMALL","BASE","LARGE"])
+    parser.add_argument("--models", nargs="+", choices=["SMALL","BASE"],
+                        default=["SMALL","BASE"])
     args = parser.parse_args()
 
     target_models = [m for m in MODELS if m.key in args.models]

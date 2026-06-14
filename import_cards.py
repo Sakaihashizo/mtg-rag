@@ -16,7 +16,7 @@ import_cards.py — 修正版 v3
   python import_cards.py --model BASE_V2 --embed_only
 
   # 既存テーブルの oracle_text だけ修正（再embeddingなし）
-  python import_cards.py --repair --model SMALL
+  python import_cards.py --repair --model SMALL_V2
 """
 
 import argparse
@@ -42,24 +42,6 @@ COLOR_NAMES = {
 }
 
 MODEL_CONFIGS = {
-    "SMALL": {
-        "model_name": "intfloat/multilingual-e5-small",
-        "prefix": "passage: ",
-        "table_cards": "mtg_cards",
-        "table_embed": "mtg_embeddings_small",
-    },
-    "BASE": {
-        "model_name": "intfloat/multilingual-e5-base",
-        "prefix": "passage: ",
-        "table_cards": "mtg_cards",
-        "table_embed": "mtg_embeddings_base",
-    },
-    "LARGE": {
-        "model_name": "intfloat/multilingual-e5-large-instruct",
-        "prefix": "Instruct: Retrieve Magic: The Gathering cards relevant to the query\nQuery: ",
-        "table_cards": "mtg_cards",
-        "table_embed": "mtg_embeddings",
-    },
     "SMALL_V2": {
         "model_name": "intfloat/multilingual-e5-small",
         "prefix": "passage: ",
@@ -405,7 +387,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--model",
-        choices=["SMALL", "BASE", "LARGE", "SMALL_V2", "BASE_V2"],
+        choices=["SMALL_V2", "BASE_V2"],
         default="SMALL_V2",
     )
     parser.add_argument(
