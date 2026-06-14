@@ -51,7 +51,7 @@ MODEL_CONFIGS = {
     "BASE_V2": {
         "model_name": "intfloat/multilingual-e5-base",
         "prefix": "passage: ",
-        "table_cards": "mtg_cards_v3",
+        "table_cards": "mtg_cards_v2",
         "table_embed": "mtg_embeddings_base_v2",
     },
 }
