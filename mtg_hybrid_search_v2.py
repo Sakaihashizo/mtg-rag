@@ -288,9 +288,12 @@ def attr_filter_sql(cmc_min=None, cmc_max=None,
                     mana_producer: bool = False) -> str:
     """数値属性（マナ総量 cmc・パワー・タフネス）と構造化フラグの SQL 断片を生成する。
 
-    cmc は numeric カラムなので直接比較できる。power / toughness は '*' や 'X' 等の
-    特殊値を含む text カラムなので、正規表現で「純粋な整数の行」だけを漉してから
-    数値比較する（特殊値は数値フィルタの対象外＝正しい挙動）。
+    cmc フィルタは face_cmcs（撃てる cmc の集合）に対し EXISTS で判定する。
+    「1つの面が指定範囲内に収まるか」を問うので、split カードの各面を独立して評価できる。
+    cmc_min と cmc_max が両方ある場合は単一 EXISTS に AND でまとめる（別々の EXISTS にすると
+    faces=[1,5] が範囲[2,4] に誤マッチするため）。
+    power / toughness は '*' や 'X' 等の特殊値を含む text カラムなので、正規表現で
+    「純粋な整数の行」だけを漉してから数値比較する（特殊値は数値フィルタの対象外＝正しい挙動）。
     値はすべて _safe_int で整数検証済みなので、f 文字列に埋めても SQL インジェクションは
     起きない（型で保証される）。断片に % を含まないため param/no-param どちらの実行でも安全。
 
@@ -303,10 +306,14 @@ def attr_filter_sql(cmc_min=None, cmc_max=None,
         frags.append("AND c.produced_mana IS NOT NULL "
                      "AND array_length(c.produced_mana, 1) > 0")
     cmn, cmx = _safe_int(cmc_min), _safe_int(cmc_max)
-    if cmn is not None:
-        frags.append(f"AND c.cmc >= {cmn}")
-    if cmx is not None:
-        frags.append(f"AND c.cmc <= {cmx}")
+    if cmn is not None or cmx is not None:
+        conds = []
+        if cmn is not None:
+            conds.append(f"fc >= {cmn}")
+        if cmx is not None:
+            conds.append(f"fc <= {cmx}")
+        frags.append("AND EXISTS (SELECT 1 FROM unnest(c.face_cmcs) fc "
+                     f"WHERE {' AND '.join(conds)})")
     for col, vmin, vmax in (("power", power_min, power_max),
                             ("toughness", toughness_min, toughness_max)):
         lo, hi = _safe_int(vmin), _safe_int(vmax)

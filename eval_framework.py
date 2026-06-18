@@ -353,7 +353,8 @@ def compute_metrics(system_results: list, gt: dict) -> dict:
 # ─── 評価実行 ─────────────────────────────────────────────────
 
 def run_eval(conn, gt_path: str, model_key: str, note: str = "",
-             router_cache: dict = None, allow_partial: bool = False):
+             router_cache: dict = None, allow_partial: bool = False,
+             top_k: int = TOP_K):
     """
     編集済みGT CSVを読んで指標を計算し、eval_runs に保存する。
     router_cache 指定時はルーター/エージェント経路で検索する（キャッシュ利用・決定的）。
@@ -417,7 +418,7 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
         fmt = fmt_by_query.get(query)
         entry = entries[query] if router_cache is not None else None
         # pool 収集と同じ Vintage リーガルフィルタを通す（ラベルと評価対象を揃える）
-        legal, _ = search_legal(searcher, conn, query, fmt, TOP_K,
+        legal, _ = search_legal(searcher, conn, query, fmt, top_k,
                                 router_entry=entry)
         system_results = [(r.card_name, i + 1) for i, r in enumerate(legal)]
         m = compute_metrics(system_results, gt)
@@ -446,7 +447,7 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
 
     config = {
         "model_key": model_key,
-        "top_k": TOP_K,
+        "top_k": top_k,
         "gt_path": gt_path,
         "run_date": datetime.now().isoformat(),
         # 検索経路。searcher 直呼びとルーター経由の数値は条件が違うので比較しない
@@ -562,7 +563,8 @@ def main():
                      gt_path=args.gt)
     elif args.run:
         run_eval(conn, gt_path=args.gt, model_key=args.model, note=args.note,
-                 router_cache=router_cache, allow_partial=args.partial)
+                 router_cache=router_cache, allow_partial=args.partial,
+                 top_k=args.top_k)
     elif args.show:
         show_runs(conn)
     else:

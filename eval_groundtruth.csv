@@ -1,0 +1,973 @@
+query,format,category,system_rank,card_name,japanese_name,type_line,japanese_oracle_text,oracle_text,human_rank,note
+純粋に強いカウンター呪文,,counter,1,Force of Will,意志の力,Instant,"この呪文のマナ・コストを支払うのではなく、「１点のライフを支払い、あなたの手札にある青のカード１枚を追放する。」を選んでもよい。
+呪文１つを対象とする。それを打ち消す。","You may pay 1 life and exile a blue card from your hand rather than pay this spell's mana cost.
+Counter target spell.",1,
+純粋に強いカウンター呪文,,counter,2,Force of Negation,否定の力,Instant,"あなたのターンでないなら、この呪文のマナ・コストを支払うのではなく、あなたの手札にある青のカード１枚を追放してもよい。
+クリーチャーでない呪文１つを対象とする。それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。","If it's not your turn, you may exile a blue card from your hand rather than pay this spell's mana cost.
+Counter target noncreature spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",2,
+純粋に強いカウンター呪文,,counter,3,Daze,目くらまし,Instant,"この呪文のマナ・コストを支払うのではなく、あなたがコントロールしている島１つをオーナーの手札に戻してもよい。
+呪文１つを対象とする。それのコントローラーが{1}を支払わないかぎり、それを打ち消す。","You may return an Island you control to its owner's hand rather than pay this spell's mana cost.
+Counter target spell unless its controller pays {1}.",3,
+純粋に強いカウンター呪文,,counter,4,Spell Pierce,呪文貫き,Instant,クリーチャーでない呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。,Counter target noncreature spell unless its controller pays {2}.,6,
+純粋に強いカウンター呪文,,counter,5,Make Disappear,かき消し,Instant,"犠牲１（あなたがこの呪文を唱えるに際し、あなたはパワーが１以上であるクリーチャー１体を生け贄に捧げてもよい。そうしたとき、この呪文をコピーし、あなたはそのコピーの新しい対象を選んでもよい。）
+呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。","Casualty 1 (As you cast this spell, you may sacrifice a creature with power 1 or greater. When you do, copy this spell and you may choose a new target for the copy.)
+Counter target spell unless its controller pays {2}.",9,
+純粋に強いカウンター呪文,,counter,6,Counterspell,対抗呪文,Instant,呪文１つを対象とする。それを打ち消す。,Counter target spell.,4,
+純粋に強いカウンター呪文,,counter,7,No More Lies,喝破,Instant,呪文１つを対象とする。それのコントローラーが{3}を支払わないかぎり、それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。,"Counter target spell unless its controller pays {3}. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",8,
+純粋に強いカウンター呪文,,counter,8,Spell Snare,呪文嵌め,Instant,マナ総量が２である呪文１つを対象とする。それを打ち消す。,Counter target spell with mana value 2.,5,
+純粋に強いカウンター呪文,,counter,9,Dovin's Veto,ドビンの拒否権,Instant,"この呪文は打ち消されない。
+クリーチャーでない呪文１つを対象とする。それを打ち消す。","This spell can't be countered.
+Counter target noncreature spell.",7,
+純粋に強いカウンター呪文,,counter,10,It'll Quench Ya!,飲めば潤う！,Instant — Lesson,呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。,Counter target spell unless its controller pays {2}.,10,
+モダンの最強カウンター呪文,modern,counter,1,Force of Negation,否定の力,Instant,"あなたのターンでないなら、この呪文のマナ・コストを支払うのではなく、あなたの手札にある青のカード１枚を追放してもよい。
+クリーチャーでない呪文１つを対象とする。それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。","If it's not your turn, you may exile a blue card from your hand rather than pay this spell's mana cost.
+Counter target noncreature spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",1,
+モダンの最強カウンター呪文,modern,counter,2,Spell Pierce,呪文貫き,Instant,クリーチャーでない呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。,Counter target noncreature spell unless its controller pays {2}.,4,
+モダンの最強カウンター呪文,modern,counter,3,Make Disappear,かき消し,Instant,"犠牲１（あなたがこの呪文を唱えるに際し、あなたはパワーが１以上であるクリーチャー１体を生け贄に捧げてもよい。そうしたとき、この呪文をコピーし、あなたはそのコピーの新しい対象を選んでもよい。）
+呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。","Casualty 1 (As you cast this spell, you may sacrifice a creature with power 1 or greater. When you do, copy this spell and you may choose a new target for the copy.)
+Counter target spell unless its controller pays {2}.",8,
+モダンの最強カウンター呪文,modern,counter,4,Counterspell,対抗呪文,Instant,呪文１つを対象とする。それを打ち消す。,Counter target spell.,2,
+モダンの最強カウンター呪文,modern,counter,5,No More Lies,喝破,Instant,呪文１つを対象とする。それのコントローラーが{3}を支払わないかぎり、それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。,"Counter target spell unless its controller pays {3}. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",7,
+モダンの最強カウンター呪文,modern,counter,6,Spell Snare,呪文嵌め,Instant,マナ総量が２である呪文１つを対象とする。それを打ち消す。,Counter target spell with mana value 2.,3,
+モダンの最強カウンター呪文,modern,counter,7,Three Steps Ahead,三歩先,Instant,"放題
+＋ {1}{U} ― 呪文１つを対象とする。それを打ち消す。
+＋ {3} ― あなたがコントロールしていてアーティファクトやクリーチャーである１つを対象とする。それのコピーであるトークン１つを生成する。
+＋ {2} ― カード２枚を引く。その後、カード１枚を捨てる。","Spree (Choose one or more additional costs.)
++ {1}{U} — Counter target spell.
++ {3} — Create a token that's a copy of target artifact or creature you control.
++ {2} — Draw two cards, then discard a card.",5,
+モダンの最強カウンター呪文,modern,counter,8,It'll Quench Ya!,飲めば潤う！,Instant — Lesson,呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。,Counter target spell unless its controller pays {2}.,10,
+モダンの最強カウンター呪文,modern,counter,9,Dovin's Veto,ドビンの拒否権,Instant,"この呪文は打ち消されない。
+クリーチャーでない呪文１つを対象とする。それを打ち消す。","This spell can't be countered.
+Counter target noncreature spell.",6,
+モダンの最強カウンター呪文,modern,counter,10,Quandrix Charm,クアンドリクスの魔除け,Instant,"以下から１つを選ぶ。
+・呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。
+・エンチャント１つを対象とする。それを破壊する。
+・クリーチャー１体を対象とする。ターン終了時まで、それの基本のパワーとタフネスは５/５である。","Choose one —
+• Counter target spell unless its controller pays {2}.
+• Destroy target enchantment.
+• Target creature has base power and toughness 5/5 until end of turn.",9,
+レガシーのカウンター呪文,legacy,counter,1,Force of Negation,否定の力,Instant,"あなたのターンでないなら、この呪文のマナ・コストを支払うのではなく、あなたの手札にある青のカード１枚を追放してもよい。
+クリーチャーでない呪文１つを対象とする。それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。","If it's not your turn, you may exile a blue card from your hand rather than pay this spell's mana cost.
+Counter target noncreature spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",2,
+レガシーのカウンター呪文,legacy,counter,2,Force of Will,意志の力,Instant,"この呪文のマナ・コストを支払うのではなく、「１点のライフを支払い、あなたの手札にある青のカード１枚を追放する。」を選んでもよい。
+呪文１つを対象とする。それを打ち消す。","You may pay 1 life and exile a blue card from your hand rather than pay this spell's mana cost.
+Counter target spell.",1,
+レガシーのカウンター呪文,legacy,counter,3,Make Disappear,かき消し,Instant,"犠牲１（あなたがこの呪文を唱えるに際し、あなたはパワーが１以上であるクリーチャー１体を生け贄に捧げてもよい。そうしたとき、この呪文をコピーし、あなたはそのコピーの新しい対象を選んでもよい。）
+呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。","Casualty 1 (As you cast this spell, you may sacrifice a creature with power 1 or greater. When you do, copy this spell and you may choose a new target for the copy.)
+Counter target spell unless its controller pays {2}.",9,
+レガシーのカウンター呪文,legacy,counter,4,Counterspell,対抗呪文,Instant,呪文１つを対象とする。それを打ち消す。,Counter target spell.,4,
+レガシーのカウンター呪文,legacy,counter,5,Sublime Epiphany,崇高な天啓,Instant,"以下から１つ以上を選ぶ。
+・呪文１つを対象とする。それを打ち消す。
+・起動型か誘発型である能力１つを対象とする。それを打ち消す。
+・土地でないパーマネント１つを対象とする。それをオーナーの手札に戻す。
+・あなたがコントロールしているクリーチャー１体を対象とする。それのコピーであるトークン１体を生成する。
+・プレイヤー１人を対象とする。そのプレイヤーはカード１枚を引く。","Choose one or more —
+• Counter target spell.
+• Counter target activated or triggered ability.
+• Return target nonland permanent to its owner's hand.
+• Create a token that's a copy of target creature you control.
+• Target player draws a card.",8,
+レガシーのカウンター呪文,legacy,counter,6,Daze,目くらまし,Instant,"この呪文のマナ・コストを支払うのではなく、あなたがコントロールしている島１つをオーナーの手札に戻してもよい。
+呪文１つを対象とする。それのコントローラーが{1}を支払わないかぎり、それを打ち消す。","You may return an Island you control to its owner's hand rather than pay this spell's mana cost.
+Counter target spell unless its controller pays {1}.",3,
+レガシーのカウンター呪文,legacy,counter,7,It'll Quench Ya!,飲めば潤う！,Instant — Lesson,呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。,Counter target spell unless its controller pays {2}.,10,
+レガシーのカウンター呪文,legacy,counter,8,Spell Pierce,呪文貫き,Instant,クリーチャーでない呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。,Counter target noncreature spell unless its controller pays {2}.,5,
+レガシーのカウンター呪文,legacy,counter,9,Dovin's Veto,ドビンの拒否権,Instant,"この呪文は打ち消されない。
+クリーチャーでない呪文１つを対象とする。それを打ち消す。","This spell can't be countered.
+Counter target noncreature spell.",6,
+レガシーのカウンター呪文,legacy,counter,10,Last Word,最後の言葉,Instant,"最後の言葉は呪文や能力によって打ち消されない。
+呪文１つを対象とし、それを打ち消す。","This spell can't be countered.
+Counter target spell.",7,
+2マナ以下のカウンター呪文,,counter,1,Force of Negation,否定の力,Instant,"あなたのターンでないなら、この呪文のマナ・コストを支払うのではなく、あなたの手札にある青のカード１枚を追放してもよい。
+クリーチャーでない呪文１つを対象とする。それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。","If it's not your turn, you may exile a blue card from your hand rather than pay this spell's mana cost.
+Counter target noncreature spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",0,2マナ以下で撃つことはできるが２マナ以下ではない
+2マナ以下のカウンター呪文,,counter,2,Force of Will,意志の力,Instant,"この呪文のマナ・コストを支払うのではなく、「１点のライフを支払い、あなたの手札にある青のカード１枚を追放する。」を選んでもよい。
+呪文１つを対象とする。それを打ち消す。","You may pay 1 life and exile a blue card from your hand rather than pay this spell's mana cost.
+Counter target spell.",0,2マナ以下で撃つことはできるが２マナ以下ではない
+2マナ以下のカウンター呪文,,counter,3,Change the Equation,方程式の改変,Instant,"以下から１つを選ぶ。
+・マナ総量が２以下である呪文１つを対象とする。それを打ち消す。
+・マナ総量が６以下であり赤や緑である呪文１つを対象とする。それを打ち消す。","Choose one —
+• Counter target spell with mana value 2 or less.
+• Counter target red or green spell with mana value 6 or less.",5,
+2マナ以下のカウンター呪文,,counter,4,Spell Snare,呪文嵌め,Instant,マナ総量が２である呪文１つを対象とする。それを打ち消す。,Counter target spell with mana value 2.,3,
+2マナ以下のカウンター呪文,,counter,5,Daze,目くらまし,Instant,"この呪文のマナ・コストを支払うのではなく、あなたがコントロールしている島１つをオーナーの手札に戻してもよい。
+呪文１つを対象とする。それのコントローラーが{1}を支払わないかぎり、それを打ち消す。","You may return an Island you control to its owner's hand rather than pay this spell's mana cost.
+Counter target spell unless its controller pays {1}.",1,
+2マナ以下のカウンター呪文,,counter,6,Spell Pierce,呪文貫き,Instant,クリーチャーでない呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。,Counter target noncreature spell unless its controller pays {2}.,4,
+2マナ以下のカウンター呪文,,counter,7,Make Disappear,かき消し,Instant,"犠牲１（あなたがこの呪文を唱えるに際し、あなたはパワーが１以上であるクリーチャー１体を生け贄に捧げてもよい。そうしたとき、この呪文をコピーし、あなたはそのコピーの新しい対象を選んでもよい。）
+呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。","Casualty 1 (As you cast this spell, you may sacrifice a creature with power 1 or greater. When you do, copy this spell and you may choose a new target for the copy.)
+Counter target spell unless its controller pays {2}.",8,
+2マナ以下のカウンター呪文,,counter,8,Dovin's Veto,ドビンの拒否権,Instant,"この呪文は打ち消されない。
+クリーチャーでない呪文１つを対象とする。それを打ち消す。","This spell can't be countered.
+Counter target noncreature spell.",6,
+2マナ以下のカウンター呪文,,counter,9,No More Lies,喝破,Instant,呪文１つを対象とする。それのコントローラーが{3}を支払わないかぎり、それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。,"Counter target spell unless its controller pays {3}. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",7,
+2マナ以下のカウンター呪文,,counter,10,Delay,遅延,Instant,呪文１つを対象とする。それを打ち消す。これによりそれが打ち消されたなら、それをオーナーの墓地に置く代わりに、それを時間カウンター３個が置かれた状態で追放する。それが待機を持っていないなら、それは待機を得る。（それのオーナーのアップキープの開始時に、そのカードの上から時間カウンター１個を取り除く。最後の１個が取り除かれたとき、そのプレイヤーはそれをマナ・コストを支払わずにプレイする。それがクリーチャーなら、それは速攻を持つ。）,"Counter target spell. If the spell is countered this way, exile it with three time counters on it instead of putting it into its owner's graveyard. If it doesn't have suspend, it gains suspend. (At the beginning of its owner's upkeep, they remove a time counter. When the last is removed, they may play it without paying its mana cost. If it's a creature, it has haste.)",2,
+条件付きカウンター呪文,,counter,1,Force of Negation,否定の力,Instant,"あなたのターンでないなら、この呪文のマナ・コストを支払うのではなく、あなたの手札にある青のカード１枚を追放してもよい。
+クリーチャーでない呪文１つを対象とする。それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。","If it's not your turn, you may exile a blue card from your hand rather than pay this spell's mana cost.
+Counter target noncreature spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",1,
+条件付きカウンター呪文,,counter,2,Force of Will,意志の力,Instant,"この呪文のマナ・コストを支払うのではなく、「１点のライフを支払い、あなたの手札にある青のカード１枚を追放する。」を選んでもよい。
+呪文１つを対象とする。それを打ち消す。","You may pay 1 life and exile a blue card from your hand rather than pay this spell's mana cost.
+Counter target spell.",0,打ち消すカードに条件がない
+条件付きカウンター呪文,,counter,3,Sublime Epiphany,崇高な天啓,Instant,"以下から１つ以上を選ぶ。
+・呪文１つを対象とする。それを打ち消す。
+・起動型か誘発型である能力１つを対象とする。それを打ち消す。
+・土地でないパーマネント１つを対象とする。それをオーナーの手札に戻す。
+・あなたがコントロールしているクリーチャー１体を対象とする。それのコピーであるトークン１体を生成する。
+・プレイヤー１人を対象とする。そのプレイヤーはカード１枚を引く。","Choose one or more —
+• Counter target spell.
+• Counter target activated or triggered ability.
+• Return target nonland permanent to its owner's hand.
+• Create a token that's a copy of target creature you control.
+• Target player draws a card.",0,打ち消すカードに条件がない
+条件付きカウンター呪文,,counter,4,Daze,目くらまし,Instant,"この呪文のマナ・コストを支払うのではなく、あなたがコントロールしている島１つをオーナーの手札に戻してもよい。
+呪文１つを対象とする。それのコントローラーが{1}を支払わないかぎり、それを打ち消す。","You may return an Island you control to its owner's hand rather than pay this spell's mana cost.
+Counter target spell unless its controller pays {1}.",6,マナ要求は条件に含めることにした
+条件付きカウンター呪文,,counter,5,Counterspell,対抗呪文,Instant,呪文１つを対象とする。それを打ち消す。,Counter target spell.,0,打ち消すカードに条件がない
+条件付きカウンター呪文,,counter,6,Spell Pierce,呪文貫き,Instant,クリーチャーでない呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。,Counter target noncreature spell unless its controller pays {2}.,3,
+条件付きカウンター呪文,,counter,7,Make Disappear,かき消し,Instant,"犠牲１（あなたがこの呪文を唱えるに際し、あなたはパワーが１以上であるクリーチャー１体を生け贄に捧げてもよい。そうしたとき、この呪文をコピーし、あなたはそのコピーの新しい対象を選んでもよい。）
+呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。","Casualty 1 (As you cast this spell, you may sacrifice a creature with power 1 or greater. When you do, copy this spell and you may choose a new target for the copy.)
+Counter target spell unless its controller pays {2}.",5,マナ要求は条件に含めることにした
+条件付きカウンター呪文,,counter,8,Quandrix Command,クアンドリクスの命令,Instant,"以下から２つを選ぶ。
+• クリーチャーやプレインズウォーカーのうち１体を対象とする。それをオーナーの手札に戻す。
+• アーティファクトやエンチャントである呪文１つを対象とする。それを打ち消す。
+• クリーチャー１体を対象とする。それの上に＋１/＋１カウンター２個を置く。
+• プレイヤー１人を対象とし、そのプレイヤーの墓地にあるカード最大３枚を対象とする。そのプレイヤーは、それらのカードをライブラリーに加えて切り直す。","Choose two —
+• Return target creature or planeswalker to its owner's hand.
+• Counter target artifact or enchantment spell.
+• Put two +1/+1 counters on target creature.
+• Target player shuffles up to three target cards from their graveyard into their library.",4,
+条件付きカウンター呪文,,counter,9,Dovin's Veto,ドビンの拒否権,Instant,"この呪文は打ち消されない。
+クリーチャーでない呪文１つを対象とする。それを打ち消す。","This spell can't be countered.
+Counter target noncreature spell.",2,
+条件付きカウンター呪文,,counter,10,No More Lies,喝破,Instant,呪文１つを対象とする。それのコントローラーが{3}を支払わないかぎり、それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。,"Counter target spell unless its controller pays {3}. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",7,マナ要求は条件に含めることにした
+最強の単体除去,,removal,1,Lightning Bolt,稲妻,Instant,１つを対象とする。稲妻はそれに３点のダメージを与える。,Lightning Bolt deals 3 damage to any target.,2,
+最強の単体除去,,removal,2,Orcish Bowmasters,オークの弓使い,Creature — Orc Archer,"瞬速
+オークの弓使いが戦場に出たとき、ならびに、対戦相手が自分の各ドロー・ステップ内で最初に引くカード以外のカード１枚を引くたび、クリーチャーやプレインズウォーカーやプレイヤーのうち１つを対象とする。オークの弓使いはそれに１点のダメージを与える。その後、オーク動員１を行う。","Flash
+When this creature enters and whenever an opponent draws a card except the first one they draw in each of their draw steps, this creature deals 1 damage to any target. Then amass Orcs 1.",7,
+最強の単体除去,,removal,3,"Eiganjo, Seat of the Empire",皇国の地、永岩城,Legendary Land,"{T}：{W}を加える。
+魂力 — {2}{W}, 皇国の地、永岩城を捨てる：攻撃クリーチャーやブロック・クリーチャーのうち１体を対象とする。これはそれに４点のダメージを与える。この能力を起動するためのコストは、あなたがコントロールしている伝説のクリーチャー１体につき{1}少なくなる。","{T}: Add {W}.
+Channel — {2}{W}, Discard this card: It deals 4 damage to target attacking or blocking creature. This ability costs {1} less to activate for each legendary creature you control.",3,除去できる対象に条件あり
+最強の単体除去,,removal,4,Ancient Tomb,古えの墳墓,Land,{T}：{C}{C}を加える。古えの墳墓はあなたに２点のダメージを与える。,{T}: Add {C}{C}. This land deals 2 damage to you.,0,どうみても除去ではない
+最強の単体除去,,removal,5,Torch the Tower,塔の点火,Instant,"協約（この呪文を唱えるに際し、アーティファクトやエンチャントやトークンのうち１つを生け贄に捧げてもよい。）
+クリーチャーやプレインズウォーカーのうち１体を対象とする。塔の点火はそれに２点のダメージを与える。この呪文が協約されていたなら、代わりに、これはそのパーマネントに３点のダメージを与え、あなたは占術１を行う。
+このターン、塔の点火からダメージを受けたパーマネントが死亡するなら、代わりにそれを追放する。","Bargain (You may sacrifice an artifact, enchantment, or token as you cast this spell.)
+Torch the Tower deals 2 damage to target creature or planeswalker. If this spell was bargained, instead it deals 3 damage to that permanent and you scry 1.
+If a permanent dealt damage by Torch the Tower would die this turn, exile it instead.",6,
+最強の単体除去,,removal,6,Burst Lightning,噴出の稲妻,Instant,"キッカー{4}（この呪文を唱えるに際し、追加で{4}を支払ってもよい。）
+１つを対象とする。噴出の稲妻はそれに２点のダメージを与える。この呪文がキッカーされていたなら、代わりに、これは４点のダメージを与える。","Kicker {4} (You may pay an additional {4} as you cast this spell.)
+Burst Lightning deals 2 damage to any target. If this spell was kicked, it deals 4 damage instead.",4,
+最強の単体除去,,removal,7,Unholy Heat,邪悪な熱気,Instant,"クリーチャーやプレインズウォーカーである１体を対象とする。邪悪な熱気はそれに２点のダメージを与える。
+昂揚 ― あなたの墓地にあるカードの中に４種類以上のカード・タイプがあるなら、代わりに、邪悪な熱気は６点のダメージを与える。","Unholy Heat deals 2 damage to target creature or planeswalker.
+Delirium — Unholy Heat deals 6 damage instead if there are four or more card types among cards in your graveyard.",1,ダメージ量が一番大きい
+最強の単体除去,,removal,8,Abrade,削剥,Instant,"以下から１つを選ぶ。
+・クリーチャー１体を対象とする。削剥はそれに３点のダメージを与える。
+・アーティファクト１つを対象とする。それを破壊する。","Choose one —
+• Abrade deals 3 damage to target creature.
+• Destroy target artifact.",5,
+最強の単体除去,,removal,9,Sulfurous Springs,硫黄泉,Land,"{T}：{C}を加える。
+{T}：{B}か{R}を加える。この土地はあなたに１点のダメージを与える。","{T}: Add {C}.
+{T}: Add {B} or {R}. This land deals 1 damage to you.",0,どうみても除去ではない
+最強の単体除去,,removal,10,Underground River,地底の大河,Land,"{T}：{C}を加える。
+{T}：{U}か{B}を加える。この土地はあなたに１点のダメージを与える。","{T}: Add {C}.
+{T}: Add {U} or {B}. This land deals 1 damage to you.",0,どうみても除去ではない
+モダンの単体除去,modern,removal,1,Lightning Bolt,稲妻,Instant,１つを対象とする。稲妻はそれに３点のダメージを与える。,Lightning Bolt deals 3 damage to any target.,1,モダンで一番デッキを選ばない
+モダンの単体除去,modern,removal,2,Torch the Tower,塔の点火,Instant,"協約（この呪文を唱えるに際し、アーティファクトやエンチャントやトークンのうち１つを生け贄に捧げてもよい。）
+クリーチャーやプレインズウォーカーのうち１体を対象とする。塔の点火はそれに２点のダメージを与える。この呪文が協約されていたなら、代わりに、これはそのパーマネントに３点のダメージを与え、あなたは占術１を行う。
+このターン、塔の点火からダメージを受けたパーマネントが死亡するなら、代わりにそれを追放する。","Bargain (You may sacrifice an artifact, enchantment, or token as you cast this spell.)
+Torch the Tower deals 2 damage to target creature or planeswalker. If this spell was bargained, instead it deals 3 damage to that permanent and you scry 1.
+If a permanent dealt damage by Torch the Tower would die this turn, exile it instead.",7,
+モダンの単体除去,modern,removal,3,Orcish Bowmasters,オークの弓使い,Creature — Orc Archer,"瞬速
+オークの弓使いが戦場に出たとき、ならびに、対戦相手が自分の各ドロー・ステップ内で最初に引くカード以外のカード１枚を引くたび、クリーチャーやプレインズウォーカーやプレイヤーのうち１つを対象とする。オークの弓使いはそれに１点のダメージを与える。その後、オーク動員１を行う。","Flash
+When this creature enters and whenever an opponent draws a card except the first one they draw in each of their draw steps, this creature deals 1 damage to any target. Then amass Orcs 1.",6,モダンらしいカードではあるのだがイマイチ除去扱いをしにくい
+モダンの単体除去,modern,removal,4,"Eiganjo, Seat of the Empire",皇国の地、永岩城,Legendary Land,"{T}：{W}を加える。
+魂力 — {2}{W}, 皇国の地、永岩城を捨てる：攻撃クリーチャーやブロック・クリーチャーのうち１体を対象とする。これはそれに４点のダメージを与える。この能力を起動するためのコストは、あなたがコントロールしている伝説のクリーチャー１体につき{1}少なくなる。","{T}: Add {W}.
+Channel — {2}{W}, Discard this card: It deals 4 damage to target attacking or blocking creature. This ability costs {1} less to activate for each legendary creature you control.",5,
+モダンの単体除去,modern,removal,5,Burst Lightning,噴出の稲妻,Instant,"キッカー{4}（この呪文を唱えるに際し、追加で{4}を支払ってもよい。）
+１つを対象とする。噴出の稲妻はそれに２点のダメージを与える。この呪文がキッカーされていたなら、代わりに、これは４点のダメージを与える。","Kicker {4} (You may pay an additional {4} as you cast this spell.)
+Burst Lightning deals 2 damage to any target. If this spell was kicked, it deals 4 damage instead.",4,
+モダンの単体除去,modern,removal,6,Unholy Heat,邪悪な熱気,Instant,"クリーチャーやプレインズウォーカーである１体を対象とする。邪悪な熱気はそれに２点のダメージを与える。
+昂揚 ― あなたの墓地にあるカードの中に４種類以上のカード・タイプがあるなら、代わりに、邪悪な熱気は６点のダメージを与える。","Unholy Heat deals 2 damage to target creature or planeswalker.
+Delirium — Unholy Heat deals 6 damage instead if there are four or more card types among cards in your graveyard.",2,
+モダンの単体除去,modern,removal,7,Abrade,削剥,Instant,"以下から１つを選ぶ。
+・クリーチャー１体を対象とする。削剥はそれに３点のダメージを与える。
+・アーティファクト１つを対象とする。それを破壊する。","Choose one —
+• Abrade deals 3 damage to target creature.
+• Destroy target artifact.",3,
+モダンの単体除去,modern,removal,8,Jeskai Revelation,ジェスカイの啓示,Instant,呪文やパーマネントである１つを対象とし、１つを対象とする。その前者をオーナーの手札に戻す。ジェスカイの啓示はその後者に４点のダメージを与える。あなたは果敢を持つ白の１/１のモンク・クリーチャー・トークン２体を生成し、カード２枚を引き、４点のライフを得る。,Return target spell or permanent to its owner's hand. Jeskai Revelation deals 4 damage to any target. Create two 1/1 white Monk creature tokens with prowess. Draw two cards. You gain 4 life.,10,
+モダンの単体除去,modern,removal,9,Impractical Joke,すべきでない悪ふざけ,Sorcery,クリーチャーやプレインズウォーカーである最大１体を対象とする。このターン、ダメージは軽減できない。すべきでない悪ふざけはそれに３点のダメージを与える。,Damage can't be prevented this turn. Impractical Joke deals 3 damage to up to one target creature or planeswalker.,9,
+モダンの単体除去,modern,removal,10,Firebending Lesson,火の技の修行,Instant — Lesson,"キッカー{4}（この呪文を唱えるに際し、追加で{4}を支払ってもよい。）
+クリーチャー１体を対象とする。火の技の修行はそれに２点のダメージを与える。この呪文がキッカーされていたなら、代わりに、これはそのクリーチャーに５点のダメージを与える。","Kicker {4} (You may pay an additional {4} as you cast this spell.)
+Firebending Lesson deals 2 damage to target creature. If this spell was kicked, it deals 5 damage to that creature instead.",8,
+クリーチャーを追放する除去,,removal,1,Lightning Bolt,稲妻,Instant,１つを対象とする。稲妻はそれに３点のダメージを与える。,Lightning Bolt deals 3 damage to any target.,0,
+クリーチャーを追放する除去,,removal,2,Torch the Tower,塔の点火,Instant,"協約（この呪文を唱えるに際し、アーティファクトやエンチャントやトークンのうち１つを生け贄に捧げてもよい。）
+クリーチャーやプレインズウォーカーのうち１体を対象とする。塔の点火はそれに２点のダメージを与える。この呪文が協約されていたなら、代わりに、これはそのパーマネントに３点のダメージを与え、あなたは占術１を行う。
+このターン、塔の点火からダメージを受けたパーマネントが死亡するなら、代わりにそれを追放する。","Bargain (You may sacrifice an artifact, enchantment, or token as you cast this spell.)
+Torch the Tower deals 2 damage to target creature or planeswalker. If this spell was bargained, instead it deals 3 damage to that permanent and you scry 1.
+If a permanent dealt damage by Torch the Tower would die this turn, exile it instead.",1,
+クリーチャーを追放する除去,,removal,3,Orcish Bowmasters,オークの弓使い,Creature — Orc Archer,"瞬速
+オークの弓使いが戦場に出たとき、ならびに、対戦相手が自分の各ドロー・ステップ内で最初に引くカード以外のカード１枚を引くたび、クリーチャーやプレインズウォーカーやプレイヤーのうち１つを対象とする。オークの弓使いはそれに１点のダメージを与える。その後、オーク動員１を行う。","Flash
+When this creature enters and whenever an opponent draws a card except the first one they draw in each of their draw steps, this creature deals 1 damage to any target. Then amass Orcs 1.",0,
+クリーチャーを追放する除去,,removal,4,"Eiganjo, Seat of the Empire",皇国の地、永岩城,Legendary Land,"{T}：{W}を加える。
+魂力 — {2}{W}, 皇国の地、永岩城を捨てる：攻撃クリーチャーやブロック・クリーチャーのうち１体を対象とする。これはそれに４点のダメージを与える。この能力を起動するためのコストは、あなたがコントロールしている伝説のクリーチャー１体につき{1}少なくなる。","{T}: Add {W}.
+Channel — {2}{W}, Discard this card: It deals 4 damage to target attacking or blocking creature. This ability costs {1} less to activate for each legendary creature you control.",0,
+クリーチャーを追放する除去,,removal,5,Burst Lightning,噴出の稲妻,Instant,"キッカー{4}（この呪文を唱えるに際し、追加で{4}を支払ってもよい。）
+１つを対象とする。噴出の稲妻はそれに２点のダメージを与える。この呪文がキッカーされていたなら、代わりに、これは４点のダメージを与える。","Kicker {4} (You may pay an additional {4} as you cast this spell.)
+Burst Lightning deals 2 damage to any target. If this spell was kicked, it deals 4 damage instead.",0,
+クリーチャーを追放する除去,,removal,6,Unholy Heat,邪悪な熱気,Instant,"クリーチャーやプレインズウォーカーである１体を対象とする。邪悪な熱気はそれに２点のダメージを与える。
+昂揚 ― あなたの墓地にあるカードの中に４種類以上のカード・タイプがあるなら、代わりに、邪悪な熱気は６点のダメージを与える。","Unholy Heat deals 2 damage to target creature or planeswalker.
+Delirium — Unholy Heat deals 6 damage instead if there are four or more card types among cards in your graveyard.",0,
+クリーチャーを追放する除去,,removal,7,Abrade,削剥,Instant,"以下から１つを選ぶ。
+・クリーチャー１体を対象とする。削剥はそれに３点のダメージを与える。
+・アーティファクト１つを対象とする。それを破壊する。","Choose one —
+• Abrade deals 3 damage to target creature.
+• Destroy target artifact.",0,
+クリーチャーを追放する除去,,removal,8,Ancient Tomb,古えの墳墓,Land,{T}：{C}{C}を加える。古えの墳墓はあなたに２点のダメージを与える。,{T}: Add {C}{C}. This land deals 2 damage to you.,0,
+クリーチャーを追放する除去,,removal,9,Jeskai Revelation,ジェスカイの啓示,Instant,呪文やパーマネントである１つを対象とし、１つを対象とする。その前者をオーナーの手札に戻す。ジェスカイの啓示はその後者に４点のダメージを与える。あなたは果敢を持つ白の１/１のモンク・クリーチャー・トークン２体を生成し、カード２枚を引き、４点のライフを得る。,Return target spell or permanent to its owner's hand. Jeskai Revelation deals 4 damage to any target. Create two 1/1 white Monk creature tokens with prowess. Draw two cards. You gain 4 life.,0,
+クリーチャーを追放する除去,,removal,10,Impractical Joke,すべきでない悪ふざけ,Sorcery,クリーチャーやプレインズウォーカーである最大１体を対象とする。このターン、ダメージは軽減できない。すべきでない悪ふざけはそれに３点のダメージを与える。,Damage can't be prevented this turn. Impractical Joke deals 3 damage to up to one target creature or planeswalker.,0,
+クリーチャーを破壊する除去,,removal,1,Lightning Bolt,稲妻,Instant,１つを対象とする。稲妻はそれに３点のダメージを与える。,Lightning Bolt deals 3 damage to any target.,2,結果的に破壊されるがダメージによるものを破壊と呼ぶかは怪しい。
+クリーチャーを破壊する除去,,removal,2,Torch the Tower,塔の点火,Instant,"協約（この呪文を唱えるに際し、アーティファクトやエンチャントやトークンのうち１つを生け贄に捧げてもよい。）
+クリーチャーやプレインズウォーカーのうち１体を対象とする。塔の点火はそれに２点のダメージを与える。この呪文が協約されていたなら、代わりに、これはそのパーマネントに３点のダメージを与え、あなたは占術１を行う。
+このターン、塔の点火からダメージを受けたパーマネントが死亡するなら、代わりにそれを追放する。","Bargain (You may sacrifice an artifact, enchantment, or token as you cast this spell.)
+Torch the Tower deals 2 damage to target creature or planeswalker. If this spell was bargained, instead it deals 3 damage to that permanent and you scry 1.
+If a permanent dealt damage by Torch the Tower would die this turn, exile it instead.",2,結果的に破壊されるがダメージによるものを破壊と呼ぶかは怪しい。
+クリーチャーを破壊する除去,,removal,3,Orcish Bowmasters,オークの弓使い,Creature — Orc Archer,"瞬速
+オークの弓使いが戦場に出たとき、ならびに、対戦相手が自分の各ドロー・ステップ内で最初に引くカード以外のカード１枚を引くたび、クリーチャーやプレインズウォーカーやプレイヤーのうち１つを対象とする。オークの弓使いはそれに１点のダメージを与える。その後、オーク動員１を行う。","Flash
+When this creature enters and whenever an opponent draws a card except the first one they draw in each of their draw steps, this creature deals 1 damage to any target. Then amass Orcs 1.",2,結果的に破壊されるがダメージによるものを破壊と呼ぶかは怪しい。
+クリーチャーを破壊する除去,,removal,4,"Eiganjo, Seat of the Empire",皇国の地、永岩城,Legendary Land,"{T}：{W}を加える。
+魂力 — {2}{W}, 皇国の地、永岩城を捨てる：攻撃クリーチャーやブロック・クリーチャーのうち１体を対象とする。これはそれに４点のダメージを与える。この能力を起動するためのコストは、あなたがコントロールしている伝説のクリーチャー１体につき{1}少なくなる。","{T}: Add {W}.
+Channel — {2}{W}, Discard this card: It deals 4 damage to target attacking or blocking creature. This ability costs {1} less to activate for each legendary creature you control.",2,結果的に破壊されるがダメージによるものを破壊と呼ぶかは怪しい。
+クリーチャーを破壊する除去,,removal,5,Burst Lightning,噴出の稲妻,Instant,"キッカー{4}（この呪文を唱えるに際し、追加で{4}を支払ってもよい。）
+１つを対象とする。噴出の稲妻はそれに２点のダメージを与える。この呪文がキッカーされていたなら、代わりに、これは４点のダメージを与える。","Kicker {4} (You may pay an additional {4} as you cast this spell.)
+Burst Lightning deals 2 damage to any target. If this spell was kicked, it deals 4 damage instead.",2,結果的に破壊されるがダメージによるものを破壊と呼ぶかは怪しい。
+クリーチャーを破壊する除去,,removal,6,Unholy Heat,邪悪な熱気,Instant,"クリーチャーやプレインズウォーカーである１体を対象とする。邪悪な熱気はそれに２点のダメージを与える。
+昂揚 ― あなたの墓地にあるカードの中に４種類以上のカード・タイプがあるなら、代わりに、邪悪な熱気は６点のダメージを与える。","Unholy Heat deals 2 damage to target creature or planeswalker.
+Delirium — Unholy Heat deals 6 damage instead if there are four or more card types among cards in your graveyard.",2,結果的に破壊されるがダメージによるものを破壊と呼ぶかは怪しい。
+クリーチャーを破壊する除去,,removal,7,Abrade,削剥,Instant,"以下から１つを選ぶ。
+・クリーチャー１体を対象とする。削剥はそれに３点のダメージを与える。
+・アーティファクト１つを対象とする。それを破壊する。","Choose one —
+• Abrade deals 3 damage to target creature.
+• Destroy target artifact.",1,アーティファクト・クリーチャーであれば破壊できる。
+クリーチャーを破壊する除去,,removal,8,Ancient Tomb,古えの墳墓,Land,{T}：{C}{C}を加える。古えの墳墓はあなたに２点のダメージを与える。,{T}: Add {C}{C}. This land deals 2 damage to you.,0,なんも破壊しない
+クリーチャーを破壊する除去,,removal,9,Jeskai Revelation,ジェスカイの啓示,Instant,呪文やパーマネントである１つを対象とし、１つを対象とする。その前者をオーナーの手札に戻す。ジェスカイの啓示はその後者に４点のダメージを与える。あなたは果敢を持つ白の１/１のモンク・クリーチャー・トークン２体を生成し、カード２枚を引き、４点のライフを得る。,Return target spell or permanent to its owner's hand. Jeskai Revelation deals 4 damage to any target. Create two 1/1 white Monk creature tokens with prowess. Draw two cards. You gain 4 life.,2,結果的に破壊されるがダメージによるものを破壊と呼ぶかは怪しい。
+クリーチャーを破壊する除去,,removal,10,Impractical Joke,すべきでない悪ふざけ,Sorcery,クリーチャーやプレインズウォーカーである最大１体を対象とする。このターン、ダメージは軽減できない。すべきでない悪ふざけはそれに３点のダメージを与える。,Damage can't be prevented this turn. Impractical Joke deals 3 damage to up to one target creature or planeswalker.,2,結果的に破壊されるがダメージによるものを破壊と呼ぶかは怪しい。
+スタンダードの単体除去,standard,removal,1,Torch the Tower,塔の点火,Instant,"協約（この呪文を唱えるに際し、アーティファクトやエンチャントやトークンのうち１つを生け贄に捧げてもよい。）
+クリーチャーやプレインズウォーカーのうち１体を対象とする。塔の点火はそれに２点のダメージを与える。この呪文が協約されていたなら、代わりに、これはそのパーマネントに３点のダメージを与え、あなたは占術１を行う。
+このターン、塔の点火からダメージを受けたパーマネントが死亡するなら、代わりにそれを追放する。","Bargain (You may sacrifice an artifact, enchantment, or token as you cast this spell.)
+Torch the Tower deals 2 damage to target creature or planeswalker. If this spell was bargained, instead it deals 3 damage to that permanent and you scry 1.
+If a permanent dealt damage by Torch the Tower would die this turn, exile it instead.",5,
+スタンダードの単体除去,standard,removal,2,Burst Lightning,噴出の稲妻,Instant,"キッカー{4}（この呪文を唱えるに際し、追加で{4}を支払ってもよい。）
+１つを対象とする。噴出の稲妻はそれに２点のダメージを与える。この呪文がキッカーされていたなら、代わりに、これは４点のダメージを与える。","Kicker {4} (You may pay an additional {4} as you cast this spell.)
+Burst Lightning deals 2 damage to any target. If this spell was kicked, it deals 4 damage instead.",4,
+スタンダードの単体除去,standard,removal,3,Abrade,削剥,Instant,"以下から１つを選ぶ。
+・クリーチャー１体を対象とする。削剥はそれに３点のダメージを与える。
+・アーティファクト１つを対象とする。それを破壊する。","Choose one —
+• Abrade deals 3 damage to target creature.
+• Destroy target artifact.",6,
+スタンダードの単体除去,standard,removal,4,Get Lost,失せろ,Instant,"クリーチャーやエンチャントやプレインズウォーカーである１つを対象とする。それを破壊する。それのコントローラーは地図・トークン２つを生成する。（それは「{1}, {T}, このアーティファクトを生け贄に捧げる：あなたがコントロールしているクリーチャー１体を対象とする。それは探検を行う。起動はソーサリーとしてのみ行う。」を持つアーティファクトである。）","Destroy target creature, enchantment, or planeswalker. Its controller creates two Map tokens. (They're artifacts with ""{1}, {T}, Sacrifice this token: Target creature you control explores. Activate only as a sorcery."")",1,
+スタンダードの単体除去,standard,removal,5,Jeskai Revelation,ジェスカイの啓示,Instant,呪文やパーマネントである１つを対象とし、１つを対象とする。その前者をオーナーの手札に戻す。ジェスカイの啓示はその後者に４点のダメージを与える。あなたは果敢を持つ白の１/１のモンク・クリーチャー・トークン２体を生成し、カード２枚を引き、４点のライフを得る。,Return target spell or permanent to its owner's hand. Jeskai Revelation deals 4 damage to any target. Create two 1/1 white Monk creature tokens with prowess. Draw two cards. You gain 4 life.,7,除去というにはいろいろできすぎる
+スタンダードの単体除去,standard,removal,6,Impractical Joke,すべきでない悪ふざけ,Sorcery,クリーチャーやプレインズウォーカーである最大１体を対象とする。このターン、ダメージは軽減できない。すべきでない悪ふざけはそれに３点のダメージを与える。,Damage can't be prevented this turn. Impractical Joke deals 3 damage to up to one target creature or planeswalker.,8,
+スタンダードの単体除去,standard,removal,7,Firebending Lesson,火の技の修行,Instant — Lesson,"キッカー{4}（この呪文を唱えるに際し、追加で{4}を支払ってもよい。）
+クリーチャー１体を対象とする。火の技の修行はそれに２点のダメージを与える。この呪文がキッカーされていたなら、代わりに、これはそのクリーチャーに５点のダメージを与える。","Kicker {4} (You may pay an additional {4} as you cast this spell.)
+Firebending Lesson deals 2 damage to target creature. If this spell was kicked, it deals 5 damage to that creature instead.",3,
+スタンダードの単体除去,standard,removal,8,Traumatic Critique,傷残す批評,Instant,１つを対象とする。傷残す批評はそれにＸ点のダメージを与える。カード２枚を引く。その後、カード１枚を捨てる。,"Traumatic Critique deals X damage to any target. Draw two cards, then discard a card.",9,高タフネスを除去しようとするとマナがかさむ
+スタンダードの単体除去,standard,removal,9,Sear,焼きつけ,Instant,クリーチャーやプレインズウォーカーである１体を対象とする。焼きつけはそれに４点のダメージを与える。,Sear deals 4 damage to target creature or planeswalker.,2,
+スタンダードの単体除去,standard,removal,10,Prismari Charm,プリズマリの魔除け,Instant,"以下から１つを選ぶ。
+・諜報２を行う。その後、カード１枚を引く。
+・１つか２つを対象とする。プリズマリの魔除けはそれらにそれぞれ１点のダメージを与える。
+・土地でないパーマネント１つを対象とする。それをオーナーの手札に戻す。","Choose one —
+• Surveil 2, then draw a card.
+• Prismari Charm deals 1 damage to each of one or two targets.
+• Return target nonland permanent to its owner's hand.",10,点数が低すぎる
+カードを2枚引く,,draw,1,Sylvan Library,森の知恵,Enchantment,あなたのドロー・ステップの開始時に、あなたは追加でカード２枚を引いてもよい。そうしたなら、あなたの手札からこのターンに引いたカード２枚を選ぶ。それらの各カードにつきそれぞれ、４点のライフを支払うか、そのカードをあなたのライブラリーの一番上に置く。,"At the beginning of your draw step, you may draw two additional cards. If you do, choose two cards in your hand drawn this turn. For each of those cards, pay 4 life or put the card on top of your library.",1,
+カードを2枚引く,,draw,2,Seasoned Pyromancer,歴戦の紅蓮術士,Creature — Human Shaman,"歴戦の紅蓮術士が戦場に出たとき、カード２枚を捨て、その後、カード２枚を引く。これにより捨てられて土地でないカード１枚につき、赤の１/１のエレメンタル・クリーチャー・トークン１体を生成する。
+{3}{R}{R}, あなたの墓地にある歴戦の紅蓮術士を追放する：赤の１/１のエレメンタル・クリーチャー・トークン２体を生成する。","When this creature enters, discard two cards, then draw two cards. For each nonland card discarded this way, create a 1/1 red Elemental creature token.
+{3}{R}{R}, Exile this card from your graveyard: Create two 1/1 red Elemental creature tokens.",8,
+カードを2枚引く,,draw,3,Thought Reflection,思考の反射,Enchantment,あなたがカードを１枚引くなら、代わりにカードを２枚引く。,"If you would draw a card, draw two cards instead.",9,
+カードを2枚引く,,draw,4,Well of Ideas,発想の井戸,Enchantment,"発想の井戸が戦場に出たとき、カードを２枚引く。
+他の各プレイヤーのドロー・ステップの開始時に、そのプレイヤーはカードを追加で１枚引く。
+あなたのドロー・ステップの開始時に、カードを追加で２枚引く。","When this enchantment enters, draw two cards.
+At the beginning of each other player's draw step, that player draws an additional card.
+At the beginning of your draw step, draw two additional cards.",10,カードを2枚引くという命題で出るには間違っていないがそれ以外もできすぎてしまう
+カードを2枚引く,,draw,5,Faithless Looting,信仰無き物あさり,Sorcery,"カード２枚を引く。その後、カード２枚を捨てる。
+フラッシュバック{2R}（あなたの墓地にあるこのカードをフラッシュバック・コストで唱えてもよい。その後、これを追放する。）","Draw two cards, then discard two cards.
+Flashback {2}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",7,
+カードを2枚引く,,draw,6,Predict,予報,Instant,プレイヤー１人を対象とする。カード名１つを選ぶ。その後、そのプレイヤーは自分のライブラリーの一番上のカードを自分の墓地に置く。そのカードがその選ばれた名前を持っているなら、あなたはカードを２枚引く。そうでないなら、カードを１枚引く。,"Choose a card name, then target player mills a card. If a card with the chosen name was milled this way, you draw two cards. Otherwise, you draw a card.",6,
+カードを2枚引く,,draw,7,Inspiration,霊感,Instant,プレイヤー１人を対象とする。そのプレイヤーはカードを２枚引く。,Target player draws two cards.,2,
+カードを2枚引く,,draw,8,Alhammarret's Archive,アルハマレットの書庫,Legendary Artifact,"あなたがライフを得るなら、代わりにあなたはその２倍の点数のライフを得る。
+あなたがあなたの各ドロー・ステップで引く１枚目のカードでないカード１枚を引くなら、代わりにカード２枚を引く。","If you would gain life, you gain twice that much life instead.
+If you would draw a card except the first one you draw in each of your draw steps, draw two cards instead.",3,
+カードを2枚引く,,draw,9,Divination,予言,Sorcery,カードを２枚引く。,Draw two cards.,4,
+カードを2枚引く,,draw,10,Teachings of the Archaics,アルカイックの教え,Sorcery — Lesson,対戦相手１人の手札にあるカードがあなたより多いなら、あなたはカード２枚を引く。対戦相手１人の手札にあるカードがあなたより４枚以上多いなら、代わりにカード３枚を引く。,"If an opponent has more cards in hand than you, draw two cards. Draw three cards instead if an opponent has at least four more cards in hand than you.",5,
+手札補充できる青いカード,,draw,1,The One Ring,一つの指輪,Legendary Artifact,"破壊不能
+一つの指輪が戦場に出たとき、あなたがこれを唱えていた場合、次のあなたのターンまで、あなたはプロテクション（すべて）を得る。
+あなたのアップキープの開始時に、一つの指輪の上にある重荷カウンター１個につき１点のライフを失う。
+{T}：一つの指輪の上に重荷カウンター１個を置く。その後、一つの指輪の上にある重荷カウンター１個につき１枚のカードを引く。","Indestructible
+When The One Ring enters, if you cast it, you gain protection from everything until your next turn.
+At the beginning of your upkeep, you lose 1 life for each burden counter on The One Ring.
+{T}: Put a burden counter on The One Ring, then draw a card for each burden counter on The One Ring.",0,
+手札補充できる青いカード,,draw,2,Quantum Riddler,量（りょう）子（し）の謎（なぞ）かけ屋（や）,Creature — Sphinx,"Flying
+When this creature enters, draw a card.
+As long as you have one or fewer cards in hand, if you would draw one or more cards, you draw that many cards plus one instead.
+Warp {1U}","Flying
+When this creature enters, draw a card.
+As long as you have one or fewer cards in hand, if you would draw one or more cards, you draw that many cards plus one instead.
+Warp {1}{U}",1,
+手札補充できる青いカード,,draw,3,Faerie Mastermind,フェアリーの黒幕,Creature — Faerie Rogue,"瞬速
+飛行
+対戦相手１人が各ターン内の自分の２枚目のカードを引くたび、あなたはカード１枚を引く。
+{3U}：各プレイヤーはそれぞれカード１枚を引く。","Flash
+Flying
+Whenever an opponent draws their second card each turn, you draw a card.
+{3}{U}: Each player draws a card.",4,
+手札補充できる青いカード,,draw,4,"Kaito, Bane of Nightmares",悪夢滅ぼし、魁渡,Legendary Planeswalker — Kaito,"忍術{1}{U}{B}
+あなたのターンの間、これの上に１個以上の忠誠カウンターがあるかぎり、これは呪禁を持つ３/４の忍者・クリーチャーである。
++1：「あなたがコントロールしているすべての忍者は＋１/＋１の修整を受ける。」の紋章を得る。
+0：諜報２を行う。その後、このターンにライフを失った対戦相手１人につき１枚のカードを引く。
+-2：クリーチャー１体を対象とする。それをタップする。それの上に麻痺カウンター２個を置く。","Ninjutsu {1}{U}{B} ({1}{U}{B}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)
+During your turn, as long as Kaito has one or more loyalty counters on him, he's a 3/4 Ninja creature and has hexproof.
++1: You get an emblem with ""Ninjas you control get +1/+1.""
+0: Surveil 2. Then draw a card for each opponent who lost life this turn.
+−2: Tap target creature. Put two stun counters on it.",3,
+手札補充できる青いカード,,draw,5,"Jace, Wielder of Mysteries",神秘を操る者、ジェイス,Legendary Planeswalker — Jace,"あなたのライブラリーにカードがないときにあなたがカードを引くなら、代わりにあなたはこのゲームに勝利する。
++1:プレイヤー１人を対象とする。そのプレイヤーは、自分のライブラリーの一番上からカードを２枚自分の墓地に置く。カードを１枚引く。
+-8：カードを７枚引く。その後、あなたのライブラリーにカードがないなら、あなたはこのゲームに勝利する。","If you would draw a card while your library has no cards in it, you win the game instead.
++1: Target player mills two cards. Draw a card.
+−8: Draw seven cards. Then if your library has no cards in it, you win the game.",2,
+手札補充できる青いカード,,draw,6,"Narset, Parter of Veils",覆いを割く者、ナーセット,Legendary Planeswalker — Narset,"各ターン、各対戦相手はそれぞれ２枚以上のカードを引くことができない。
+-2：あなたのライブラリーの一番上にあるカード４枚を見る。「その中からクリーチャーでも土地でもないカード１枚を公開し、あなたの手札に加える。」を選んでもよい。残りをあなたのライブラリーの一番下に無作為の順番で置く。","Each opponent can't draw more than one card each turn.
+−2: Look at the top four cards of your library. You may reveal a noncreature, nonland card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",6,
+手札補充できる青いカード,,draw,7,Deadly Cover-Up,死人に口無し,Sorcery,"この呪文を唱えるための追加コストとして、証拠収集６を行ってもよい。
+すべてのクリーチャーを破壊する。証拠収集を行ったなら、対戦相手１人の墓地にあるカード１枚を追放する。
+その後、それのオーナーの墓地と手札とライブラリーから、その名前を持つ望む枚数のカードを探し、追放する。そのプレイヤーはライブラリーを切り直し、その後、これにより自分の手札から追放されたカード１枚につき１枚のカードを引く。","As an additional cost to cast this spell, you may collect evidence 6.
+Destroy all creatures. If evidence was collected, exile a card from an opponent's graveyard. Then search its owner's graveyard, hand, and library for any number of cards with that name and exile them. That player shuffles, then draws a card for each card exiled from their hand this way.",0,
+手札補充できる青いカード,,draw,8,Spirit of the Labyrinth,迷宮の霊魂,Enchantment Creature — Spirit,各プレイヤーは、各ターンに２枚以上カードを引くことができない。,Each player can't draw more than one card each turn.,0,
+手札補充できる青いカード,,draw,9,"Wan Shi Tong, Librarian",司書、ワン・シー・トン,Legendary Creature — Bird Spirit,"瞬速
+飛行、警戒
+これが戦場に出たとき、これの上に＋１/＋１カウンターＸ個を置く。その後、Ｘの端数を切り捨てた半分の枚数のカードを引く。
+対戦相手１人が自分のライブラリーを探すたび、これの上に＋１/＋１カウンター１個を置き、あなたはカード１枚を引く。","Flash
+Flying, vigilance
+When Wan Shi Tong enters, put X +1/+1 counters on him. Then draw half X cards, rounded down.
+Whenever an opponent searches their library, put a +1/+1 counter on Wan Shi Tong and draw a card.",5,
+手札補充できる青いカード,,draw,10,Tersa Lightshatter,光砕く者、テルサ,Legendary Creature — Orc Wizard,"速攻
+光砕く者、テルサが戦場に出たとき、カード最大２枚を捨てる。その後、その枚数に等しい枚数のカードを引く。
+光砕く者、テルサが攻撃するたび、あなたの墓地に７枚以上のカードがある場合、あなたの墓地にあるカード１枚を無作為に選んで追放する。このターン、そのカードをプレイしてもよい。","Haste
+When Tersa Lightshatter enters, discard up to two cards, then draw that many cards.
+Whenever Tersa Lightshatter attacks, if there are seven or more cards in your graveyard, exile a card at random from your graveyard. You may play that card this turn.",0,
+ドローしながらフィルタリングできるカード,,draw,1,The One Ring,一つの指輪,Legendary Artifact,"破壊不能
+一つの指輪が戦場に出たとき、あなたがこれを唱えていた場合、次のあなたのターンまで、あなたはプロテクション（すべて）を得る。
+あなたのアップキープの開始時に、一つの指輪の上にある重荷カウンター１個につき１点のライフを失う。
+{T}：一つの指輪の上に重荷カウンター１個を置く。その後、一つの指輪の上にある重荷カウンター１個につき１枚のカードを引く。","Indestructible
+When The One Ring enters, if you cast it, you gain protection from everything until your next turn.
+At the beginning of your upkeep, you lose 1 life for each burden counter on The One Ring.
+{T}: Put a burden counter on The One Ring, then draw a card for each burden counter on The One Ring.",,フィルタリングというマジック用語は存在しないため保留
+ドローしながらフィルタリングできるカード,,draw,2,Quantum Riddler,量（りょう）子（し）の謎（なぞ）かけ屋（や）,Creature — Sphinx,"Flying
+When this creature enters, draw a card.
+As long as you have one or fewer cards in hand, if you would draw one or more cards, you draw that many cards plus one instead.
+Warp {1U}","Flying
+When this creature enters, draw a card.
+As long as you have one or fewer cards in hand, if you would draw one or more cards, you draw that many cards plus one instead.
+Warp {1}{U}",,
+ドローしながらフィルタリングできるカード,,draw,3,Faerie Mastermind,フェアリーの黒幕,Creature — Faerie Rogue,"瞬速
+飛行
+対戦相手１人が各ターン内の自分の２枚目のカードを引くたび、あなたはカード１枚を引く。
+{3U}：各プレイヤーはそれぞれカード１枚を引く。","Flash
+Flying
+Whenever an opponent draws their second card each turn, you draw a card.
+{3}{U}: Each player draws a card.",,
+ドローしながらフィルタリングできるカード,,draw,4,"Kaito, Bane of Nightmares",悪夢滅ぼし、魁渡,Legendary Planeswalker — Kaito,"忍術{1}{U}{B}
+あなたのターンの間、これの上に１個以上の忠誠カウンターがあるかぎり、これは呪禁を持つ３/４の忍者・クリーチャーである。
++1：「あなたがコントロールしているすべての忍者は＋１/＋１の修整を受ける。」の紋章を得る。
+0：諜報２を行う。その後、このターンにライフを失った対戦相手１人につき１枚のカードを引く。
+-2：クリーチャー１体を対象とする。それをタップする。それの上に麻痺カウンター２個を置く。","Ninjutsu {1}{U}{B} ({1}{U}{B}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)
+During your turn, as long as Kaito has one or more loyalty counters on him, he's a 3/4 Ninja creature and has hexproof.
++1: You get an emblem with ""Ninjas you control get +1/+1.""
+0: Surveil 2. Then draw a card for each opponent who lost life this turn.
+−2: Tap target creature. Put two stun counters on it.",,
+ドローしながらフィルタリングできるカード,,draw,5,"Jace, Wielder of Mysteries",神秘を操る者、ジェイス,Legendary Planeswalker — Jace,"あなたのライブラリーにカードがないときにあなたがカードを引くなら、代わりにあなたはこのゲームに勝利する。
++1:プレイヤー１人を対象とする。そのプレイヤーは、自分のライブラリーの一番上からカードを２枚自分の墓地に置く。カードを１枚引く。
+-8：カードを７枚引く。その後、あなたのライブラリーにカードがないなら、あなたはこのゲームに勝利する。","If you would draw a card while your library has no cards in it, you win the game instead.
++1: Target player mills two cards. Draw a card.
+−8: Draw seven cards. Then if your library has no cards in it, you win the game.",,
+ドローしながらフィルタリングできるカード,,draw,6,"Narset, Parter of Veils",覆いを割く者、ナーセット,Legendary Planeswalker — Narset,"各ターン、各対戦相手はそれぞれ２枚以上のカードを引くことができない。
+-2：あなたのライブラリーの一番上にあるカード４枚を見る。「その中からクリーチャーでも土地でもないカード１枚を公開し、あなたの手札に加える。」を選んでもよい。残りをあなたのライブラリーの一番下に無作為の順番で置く。","Each opponent can't draw more than one card each turn.
+−2: Look at the top four cards of your library. You may reveal a noncreature, nonland card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",,
+ドローしながらフィルタリングできるカード,,draw,7,Accumulated Knowledge,蓄積した知識,Instant,カードを１枚引き、その後、すべての墓地にある「蓄積した知識」という名前のカードの総数に等しい枚数のカードを引く。,"Draw a card, then draw cards equal to the number of cards named Accumulated Knowledge in all graveyards.",,
+ドローしながらフィルタリングできるカード,,draw,8,Plagiarize,盗用,Instant,プレイヤー１人を対象とする。ターン終了時まで、そのプレイヤーがカードを１枚引く場合、代わりにそのプレイヤーはそのドローを飛ばし、あなたがカードを１枚引く。,"Until end of turn, if target player would draw a card, instead that player skips that draw and you draw a card.",,
+ドローしながらフィルタリングできるカード,,draw,9,Compulsion,強制,Enchantment,"{1}{U}, カード１枚を捨てる：カード１枚を引く。
+{1}{U}, 強制を生け贄に捧げる：カード１枚を引く。","{1}{U}, Discard a card: Draw a card.
+{1}{U}, Sacrifice this enchantment: Draw a card.",,
+ドローしながらフィルタリングできるカード,,draw,10,Deadly Cover-Up,死人に口無し,Sorcery,"この呪文を唱えるための追加コストとして、証拠収集６を行ってもよい。
+すべてのクリーチャーを破壊する。証拠収集を行ったなら、対戦相手１人の墓地にあるカード１枚を追放する。
+その後、それのオーナーの墓地と手札とライブラリーから、その名前を持つ望む枚数のカードを探し、追放する。そのプレイヤーはライブラリーを切り直し、その後、これにより自分の手札から追放されたカード１枚につき１枚のカードを引く。","As an additional cost to cast this spell, you may collect evidence 6.
+Destroy all creatures. If evidence was collected, exile a card from an opponent's graveyard. Then search its owner's graveyard, hand, and library for any number of cards with that name and exile them. That player shuffles, then draws a card for each card exiled from their hand this way.",,
+インスタントでドローできるカード,,draw,1,The One Ring,一つの指輪,Legendary Artifact,"破壊不能
+一つの指輪が戦場に出たとき、あなたがこれを唱えていた場合、次のあなたのターンまで、あなたはプロテクション（すべて）を得る。
+あなたのアップキープの開始時に、一つの指輪の上にある重荷カウンター１個につき１点のライフを失う。
+{T}：一つの指輪の上に重荷カウンター１個を置く。その後、一つの指輪の上にある重荷カウンター１個につき１枚のカードを引く。","Indestructible
+When The One Ring enters, if you cast it, you gain protection from everything until your next turn.
+At the beginning of your upkeep, you lose 1 life for each burden counter on The One Ring.
+{T}: Put a burden counter on The One Ring, then draw a card for each burden counter on The One Ring.",1,
+インスタントでドローできるカード,,draw,2,Quantum Riddler,量（りょう）子（し）の謎（なぞ）かけ屋（や）,Creature — Sphinx,"Flying
+When this creature enters, draw a card.
+As long as you have one or fewer cards in hand, if you would draw one or more cards, you draw that many cards plus one instead.
+Warp {1U}","Flying
+When this creature enters, draw a card.
+As long as you have one or fewer cards in hand, if you would draw one or more cards, you draw that many cards plus one instead.
+Warp {1}{U}",0,単体では満たせない。
+インスタントでドローできるカード,,draw,3,Faerie Mastermind,フェアリーの黒幕,Creature — Faerie Rogue,"瞬速
+飛行
+対戦相手１人が各ターン内の自分の２枚目のカードを引くたび、あなたはカード１枚を引く。
+{3U}：各プレイヤーはそれぞれカード１枚を引く。","Flash
+Flying
+Whenever an opponent draws their second card each turn, you draw a card.
+{3}{U}: Each player draws a card.",3,
+インスタントでドローできるカード,,draw,4,"Kaito, Bane of Nightmares",悪夢滅ぼし、魁渡,Legendary Planeswalker — Kaito,"忍術{1}{U}{B}
+あなたのターンの間、これの上に１個以上の忠誠カウンターがあるかぎり、これは呪禁を持つ３/４の忍者・クリーチャーである。
++1：「あなたがコントロールしているすべての忍者は＋１/＋１の修整を受ける。」の紋章を得る。
+0：諜報２を行う。その後、このターンにライフを失った対戦相手１人につき１枚のカードを引く。
+-2：クリーチャー１体を対象とする。それをタップする。それの上に麻痺カウンター２個を置く。","Ninjutsu {1}{U}{B} ({1}{U}{B}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)
+During your turn, as long as Kaito has one or more loyalty counters on him, he's a 3/4 Ninja creature and has hexproof.
++1: You get an emblem with ""Ninjas you control get +1/+1.""
+0: Surveil 2. Then draw a card for each opponent who lost life this turn.
+−2: Tap target creature. Put two stun counters on it.",0,単体では満たせない。
+インスタントでドローできるカード,,draw,5,"Jace, Wielder of Mysteries",神秘を操る者、ジェイス,Legendary Planeswalker — Jace,"あなたのライブラリーにカードがないときにあなたがカードを引くなら、代わりにあなたはこのゲームに勝利する。
++1:プレイヤー１人を対象とする。そのプレイヤーは、自分のライブラリーの一番上からカードを２枚自分の墓地に置く。カードを１枚引く。
+-8：カードを７枚引く。その後、あなたのライブラリーにカードがないなら、あなたはこのゲームに勝利する。","If you would draw a card while your library has no cards in it, you win the game instead.
++1: Target player mills two cards. Draw a card.
+−8: Draw seven cards. Then if your library has no cards in it, you win the game.",0,単体では満たせない。
+インスタントでドローできるカード,,draw,6,"Narset, Parter of Veils",覆いを割く者、ナーセット,Legendary Planeswalker — Narset,"各ターン、各対戦相手はそれぞれ２枚以上のカードを引くことができない。
+-2：あなたのライブラリーの一番上にあるカード４枚を見る。「その中からクリーチャーでも土地でもないカード１枚を公開し、あなたの手札に加える。」を選んでもよい。残りをあなたのライブラリーの一番下に無作為の順番で置く。","Each opponent can't draw more than one card each turn.
+−2: Look at the top four cards of your library. You may reveal a noncreature, nonland card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",0,単体では満たせない。
+インスタントでドローできるカード,,draw,7,Plagiarize,盗用,Instant,プレイヤー１人を対象とする。ターン終了時まで、そのプレイヤーがカードを１枚引く場合、代わりにそのプレイヤーはそのドローを飛ばし、あなたがカードを１枚引く。,"Until end of turn, if target player would draw a card, instead that player skips that draw and you draw a card.",4,
+インスタントでドローできるカード,,draw,8,Deadly Cover-Up,死人に口無し,Sorcery,"この呪文を唱えるための追加コストとして、証拠収集６を行ってもよい。
+すべてのクリーチャーを破壊する。証拠収集を行ったなら、対戦相手１人の墓地にあるカード１枚を追放する。
+その後、それのオーナーの墓地と手札とライブラリーから、その名前を持つ望む枚数のカードを探し、追放する。そのプレイヤーはライブラリーを切り直し、その後、これにより自分の手札から追放されたカード１枚につき１枚のカードを引く。","As an additional cost to cast this spell, you may collect evidence 6.
+Destroy all creatures. If evidence was collected, exile a card from an opponent's graveyard. Then search its owner's graveyard, hand, and library for any number of cards with that name and exile them. That player shuffles, then draws a card for each card exiled from their hand this way.",0,単体では満たせない。
+インスタントでドローできるカード,,draw,9,Spirit of the Labyrinth,迷宮の霊魂,Enchantment Creature — Spirit,各プレイヤーは、各ターンに２枚以上カードを引くことができない。,Each player can't draw more than one card each turn.,0,単体では満たせない。
+インスタントでドローできるカード,,draw,10,"Wan Shi Tong, Librarian",司書、ワン・シー・トン,Legendary Creature — Bird Spirit,"瞬速
+飛行、警戒
+これが戦場に出たとき、これの上に＋１/＋１カウンターＸ個を置く。その後、Ｘの端数を切り捨てた半分の枚数のカードを引く。
+対戦相手１人が自分のライブラリーを探すたび、これの上に＋１/＋１カウンター１個を置き、あなたはカード１枚を引く。","Flash
+Flying, vigilance
+When Wan Shi Tong enters, put X +1/+1 counters on him. Then draw half X cards, rounded down.
+Whenever an opponent searches their library, put a +1/+1 counter on Wan Shi Tong and draw a card.",2,
+飛行を持つクリーチャー,,keyword_creature,1,Murktide Regent,濁浪の執政,Creature — Dragon,"探査（この呪文を唱える段階であなたがあなたの墓地から追放した各カードは、{1}を支払う。）
+飛行
+濁浪の執政は、これによって追放されてインスタントやソーサリーであるカードの枚数に等しい数の＋１/＋１カウンターが置かれた状態で戦場に出る。
+インスタントやソーサリーであるカード１枚があなたの墓地を離れるたび、濁浪の執政の上に＋１/＋１カウンター１個を置く。","Delve (Each card you exile from your graveyard while casting this spell pays for {1}.)
+Flying
+This creature enters with a +1/+1 counter on it for each instant and sorcery card exiled with it.
+Whenever an instant or sorcery card leaves your graveyard, put a +1/+1 counter on this creature.",4,
+飛行を持つクリーチャー,,keyword_creature,2,"Atraxa, Grand Unifier",偉大なる統一者、アトラクサ,Legendary Creature — Phyrexian Angel,"飛行、警戒、接死、絆魂
+これが戦場に出たとき、あなたのライブラリーの一番上にあるカード１０枚を公開する。各カード・タイプにつきそれぞれ、それらの公開されたカードの中からそのタイプであるカード１枚をあなたの手札に加えてもよい。残りをあなたのライブラリーの一番下に無作為の順番で置く。","Flying, vigilance, deathtouch, lifelink
+When Atraxa enters, reveal the top ten cards of your library. For each card type, you may put a card of that type from among the revealed cards into your hand. Put the rest on the bottom of your library in a random order. (Artifact, battle, creature, enchantment, instant, land, planeswalker, and sorcery are card types.)",8,
+飛行を持つクリーチャー,,keyword_creature,3,Dragon's Rage Channeler,ドラゴンの怒りの媒介者,Creature — Human Shaman,"あなたがクリーチャーでない呪文を唱えるたび、諜報１を行う。（あなたのライブラリーの一番上のカードを見る。あなたはそのカードをあなたの墓地に置いてもよい。）
+昂揚 ― あなたの墓地にあるカードの中に４種類以上のカード・タイプがあるかぎり、ドラゴンの怒りの媒介者は＋２/＋２の修整を受け、飛行を持ち、各戦闘で可能なら攻撃する。","Whenever you cast a noncreature spell, surveil 1. (Look at the top card of your library. You may put that card into your graveyard.)
+Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.",9,条件付きなので順位を下げた
+飛行を持つクリーチャー,,keyword_creature,4,Starry-Eyed Skyrider,夢見がちな空乗り,Creature — Human Scout,"飛行
+このクリーチャーが攻撃するたび、あなたがコントロールしていてこれでないクリーチャー１体を対象とする。ターン終了時まで、それは飛行を得る。
+あなたがコントロールしていて攻撃しているすべてのトークンは飛行を持つ。","Flying
+Whenever this creature attacks, another target creature you control gains flying until end of turn.
+Attacking tokens you control have flying.",6,
+飛行を持つクリーチャー,,keyword_creature,5,"Momo, Friendly Flier",空飛ぶ友だち、モモ,Legendary Creature — Lemur Bat Ally,"飛行
+あなたの各ターン内で初めて、飛行を持ちキツネザルでないクリーチャー・呪文を唱えるためのコストは{1}少なくなる。
+あなたがコントロールしていて飛行を持ちこれでないクリーチャー１体が戦場に出るたび、ターン終了時まで、これは＋１/＋１の修整を受ける。","Flying
+The first non-Lemur creature spell with flying you cast during each of your turns costs {1} less to cast.
+Whenever another creature you control with flying enters, Momo gets +1/+1 until end of turn.",3,
+飛行を持つクリーチャー,,keyword_creature,6,Slickshot Show-Off,精鋭射手団の目立ちたがり,Creature — Bird Wizard,"飛行、速攻
+あなたがクリーチャーでない呪文１つを唱えるたび、ターン終了時まで、精鋭射手団の目立ちたがりは＋２/＋０の修整を受ける。
+計画{1}{R}（{1}{R}を支払ってあなたの手札にあるこのカードを追放してもよい。後のターンに、これをソーサリーとしてマナ・コストを支払うことなく唱えてもよい。計画はソーサリーとしてのみ行う。）","Flying, haste
+Whenever you cast a noncreature spell, this creature gets +2/+0 until end of turn.
+Plot {1}{R} (You may pay {1}{R} and exile this card from your hand. Cast it as a sorcery on a later turn without paying its mana cost. Plot only as a sorcery.)",5,
+飛行を持つクリーチャー,,keyword_creature,7,Watcher of the Spheres,天球の見張り,Creature — Bird Wizard,"飛行
+あなたが飛行を持つクリーチャー・呪文を唱えるためのコストは{1}少なくなる。
+他の飛行を持つクリーチャーが１体あなたのコントロール下で戦場に出るたび、ターン終了時まで、天球の見張りは＋１/＋１の修整を受ける。","Flying
+Creature spells with flying you cast cost {1} less to cast.
+Whenever another creature you control with flying enters, this creature gets +1/+1 until end of turn.",1,
+飛行を持つクリーチャー,,keyword_creature,8,Archon of Cruelty,残虐の執政官,Creature — Archon,"飛行
+残虐の執政官が戦場に出るか攻撃するたび、対戦相手１人を対象とする。そのプレイヤーはクリーチャーやプレインズウォーカーである１体を生け贄に捧げ、カード１枚を捨て、３点のライフを失う。あなたはカード１枚を引き３点のライフを得る。","Flying
+Whenever this creature enters or attacks, target opponent sacrifices a creature or planeswalker of their choice, discards a card, and loses 3 life. You draw a card and gain 3 life.",7,
+飛行を持つクリーチャー,,keyword_creature,9,Psychic Frog,超能力蛙,Creature — Frog,"超能力蛙がプレイヤーやプレインズウォーカーである１つに戦闘ダメージを与えるたび、カード１枚を引く。
+カード１枚を捨てる：超能力蛙の上に＋１/＋１カウンター１個を置く。
+あなたの墓地にあるカード３枚を追放する：ターン終了時まで、超能力蛙は飛行を得る。","Whenever this creature deals combat damage to a player or planeswalker, draw a card.
+Discard a card: Put a +1/+1 counter on this creature.
+Exile three cards from your graveyard: This creature gains flying until end of turn.",2,
+飛行を持つクリーチャー,,keyword_creature,10,Guide of Souls,魂の導き手,Creature — Human Cleric,"これでないクリーチャー１体があなたのコントロール下で戦場に出るたび、１点のライフと{E}を得る。
+あなたが攻撃するたび、{E}{E}{E}を支払ってもよい。そうしたとき、攻撃クリーチャー１体を対象とする。それの上に＋１/＋１カウンター２個と飛行カウンター１個を置く。それは他のタイプに加えて天使になる。","Whenever another creature you control enters, you gain 1 life and get {E} (an energy counter).
+Whenever you attack, you may pay {E}{E}{E}. When you do, put two +1/+1 counters and a flying counter on target attacking creature. It becomes an Angel in addition to its other types.",10,不可能ではないが間接的すぎる
+トランプルを持つクリーチャー,,keyword_creature,1,"Boseiju, Who Endures",耐え抜くもの、母聖樹,Legendary Land,"{T}：{G}を加える。
+魂力 — {1}{G}, 耐え抜くもの、母聖樹を捨てる：基本でない土地やアーティファクトやエンチャントのうち対戦相手１人がコントロールしている１つを対象とする。それを破壊する。そのプレイヤーは「自分のライブラリーから基本土地タイプを持つ土地・カード１枚を探し、戦場に出す。その後、ライブラリーを切り直す。」を選んでもよい。この能力を起動するためのコストは、あなたがコントロールしている伝説のクリーチャー１体につき{1}少なくなる。","{T}: Add {G}.
+Channel — {1}{G}, Discard this card: Destroy target artifact, enchantment, or nonbasic land an opponent controls. That player may search their library for a land card with a basic land type, put it onto the battlefield, then shuffle. This ability costs {1} less to activate for each legendary creature you control.",0,
+トランプルを持つクリーチャー,,keyword_creature,2,Primeval Titan,原始のタイタン,Creature — Giant,"トランプル
+このクリーチャーが戦場に出るか攻撃するたび、「あなたのライブラリーから土地・カード最大２枚を探し、タップ状態で戦場に出す。その後、ライブラリーを切り直す。」を選んでもよい。","Trample
+Whenever this creature enters or attacks, you may search your library for up to two land cards, put them onto the battlefield tapped, then shuffle.",1,
+トランプルを持つクリーチャー,,keyword_creature,3,Cultivator Colossus,耕作する巨躯,Creature — Plant Beast,"トランプル
+耕作する巨躯のパワーとタフネスは、それぞれあなたがコントロールしている土地の数に等しい。
+耕作する巨躯が戦場に出たとき、あなたはあなたの手札にある土地・カード１枚をタップ状態で戦場に出してもよい。そうしたなら、カード１枚を引き、この手順を繰り返す。","Trample
+Cultivator Colossus's power and toughness are each equal to the number of lands you control.
+When this creature enters, you may put a land card from your hand onto the battlefield tapped. If you do, draw a card and repeat this process.",4,
+トランプルを持つクリーチャー,,keyword_creature,4,Oliphaunt,オリファント,Creature — Elephant,"トランプル
+オリファントが攻撃するたび、あなたがコントロールしていてこれでないクリーチャー１体を対象とする。ターン終了時まで、それは＋２/＋０の修整を受けトランプルを得る。
+山サイクリング{1} （{1}, このカードを捨てる：あなたのライブラリーから山・カード１枚を探し、公開し、あなたの手札に加える。その後、ライブラリーを切り直す。）","Trample
+Whenever this creature attacks, another target creature you control gets +2/+0 and gains trample until end of turn.
+Mountaincycling {1} ({1}, Discard this card: Search your library for a Mountain card, reveal it, put it into your hand, then shuffle.)",6,
+トランプルを持つクリーチャー,,keyword_creature,5,"Ghalta, Primal Hunger",原初の飢え、ガルタ,Legendary Creature — Elder Dinosaur,"この呪文を唱えるためのコストは{X}少なくなる。Ｘは、あなたがコントロールしているクリーチャーのパワーの合計に等しい。
+トランプル（このクリーチャーは余剰の戦闘ダメージを、これが攻撃しているプレイヤーかプレインズウォーカーに与えることができる。）","This spell costs {X} less to cast, where X is the total power of creatures you control.
+Trample (This creature can deal excess combat damage to the player or planeswalker it's attacking.)",2,
+トランプルを持つクリーチャー,,keyword_creature,6,Scythecat Cub,大鎌猫の仔,Creature — Cat,"トランプル
+上陸 ― 土地１つがあなたのコントロール下で戦場に出るたび、あなたがコントロールしているクリーチャー１体を対象とする。それの上に＋１/＋１カウンター１個を置く。この能力が解決したのがこのターン内の２回目なら、代わりにそのクリーチャーの上に置かれている＋１/＋１カウンターの個数を２倍にする。","Trample
+Landfall — Whenever a land you control enters, put a +1/+1 counter on target creature you control. If this is the second time this ability has resolved this turn, double the number of +1/+1 counters on that creature instead.",3,
+トランプルを持つクリーチャー,,keyword_creature,7,Cori-Steel Cutter,コーリ鋼の短刀,Artifact — Equipment,"装備しているクリーチャーは＋１/＋１の修整を受けトランプルと速攻を持つ。
+疾風 ― あなたが各ターン内のあなたの２つ目の呪文を唱えるたび、果敢を持つ白の１/１のモンク・クリーチャー・トークン１体を生成する。この装備品をそれにつけてもよい。（あなたがクリーチャーでない呪文１つを唱えるたび、ターン終了時まで、そのトークンは＋１/＋１の修整を受ける。）
+装備{1}{R}","Equipped creature gets +1/+1 and has trample and haste.
+Flurry — Whenever you cast your second spell each turn, create a 1/1 white Monk creature token with prowess. You may attach this Equipment to it. (Whenever you cast a noncreature spell, the token gets +1/+1 until end of turn.)
+Equip {1}{R}",7,トランプルがつくクリーチャーを生成できるので0にはしないが……
+トランプルを持つクリーチャー,,keyword_creature,8,Monstrous Rage,巨怪の怒り,Instant,クリーチャー１体を対象とする。ターン終了時まで、それは＋２/＋０の修整を受ける。怪物・役割・トークン１つをそれについた状態で生成する。（あなたがコントロールしている役割がすでにそれについていたなら、その役割を墓地に置く。エンチャントしているクリーチャーは＋１/＋１の修整を受けトランプルを持つ。）,"Target creature gets +2/+0 until end of turn. Create a Monster Role token attached to it. (If you control another Role on it, put that one into the graveyard. Enchanted creature gets +1/+1 and has trample.)",0,
+トランプルを持つクリーチャー,,keyword_creature,9,Shadowspear,影槍,Legendary Artifact — Equipment,"装備しているクリーチャーは＋１/＋１の修整を受けトランプルと絆魂を持つ。
+{1}：ターン終了時まで、対戦相手がコントロールしているすべてのパーマネントは呪禁と破壊不能を失う。
+装備{2}","Equipped creature gets +1/+1 and has trample and lifelink.
+{1}: Permanents your opponents control lose hexproof and indestructible until end of turn.
+Equip {2}",0,
+トランプルを持つクリーチャー,,keyword_creature,10,"Jackal, Genius Geneticist",天才遺伝学者、ジャッカル,Legendary Creature — Human Scientist Villain,"トランプル
+あなたがマナ総量がこれのパワーに等しいクリーチャー・呪文１つを唱えるたび、そのコピーが伝説でないことを除き、その呪文をコピーする。その後、これの上に＋１/＋１カウンター１個を置く。","Trample
+Whenever you cast a creature spell with mana value equal to Jackal's power, copy that spell, except the copy isn't legendary. Then put a +1/+1 counter on Jackal. (The copy becomes a token.)",5,
+接死を持つクリーチャー,,keyword_creature,1,"Sheoldred, the Apocalypse",黙示録、シェオルドレッド,Legendary Creature — Phyrexian Praetor,"接死
+あなたがカード１枚を引くたび、あなたは２点のライフを得る。
+対戦相手１人がカード１枚を引くたび、そのプレイヤーは２点のライフを失う。","Deathtouch
+Whenever you draw a card, you gain 2 life.
+Whenever an opponent draws a card, they lose 2 life.",1,
+接死を持つクリーチャー,,keyword_creature,2,"Atraxa, Grand Unifier",偉大なる統一者、アトラクサ,Legendary Creature — Phyrexian Angel,"飛行、警戒、接死、絆魂
+これが戦場に出たとき、あなたのライブラリーの一番上にあるカード１０枚を公開する。各カード・タイプにつきそれぞれ、それらの公開されたカードの中からそのタイプであるカード１枚をあなたの手札に加えてもよい。残りをあなたのライブラリーの一番下に無作為の順番で置く。","Flying, vigilance, deathtouch, lifelink
+When Atraxa enters, reveal the top ten cards of your library. For each card type, you may put a card of that type from among the revealed cards into your hand. Put the rest on the bottom of your library in a random order. (Artifact, battle, creature, enchantment, instant, land, planeswalker, and sorcery are card types.)",5,
+接死を持つクリーチャー,,keyword_creature,3,Hooded Blightfang,頭巾様の荒廃牙,Creature — Snake,"接死
+あなたがコントロールしていて接死を持つクリーチャー１体が攻撃するたび、各対戦相手はそれぞれ１点のライフを失い、あなたは１点のライフを得る。
+あなたがコントロールしていて接死を持つクリーチャー１体がプレインズウォーカー１体にダメージを与えるたび、そのプレインズウォーカーを破壊する。","Deathtouch
+Whenever a creature you control with deathtouch attacks, each opponent loses 1 life and you gain 1 life.
+Whenever a creature you control with deathtouch deals damage to a planeswalker, destroy that planeswalker.",2,
+接死を持つクリーチャー,,keyword_creature,4,Archetype of Finality,決断の元型,Enchantment Creature — Gorgon,"あなたがコントロールするクリーチャーは接死を持つ。
+あなたの対戦相手がコントロールするクリーチャーは接死を失うとともに、接死を得ることも持つこともできない。","Creatures you control have deathtouch.
+Creatures your opponents control lose deathtouch and can't have or gain deathtouch.",6,
+接死を持つクリーチャー,,keyword_creature,5,Plague Engineer,疫病を仕組むもの,Creature — Phyrexian Carrier,"接死
+疫病を仕組むものが戦場に出るに際し、クリーチャー・タイプ１つを選ぶ。
+対戦相手がコントロールしていてその選ばれたタイプであるクリーチャーは－１/－１の修整を受ける。","Deathtouch
+As this creature enters, choose a creature type.
+Creatures of the chosen type your opponents control get -1/-1.",4,
+接死を持つクリーチャー,,keyword_creature,6,Touch of Moonglove,ツキノテブクロの浸潤,Instant,あなたがコントロールするクリーチャー１体を対象とする。ターン終了時まで、それは＋１/＋０の修整を受けるとともに接死を得る。このターン、そのクリーチャーによってダメージを与えられたクリーチャーが死亡するたび、そのコントローラーは２点のライフを失う。（接死を持つクリーチャーが何らかのダメージをクリーチャーに与えたら、それだけで破壊する。）,"Target creature you control gets +1/+0 and gains deathtouch until end of turn. Whenever a creature dealt damage by that creature dies this turn, its controller loses 2 life. (Any amount of damage a creature with deathtouch deals to a creature is enough to destroy it.)",0,
+接死を持つクリーチャー,,keyword_creature,7,Felhide Petrifier,悪魔の皮の石化使い,Creature — Minotaur Warrior,"接死
+あなたがコントロールする他のミノタウルス・クリーチャーは接死を持つ。","Deathtouch
+Other Minotaur creatures you control have deathtouch.",7,
+接死を持つクリーチャー,,keyword_creature,8,Agent of the Fates,運命の工作員,Creature — Human Assassin,"接死
+英雄的 ― あなたが運命の工作員を対象とする呪文を１つ唱えるたび、各対戦相手はそれぞれクリーチャーを１体生け贄に捧げる。","Deathtouch
+Heroic — Whenever you cast a spell that targets this creature, each opponent sacrifices a creature of their choice.",8,
+接死を持つクリーチャー,,keyword_creature,9,Restless Reef,不穏な浅瀬,Land,"不穏な浅瀬はタップ状態で戦場に出る。
+{T}：{U}か{B}を加える。
+{2}{U}{B}：ターン終了時まで、不穏な浅瀬は接死を持つ青黒の４/４のサメ・クリーチャーになる。これは土地でもある。
+不穏な浅瀬が攻撃するたび、プレイヤー１人を対象とする。そのプレイヤーはカード４枚を切削する。","This land enters tapped.
+{T}: Add {U} or {B}.
+{2}{U}{B}: Until end of turn, this land becomes a 4/4 blue and black Shark creature with deathtouch. It's still a land.
+Whenever this land attacks, target player mills four cards.",9,
+接死を持つクリーチャー,,keyword_creature,10,Wurmcoil Engine,ワームとぐろエンジン,Artifact Creature — Phyrexian Wurm,"接死、絆魂
+ワームとぐろエンジンが死亡したとき、接死を持つ無色の３/３のファイレクシアン・ワーム・アーティファクト・クリーチャー・トークン１体と、絆魂を持つ無色の３/３のファイレクシアン・ワーム・アーティファクト・クリーチャー・トークン１体を生成する。","Deathtouch, lifelink
+When this creature dies, create a 3/3 colorless Phyrexian Wurm artifact creature token with deathtouch and a 3/3 colorless Phyrexian Wurm artifact creature token with lifelink.",3,
+速攻を持つクリーチャー,,keyword_creature,1,"Sokenzan, Crucible of Defiance",反逆のるつぼ、霜剣山,Legendary Land,"{T}：{R}を加える。
+魂力 — {3}{R}, 反逆のるつぼ、霜剣山を捨てる：無色の１/１のスピリット・クリーチャー・トークン２体を生成する。ターン終了時まで、それらは速攻を得る。この能力を起動するためのコストは、あなたがコントロールしている伝説のクリーチャー１体につき{1}少なくなる。","{T}: Add {R}.
+Channel — {3}{R}, Discard this card: Create two 1/1 colorless Spirit creature tokens. They gain haste until end of turn. This ability costs {1} less to activate for each legendary creature you control.",5,
+速攻を持つクリーチャー,,keyword_creature,2,Badgermole Cub,アナグマモグラの仔,Creature — Badger Mole,"このクリーチャーが戦場に出たとき、土の技１を行う。（あなたがコントロールしている土地１つを対象とする。それは速攻を持つ０/０のクリーチャーになり、土地でもある。それの上に＋１/＋１カウンター１個を置く。それが死亡したか追放されたとき、それをタップ状態で戦場に戻す。）
+あなたがマナを引き出す目的でクリーチャー１体をタップするたび、追加で{G}を加える。","When this creature enters, earthbend 1. (Target land you control becomes a 0/0 creature with haste that's still a land. Put a +1/+1 counter on it. When it dies or is exiled, return it to the battlefield tapped.)
+Whenever you tap a creature for mana, add an additional {G}.",0,土の技のお陰でテキストに速攻が入っているのだろうがここでは除外
+速攻を持つクリーチャー,,keyword_creature,3,Monastery Swiftspear,僧院の速槍,Creature — Human Monk,"速攻
+果敢（あなたがクリーチャーでない呪文を唱えるたび、ターン終了時まで、このクリーチャーは＋１/＋１の修整を受ける。）","Haste
+Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)",1,
+速攻を持つクリーチャー,,keyword_creature,4,Arena of Glory,栄光の闘技場,Land,"あなたが山をコントロールしていないかぎり、栄光の闘技場はタップ状態で戦場に出る。
+{T}：{R}を加える。
+{R}, {T}, 栄光の闘技場を督励する：{R}{R}を加える。このマナがクリーチャー・呪文のために支払われたなら、ターン終了時まで、それは速攻を得る。（督励されたパーマネントは、次のあなたのアンタップ・ステップにアンタップしない。）","This land enters tapped unless you control a Mountain.
+{T}: Add {R}.
+{R}, {T}, Exert this land: Add {R}{R}. If that mana is spent on a creature spell, it gains haste until end of turn. (An exerted permanent won't untap during your next untap step.)",0,これ自身はクリーチャーでもなければ単体でクリーチャーを生み出すわけでもない
+速攻を持つクリーチャー,,keyword_creature,5,Slickshot Show-Off,精鋭射手団の目立ちたがり,Creature — Bird Wizard,"飛行、速攻
+あなたがクリーチャーでない呪文１つを唱えるたび、ターン終了時まで、精鋭射手団の目立ちたがりは＋２/＋０の修整を受ける。
+計画{1}{R}（{1}{R}を支払ってあなたの手札にあるこのカードを追放してもよい。後のターンに、これをソーサリーとしてマナ・コストを支払うことなく唱えてもよい。計画はソーサリーとしてのみ行う。）","Flying, haste
+Whenever you cast a noncreature spell, this creature gets +2/+0 until end of turn.
+Plot {1}{R} (You may pay {1}{R} and exile this card from your hand. Cast it as a sorcery on a later turn without paying its mana cost. Plot only as a sorcery.)",2,
+速攻を持つクリーチャー,,keyword_creature,6,Emberheart Challenger,熾火心の挑戦者,Creature — Mouse Warrior,"速攻
+果敢（あなたがクリーチャーでない呪文１つを唱えるたび、ターン終了時まで、このクリーチャーは＋１/＋１の修整を受ける。）
+雄姿 ― 熾火心の挑戦者が各ターン内で初めてあなたがコントロールしている呪文や能力の対象になるたび、あなたのライブラリーの一番上にあるカード１枚を追放する。ターン終了時まで、そのカードをプレイしてもよい。","Haste
+Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)
+Valiant — Whenever this creature becomes the target of a spell or ability you control for the first time each turn, exile the top card of your library. Until end of turn, you may play that card.",3,
+速攻を持つクリーチャー,,keyword_creature,7,Cori-Steel Cutter,コーリ鋼の短刀,Artifact — Equipment,"装備しているクリーチャーは＋１/＋１の修整を受けトランプルと速攻を持つ。
+疾風 ― あなたが各ターン内のあなたの２つ目の呪文を唱えるたび、果敢を持つ白の１/１のモンク・クリーチャー・トークン１体を生成する。この装備品をそれにつけてもよい。（あなたがクリーチャーでない呪文１つを唱えるたび、ターン終了時まで、そのトークンは＋１/＋１の修整を受ける。）
+装備{1}{R}","Equipped creature gets +1/+1 and has trample and haste.
+Flurry — Whenever you cast your second spell each turn, create a 1/1 white Monk creature token with prowess. You may attach this Equipment to it. (Whenever you cast a noncreature spell, the token gets +1/+1 until end of turn.)
+Equip {1}{R}",8,
+速攻を持つクリーチャー,,keyword_creature,8,Frenzied Saddlebrute,激情の鞍暴れ,Creature — Orc Warrior,"速攻
+クリーチャーはすべて、あなたの対戦相手や、あなたの対戦相手がコントロールしているプレインズウォーカーを、それらのクリーチャーが速攻を持っているかのように攻撃できる。","Haste
+All creatures can attack your opponents and planeswalkers your opponents control as though those creatures had haste.",4,
+速攻を持つクリーチャー,,keyword_creature,9,Trailblazing Historian,先駆的な歴史家,Creature — Human Shaman,"速攻
+{T}：これでないクリーチャー１体を対象とする。ターン終了時まで、それは速攻を得る。","Haste
+{T}: Another target creature gains haste until end of turn.",6,
+速攻を持つクリーチャー,,keyword_creature,10,Sootstoke Kindler,煤の焚きつけ屋,Creature — Elemental Shaman,"速攻
+{T}：黒か赤のクリーチャー１体を対象とする。それはターン終了時まで速攻を得る。","Haste
+{T}: Target black or red creature gains haste until end of turn.",7,
+破壊不能を持つクリーチャー,,keyword_creature,1,The One Ring,一つの指輪,Legendary Artifact,"破壊不能
+一つの指輪が戦場に出たとき、あなたがこれを唱えていた場合、次のあなたのターンまで、あなたはプロテクション（すべて）を得る。
+あなたのアップキープの開始時に、一つの指輪の上にある重荷カウンター１個につき１点のライフを失う。
+{T}：一つの指輪の上に重荷カウンター１個を置く。その後、一つの指輪の上にある重荷カウンター１個につき１枚のカードを引く。","Indestructible
+When The One Ring enters, if you cast it, you gain protection from everything until your next turn.
+At the beginning of your upkeep, you lose 1 life for each burden counter on The One Ring.
+{T}: Put a burden counter on The One Ring, then draw a card for each burden counter on The One Ring.",0,クリーチャーではない
+破壊不能を持つクリーチャー,,keyword_creature,2,Kaldra Compleat,カルドラの完成体,Legendary Artifact — Equipment,"生体武器
+破壊不能
+装備しているクリーチャーは＋５/＋５の修整を受け、先制攻撃とトランプルと破壊不能と速攻と「このクリーチャーがクリーチャー１体に戦闘ダメージを与えるたび、そのクリーチャーを追放する。」を持つ。
+装備{7}","Living weapon
+Indestructible
+Equipped creature gets +5/+5 and has first strike, trample, indestructible, haste, and ""Whenever this creature deals combat damage to a creature, exile that creature.""
+Equip {7}",3,
+破壊不能を持つクリーチャー,,keyword_creature,3,Shadowspear,影槍,Legendary Artifact — Equipment,"装備しているクリーチャーは＋１/＋１の修整を受けトランプルと絆魂を持つ。
+{1}：ターン終了時まで、対戦相手がコントロールしているすべてのパーマネントは呪禁と破壊不能を失う。
+装備{2}","Equipped creature gets +1/+1 and has trample and lifelink.
+{1}: Permanents your opponents control lose hexproof and indestructible until end of turn.
+Equip {2}",0,破壊不能を失わせる効果は持っている。
+破壊不能を持つクリーチャー,,keyword_creature,4,Dauntless Bodyguard,不屈の護衛,Creature — Human Knight,"不屈の護衛が戦場に出るに際し、あなたがコントロールしている他のクリーチャー１体を選ぶ。
+不屈の護衛を生け贄に捧げる：ターン終了時まで、その選ばれたクリーチャーは破壊不能を得る。","As this creature enters, choose another creature you control.
+Sacrifice this creature: The chosen creature gains indestructible until end of turn.",0,これ自身が破壊不能ではない
+破壊不能を持つクリーチャー,,keyword_creature,5,Rhonas the Indomitable,不屈の神ロナス,Legendary Creature — God,"接死、破壊不能
+あなたがパワーが４以上でありこれでないクリーチャーをコントロールしていないかぎり、不屈の神ロナスでは攻撃もブロックもできない。
+{2}{G}：これでないクリーチャー１体を対象とする。ターン終了時まで、それは＋２/＋０の修整を受けトランプルを得る。","Deathtouch, indestructible
+Rhonas can't attack or block unless you control another creature with power 4 or greater.
+{2}{G}: Another target creature gets +2/+0 and gains trample until end of turn.",1,
+破壊不能を持つクリーチャー,,keyword_creature,6,Dark Depths,暗黒の深部,Legendary Snow Land,"氷に閉じ込められた少年は、氷カウンター１０個が置かれた状態で戦場に出る。
+{3}：氷に閉じ込められた少年の上から氷カウンター１個を取り除く。
+氷に閉じ込められた少年の上に氷カウンターがないとき、これを生け贄に捧げる。そうしたなら、「マリット・レイジ」という名前で飛行と破壊不能を持つ黒の２０/２０の伝説のアバター・クリーチャー・トークン１体を生成する。","Dark Depths enters with ten ice counters on it.
+{3}: Remove an ice counter from Dark Depths.
+When Dark Depths has no ice counters on it, sacrifice it. If you do, create Marit Lage, a legendary 20/20 black Avatar creature token with flying and indestructible.",2,
+破壊不能を持つクリーチャー,,keyword_creature,7,Indestructibility,不滅,Enchantment — Aura,エンチャント（パーマネント）エンチャントされているパーマネントは破壊不能を持つ。（「破壊する」と書かれた効果では、そのパーマネントは破壊されない。破壊不能を持つクリーチャーはダメージによって破壊されない。）,"Enchant permanent
+Enchanted permanent has indestructible. (Effects that say ""destroy"" don't destroy that permanent. A creature with indestructible can't be destroyed by damage.)",0,クリーチャーではない
+破壊不能を持つクリーチャー,,keyword_creature,8,Spearbreaker Behemoth,槍折りのビヒモス,Creature — Beast,"破壊不能
+{1}：パワーが５以上であるクリーチャー１体を対象とする。ターン終了時まで、それは破壊不能を得る。","Indestructible
+{1}: Target creature with power 5 or greater gains indestructible until end of turn.",5,
+破壊不能を持つクリーチャー,,keyword_creature,9,Plaza of Heroes,英雄の公有地,Land,"{T}：{C}を加える。
+{T}：好きな色１色のマナ１点を加える。このマナは、伝説の呪文を唱えるためにしか支払えない。
+{T}：あなたがコントロールしている伝説のパーマネントの中の色１色のマナ１点を加える。
+{3},{T},英雄の公有地を追放する：伝説のクリーチャー１体を対象とする。ターン終了時まで、それは呪禁と破壊不能を得る。","{T}: Add {C}.
+{T}: Add one mana of any color. Spend this mana only to cast a legendary spell.
+{T}: Add one mana of any color among legendary permanents you control.
+{3}, {T}, Exile this land: Target legendary creature gains hexproof and indestructible until end of turn.",0,クリーチャーではない
+破壊不能を持つクリーチャー,,keyword_creature,10,Stonehoof Chieftain,石蹄獣の酋長,Creature — Centaur Warrior,"トランプル、破壊不能
+あなたがコントロールしていてこれでないクリーチャー１体が攻撃するたび、ターン終了時まで、それはトランプルと破壊不能を得る。","Trample, indestructible
+Whenever another creature you control attacks, it gains trample and indestructible until end of turn.",4,
+マナ加速できるカード,,ramp,1,Cavern of Souls,魂の洞窟,Land,"魂の洞窟が戦場に出るに際し、クリーチャー・タイプ１つを選ぶ。
+{T}：{C}を加える。
+{T}：好きな色１色のマナ１点を加える。このマナは、その選ばれたタイプのクリーチャー・呪文を唱えるためにしか支払えず、その呪文は打ち消されない。","As this land enters, choose a creature type.
+{T}: Add {C}.
+{T}: Add one mana of any color. Spend this mana only to cast a creature spell of the chosen type, and that spell can't be countered.",0,
+マナ加速できるカード,,ramp,2,Caged Sun,かごの中の太陽,Artifact,"かごの中の太陽が戦場に出るに際し、色１色を選ぶ。
+あなたがコントロールしていてその選ばれた色であるすべてのクリーチャーは＋１/＋１の修整を受ける。
+土地の能力によりあなたがその選ばれた色の１点以上のマナを加えるたび、追加でその色のマナ１点を加える。","As this artifact enters, choose a color.
+Creatures you control of the chosen color get +1/+1.
+Whenever a land's ability causes you to add one or more mana of the chosen color, add an additional one mana of that color.",2,
+マナ加速できるカード,,ramp,3,Plaza of Heroes,英雄の公有地,Land,"{T}：{C}を加える。
+{T}：好きな色１色のマナ１点を加える。このマナは、伝説の呪文を唱えるためにしか支払えない。
+{T}：あなたがコントロールしている伝説のパーマネントの中の色１色のマナ１点を加える。
+{3},{T},英雄の公有地を追放する：伝説のクリーチャー１体を対象とする。ターン終了時まで、それは呪禁と破壊不能を得る。","{T}: Add {C}.
+{T}: Add one mana of any color. Spend this mana only to cast a legendary spell.
+{T}: Add one mana of any color among legendary permanents you control.
+{3}, {T}, Exile this land: Target legendary creature gains hexproof and indestructible until end of turn.",0,
+マナ加速できるカード,,ramp,4,Vivi Ornitier,迷える黒魔道士、ビビ,Legendary Creature — Wizard,"{0}：{U}や{R}合わせてＸ点のマナを加える。Ｘは、迷える黒魔道士、ビビのパワーに等しい。あなたのターンの間にのみ、毎ターン１回しか起動できない。
+あなたがクリーチャーでない呪文１つを唱えるたび、迷える黒魔道士、ビビの上に＋１/＋１カウンター１個を置き、これは各対戦相手にそれぞれ１点のダメージを与える。","{0}: Add X mana in any combination of {U} and/or {R}, where X is Vivi Ornitier's power. Activate only during your turn and only once each turn.
+Whenever you cast a noncreature spell, put a +1/+1 counter on Vivi Ornitier and it deals 1 damage to each opponent.",3,
+マナ加速できるカード,,ramp,5,Manamorphose,魔力変,Instant,"望む色の組み合わせのマナ２点を加える。
+カードを１枚引く。","Add two mana in any combination of colors.
+Draw a card.",0,
+マナ加速できるカード,,ramp,6,"Nykthos, Shrine to Nyx",ニクスの祭殿、ニクソス,Legendary Land,"{T}：あなたのマナ・プールに{1}を加える。
+{2}, {T}：色を１つ選ぶ。あなたのマナ・プールに、あなたのその色への信心に等しい点数の、その色のマナを加える。（あなたの色への信心は、あなたがコントロールするパーマネントのマナ・コスト内に含まれるその色のマナ・シンボルの数である。）","{T}: Add {C}.
+{2}, {T}: Choose a color. Add an amount of mana of that color equal to your devotion to that color. (Your devotion to a color is the number of mana symbols of that color in the mana costs of permanents you control.)",1,
+マナ加速できるカード,,ramp,7,Mana Prism,マナ・プリズム,Artifact,,"{T}: Add {C}.
+{1}, {T}: Add one mana of any color.",4,
+マナ加速できるカード,,ramp,8,Crumbling Vestige,崩壊する痕跡,Land,"崩壊する痕跡はタップ状態で戦場に出る。
+崩壊する痕跡が戦場に出たとき、あなたのマナ・プールに、好きな色１色のマナ１点を加える。
+{T}：あなたのマナ・プールに{C}を加える。（{C}は無色マナを表す。）","This land enters tapped.
+When this land enters, add one mana of any color.
+{T}: Add {C}. ({C} represents colorless mana.)",0,
+マナ加速できるカード,,ramp,9,Mana Geode,マナ晶洞石,Artifact,"マナ晶洞石が戦場に出たとき、占術１を行う。
+{T}：好きな色１色のマナ１点を加える。","When this artifact enters, scry 1.
+{T}: Add one mana of any color.",5,
+マナ加速できるカード,,ramp,10,Sunken Citadel,沈んだ城塞,Land — Cave,"沈んだ城塞はタップ状態で戦場に出る。これが戦場に出るに際し、色１色を選ぶ。
+{T}：その選ばれた色のマナ１点を加える。
+{T}：その選ばれた色のマナ２点を加える。このマナは、土地である発生源の能力を起動するためにしか支払えない。","This land enters tapped. As it enters, choose a color.
+{T}: Add one mana of the chosen color.
+{T}: Add two mana of the chosen color. Spend this mana only to activate abilities of land sources.",6,
+パイオニアのマナ加速,pioneer,ramp,1,Cavern of Souls,魂の洞窟,Land,"魂の洞窟が戦場に出るに際し、クリーチャー・タイプ１つを選ぶ。
+{T}：{C}を加える。
+{T}：好きな色１色のマナ１点を加える。このマナは、その選ばれたタイプのクリーチャー・呪文を唱えるためにしか支払えず、その呪文は打ち消されない。","As this land enters, choose a creature type.
+{T}: Add {C}.
+{T}: Add one mana of any color. Spend this mana only to cast a creature spell of the chosen type, and that spell can't be countered.",0,
+パイオニアのマナ加速,pioneer,ramp,2,Plaza of Heroes,英雄の公有地,Land,"{T}：{C}を加える。
+{T}：好きな色１色のマナ１点を加える。このマナは、伝説の呪文を唱えるためにしか支払えない。
+{T}：あなたがコントロールしている伝説のパーマネントの中の色１色のマナ１点を加える。
+{3},{T},英雄の公有地を追放する：伝説のクリーチャー１体を対象とする。ターン終了時まで、それは呪禁と破壊不能を得る。","{T}: Add {C}.
+{T}: Add one mana of any color. Spend this mana only to cast a legendary spell.
+{T}: Add one mana of any color among legendary permanents you control.
+{3}, {T}, Exile this land: Target legendary creature gains hexproof and indestructible until end of turn.",0,
+パイオニアのマナ加速,pioneer,ramp,3,Pyramid of the Pantheon,神々のピラミッド,Artifact,"{2}, {T}：あなたのマナ・プールに、好きな色１色のマナ１点を加える。神々のピラミッドの上に石材カウンターを１個置く。
+{T}：あなたのマナ・プールに、好きな色１色のマナ３点を加える。この能力は、神々のピラミッドの上に石材カウンターが３個以上置かれているときにのみ起動できる。","{2}, {T}: Add one mana of any color. Put a brick counter on this artifact.
+{T}: Add three mana of any one color. Activate only if there are three or more brick counters on this artifact.",5,
+パイオニアのマナ加速,pioneer,ramp,4,Astral Cornucopia,霊体のヤギ角,Artifact,"霊体のヤギ角は、蓄積カウンターＸ個が置かれた状態で戦場に出る。
+{T}：色１色を選ぶ。霊体のヤギ角の上に置かれた蓄積カウンター１個につき１点のその色のマナを加える。","This artifact enters with X charge counters on it.
+{T}: Choose a color. Add one mana of that color for each charge counter on this artifact.",1,
+パイオニアのマナ加速,pioneer,ramp,5,Ilysian Caryatid,イリーシアの女像樹,Creature — Plant,{T}：好きな色１色のマナ１点を加える。あなたがパワーが４以上であるクリーチャーをコントロールしているなら、代わりに好きな色１色のマナ２点を加える。,"{T}: Add one mana of any color. If you control a creature with power 4 or greater, add two mana of any one color instead.",6,
+パイオニアのマナ加速,pioneer,ramp,6,Chromatic Lantern,彩色の灯籠,Artifact,"あなたがコントロールしているすべての土地は「{T}：好きな色１色のマナ１点を加える。」を持つ。
+{T}：好きな色１色のマナ１点を加える。","Lands you control have ""{T}: Add one mana of any color.""
+{T}: Add one mana of any color.",4,
+パイオニアのマナ加速,pioneer,ramp,7,Storm the Vault // Vault of Catlacan,,Legendary Enchantment // Legendary Land,"あなたがコントロールしているクリーチャー１体以上がプレイヤー１人に戦闘ダメージを与えるたび、「{T}, このアーティファクトを生け贄に捧げる：あなたのマナ・プールに好きな色１色のマナ１点を加える。」を持つ無色の宝物・アーティファクト・トークンを１つ生成する。
+あなたの終了ステップの開始時に、あなたがアーティファクトを５つ以上コントロールしている場合、宝物庫襲撃を変身させる。 // （宝物庫襲撃から変身する。）
+{T}：あなたのマナ・プールに好きな色１色のマナ１点を加える。
+{T}：あなたのマナ・プールに、あなたがコントロールしているアーティファクト１つにつき{U}を加える。","Whenever one or more creatures you control deal combat damage to a player, create a Treasure token. (It's an artifact with ""{T}, Sacrifice this token: Add one mana of any color."")
+At the beginning of your end step, if you control five or more artifacts, transform Storm the Vault. // (Transforms from Storm the Vault.)
+{T}: Add one mana of any color.
+{T}: Add {U} for each artifact you control.",3,
+パイオニアのマナ加速,pioneer,ramp,8,Hall of Tagsin,タグシンの広間,Land,"{T}：{C}を加える。
+{1}, {T}：好きな色１色のマナ１点を加える。
+{4}, {T}：パワーストーン・トークン１つをタップ状態で生成する。","{T}: Add {C}.
+{1}, {T}: Add one mana of any color.
+{4}, {T}: Create a tapped Powerstone token. (It's an artifact with ""{T}: Add {C}. This mana can't be spent to cast a nonartifact spell."")",7,
+パイオニアのマナ加速,pioneer,ramp,9,Guildmages' Forum,ギルド魔道士の広場,Land,"{T}：{C}を加える。
+{1}, {T}：好きな色１色のマナ１点を加える。このマナが多色のクリーチャー・呪文のために使われたなら、そのクリーチャーは＋１/＋１カウンターが追加で１個置かれた状態で戦場に出る。","{T}: Add {C}.
+{1}, {T}: Add one mana of any color. If that mana is spent on a multicolored creature spell, that creature enters with an additional +1/+1 counter on it.",0,
+パイオニアのマナ加速,pioneer,ramp,10,Vivi Ornitier,迷える黒魔道士、ビビ,Legendary Creature — Wizard,"{0}：{U}や{R}合わせてＸ点のマナを加える。Ｘは、迷える黒魔道士、ビビのパワーに等しい。あなたのターンの間にのみ、毎ターン１回しか起動できない。
+あなたがクリーチャーでない呪文１つを唱えるたび、迷える黒魔道士、ビビの上に＋１/＋１カウンター１個を置き、これは各対戦相手にそれぞれ１点のダメージを与える。","{0}: Add X mana in any combination of {U} and/or {R}, where X is Vivi Ornitier's power. Activate only during your turn and only once each turn.
+Whenever you cast a noncreature spell, put a +1/+1 counter on Vivi Ornitier and it deals 1 damage to each opponent.",2,
+土地をサーチするカード,,ramp,1,Herd Migration,群れの渡り,Sorcery,"版図 — あなたがコントロールしている土地の中の基本土地タイプ１種類につき１体の、緑の３/３のビースト・クリーチャー・トークンを生成する。
+{1}{G},群れの渡りを捨てる：あなたのライブラリーから基本土地・カード１枚を探し、公開し、あなたの手札に加える。その後、ライブラリーを切り直す。あなたは３点のライフを得る。","Domain — Create a 3/3 green Beast creature token for each basic land type among lands you control.
+{1}{G}, Discard this card: Search your library for a basic land card, reveal it, put it into your hand, then shuffle. You gain 3 life.",2,
+土地をサーチするカード,,ramp,2,Sylvan Scrying,森の占術,Sorcery,あなたのライブラリーから土地・カード１枚を探し、公開し、あなたの手札に加える。その後、ライブラリーを切り直す。,"Search your library for a land card, reveal it, put it into your hand, then shuffle.",1,
+土地をサーチするカード,,ramp,3,Explore,探検,Sorcery,"このターン、追加の土地１つをプレイしてもよい。
+カード１枚を引く。","You may play an additional land this turn.
+Draw a card.",5,
+土地をサーチするカード,,ramp,4,Lay of the Land,地勢,Sorcery,あなたのライブラリーから基本土地・カード１枚を探し、それを公開してあなたの手札に加え、その後あなたのライブラリーを切り直す。,"Search your library for a basic land card, reveal it, put it into your hand, then shuffle.",3,
+土地をサーチするカード,,ramp,5,Seek the Horizon,地平の探求,Sorcery,あなたのライブラリーから基本土地・カード最大３枚を探し、それらを公開し、あなたの手札に加える。その後あなたのライブラリーを切り直す。,"Search your library for up to three basic land cards, reveal them, put them into your hand, then shuffle.",8,
+土地をサーチするカード,,ramp,6,Cartographer's Survey,地図作りの調査,Sorcery,あなたのライブラリーの一番上にあるカード７枚を見る。その中から土地・カード最大２枚をタップ状態で戦場に出す。残りをあなたのライブラリーの一番下に無作為の順番で置く。,Look at the top seven cards of your library. Put up to two land cards from among them onto the battlefield tapped. Put the rest on the bottom of your library in a random order.,7,
+土地をサーチするカード,,ramp,7,Slimefoot's Survey,スライムフットの調査,Sorcery,版図 ― あなたのライブラリーから基本土地タイプを持つ土地・カード最大２枚を探し、タップ状態で戦場に出す。その後、あなたのライブラリーを切り直す。あなたのライブラリーの一番上にあるカードＸ枚を見る。Ｘはあなたがコントロールしている土地の中の基本土地タイプの種類数に等しい。そのうち最大１枚をあなたのライブラリーの一番上に、残りをあなたのライブラリーの一番下に無作為の順番で置く。,"Domain — Search your library for up to two land cards that each have a basic land type, put them onto the battlefield tapped, then shuffle. Look at the top X cards of your library, where X is the number of basic land types among lands you control. Put up to one of them on top of your library and the rest on the bottom of your library in a random order.",6,
+土地をサーチするカード,,ramp,8,Boundless Realms,境界なき領土,Sorcery,あなたのライブラリーから基本土地カードを最大Ｘ枚まで探し、それらをタップ状態で戦場に出す。Xはあなたがコントロールする土地の総数に等しい。その後あなたのライブラリーを切り直す。,"Search your library for up to X basic land cards, where X is the number of lands you control, put them onto the battlefield tapped, then shuffle.",9,
+土地をサーチするカード,,ramp,9,Environmental Sciences,環境科学,Sorcery — Lesson,あなたのライブラリーから基本土地・カード１枚を探し、公開し、あなたの手札に加える。その後、ライブラリーを切り直す。あなたは２点のライフを得る。,"Search your library for a basic land card, reveal it, put it into your hand, then shuffle. You gain 2 life.",10,
+土地をサーチするカード,,ramp,10,Reshape the Earth,大地の作り直し,Sorcery,あなたのライブラリーから土地・カード最大10枚を探し、タップ状態で戦場に出す。その後、あなたのライブラリーを切り直す。,"Search your library for up to ten land cards, put them onto the battlefield tapped, then shuffle.",4,
+1マナのマナクリーチャー,,ramp,1,Badgermole Cub,アナグマモグラの仔,Creature — Badger Mole,"このクリーチャーが戦場に出たとき、土の技１を行う。（あなたがコントロールしている土地１つを対象とする。それは速攻を持つ０/０のクリーチャーになり、土地でもある。それの上に＋１/＋１カウンター１個を置く。それが死亡したか追放されたとき、それをタップ状態で戦場に戻す。）
+あなたがマナを引き出す目的でクリーチャー１体をタップするたび、追加で{G}を加える。","When this creature enters, earthbend 1. (Target land you control becomes a 0/0 creature with haste that's still a land. Put a +1/+1 counter on it. When it dies or is exiled, return it to the battlefield tapped.)
+Whenever you tap a creature for mana, add an additional {G}.",0,
+1マナのマナクリーチャー,,ramp,2,"Elspeth, Storm Slayer",嵐の討伐者、エルズペス,Legendary Planeswalker — Elspeth,"あなたのコントロール下で１つ以上のトークンを生成するなら、代わりにその２倍の数のそのトークンを生成する。
++1：白の１/１の兵士・クリーチャー・トークン１体を生成する。
+0：あなたがコントロールしている各クリーチャーの上にそれぞれ＋１/＋１カウンター１個を置く。次のあなたのターンまで、それらのクリーチャーは飛行を得る。
+-3：対戦相手がコントロールしていてマナ総量が３以上であるクリーチャー１体を対象とする。それを破壊する。","If one or more tokens would be created under your control, twice that many of those tokens are created instead.
++1: Create a 1/1 white Soldier creature token.
+0: Put a +1/+1 counter on each creature you control. Those creatures gain flying until your next turn.
+−3: Destroy target creature an opponent controls with mana value 3 or greater.",0,
+1マナのマナクリーチャー,,ramp,3,Baral and Kari Zev,バラルとカーリ・ゼヴ,Legendary Creature — Human,"先制攻撃、威迫
+あなたが各ターン内で初めてインスタントやソーサリーである呪文を唱えるたび、それと共通のカード・タイプを持ちマナ総量がそれより小さい呪文１つを、あなたの手札からマナ・コストを支払うことなく唱えてもよい。そうしないなら、「航海士ラガバン」という名前で赤の２/１の伝説の猿・海賊・クリーチャー・トークン１体を生成する。ターン終了時まで、それは速攻を得る。","First strike, menace
+Whenever you cast your first instant or sorcery spell each turn, you may cast a spell with lesser mana value that shares a card type with it from your hand without paying its mana cost. If you don't, create First Mate Ragavan, a legendary 2/1 red Monkey Pirate creature token. It gains haste until end of turn.",0,
+1マナのマナクリーチャー,,ramp,4,Mana-Charged Dragon,マナ蓄積のドラゴン,Creature — Dragon,"飛行、トランプル
+同調 ― マナ蓄積のドラゴンが攻撃かブロックするたび、あなたから始めて、各プレイヤーは好きな点数のマナを支払ってもよい。 マナ蓄積のドラゴンはターン終了時まで＋Ｘ/＋０の修整を受ける。Ｘはこれにより支払われたマナの点数の合計に等しい。","Flying, trample
+Join forces — Whenever this creature attacks or blocks, each player starting with you may pay any amount of mana. This creature gets +X/+0 until end of turn, where X is the total amount of mana paid this way.",0,
+1マナのマナクリーチャー,,ramp,5,Unforgiving One,慈悲無き者,Creature — Spirit,"威迫（このクリーチャーは２体以上のクリーチャーにしかブロックされない。）
+慈悲無き者が攻撃するたび、あなたの墓地にありマナ総量がＸ以下であるクリーチャー・カード１枚を対象とする。それを戦場に戻す。Xはあなたがコントロールしていて改善されているクリーチャーの数に等しい。（装備品やあなたがコントロールしているオーラがついているかカウンターが置かれているクリーチャーは改善されている。）","Menace (This creature can't be blocked except by two or more creatures.)
+Whenever this creature attacks, return target creature card with mana value X or less from your graveyard to the battlefield, where X is the number of modified creatures you control. (Equipment, Auras you control, and counters are modifications.)",0,
+1マナのマナクリーチャー,,ramp,6,Channeler Initiate,媒介者の修練者,Creature — Human Druid,"このクリーチャーが戦場に出たとき、あなたがコントロールしているクリーチャー１体を対象とする。それの上に－１/－１カウンター３個を置く。
+{T}, このクリーチャーの上から－１/－１カウンター１個を取り除く：好きな色１色のマナ１点を加える。","When this creature enters, put three -1/-1 counters on target creature you control.
+{T}, Remove a -1/-1 counter from this creature: Add one mana of any color.",0,
+1マナのマナクリーチャー,,ramp,7,Crystalline Crawler,水晶の這行器,Artifact Creature — Construct,"収斂 ― 水晶の這行器は、これを唱えるために支払われたマナの色１色につき＋１/＋１カウンターが１個置かれた状態で戦場に出る。
+水晶の這行器の上から＋１/＋１カウンターを１個取り除く：あなたのマナ・プールに好きな色１色のマナ１点を加える。
+{T}：水晶の這行器の上に＋１/＋１カウンターを１個置く。","Converge — This creature enters with a +1/+1 counter on it for each color of mana spent to cast it.
+Remove a +1/+1 counter from this creature: Add one mana of any color.
+{T}: Put a +1/+1 counter on this creature.",0,
+1マナのマナクリーチャー,,ramp,8,Suncrusher,太陽を破壊するもの,Artifact Creature — Construct,"烈日 （これのコストのために支払われたマナの色１色につき１個の+1/+1カウンターが置かれた状態で場に出る。）
+{4}, {T}, 太陽を破壊するものの上から+1/+1カウンターを１個取り除く：クリーチャー１体を対象とし、それを破壊する。
+{2}, 太陽を破壊するものの上から+1/+1カウンターを１個取り除く：太陽を破壊するものをオーナーの手札に戻す。","Sunburst (This creature enters with a +1/+1 counter on it for each color of mana spent to cast it.)
+{4}, {T}, Remove a +1/+1 counter from this creature: Destroy target creature.
+{2}, Remove a +1/+1 counter from this creature: Return this creature to its owner's hand.",0,
+1マナのマナクリーチャー,,ramp,9,Mana Skimmer,マナを間引くもの,Creature — Leech,"飛行
+マナを間引くものがいずれかのプレイヤーにダメージを与えるたび、そのプレイヤーがコントロールする土地１つを対象とし、それをタップする。 その土地は、それのコントローラーの次のアンタップ・ステップにアンタップしない。","Flying
+Whenever this creature deals damage to a player, tap target land that player controls. That land doesn't untap during its controller's next untap step.",0,
+1マナのマナクリーチャー,,ramp,10,Manaweft Sliver,マナ編みスリヴァー,Creature — Sliver,あなたがコントロールしているすべてのスリヴァー・クリーチャーは「{T}：好きな色１色のマナ１点を加える。」を持つ。,"Sliver creatures you control have ""{T}: Add one mana of any color.""",0,
+環境で強いクリーチャー,,abstract,1,Righteous Valkyrie,正義の戦乙女,Creature — Angel Cleric,"飛行
+あなたがコントロールしていて天使やクレリックでありこれでない１体が戦場に出るたび、そのクリーチャーのタフネスに等しい点数のライフを得る。
+あなたのライフ総量が初期ライフ総量より７点以上多いかぎり、あなたがコントロールしているすべてのクリーチャーは＋２/＋２の修整を受ける。","Flying
+Whenever another Angel or Cleric you control enters, you gain life equal to that creature's toughness.
+As long as you have at least 7 life more than your starting life total, creatures you control get +2/+2.",1,
+環境で強いクリーチャー,,abstract,2,Charge,突撃,Instant,ターン終了時まで、あなたがコントロールしているクリーチャーは＋１/＋１の修整を受ける。,Creatures you control get +1/+1 until end of turn.,0,
+環境で強いクリーチャー,,abstract,3,Charismatic Vanguard,カリスマ溢れる先兵,Creature — Dwarf Soldier,{4}{W}：ターン終了時まで、あなたがコントロールしているすべてのクリーチャーは＋１/＋１の修整を受ける。,{4}{W}: Creatures you control get +1/+1 until end of turn.,3,
+環境で強いクリーチャー,,abstract,4,Virtuous Charge,高徳の突撃,Sorcery,あなたがコントロールするクリーチャーは、ターン終了時まで+1/+1の修整を受ける。,Creatures you control get +1/+1 until end of turn.,0,
+環境で強いクリーチャー,,abstract,5,Hold the Gates,門の維持,Enchantment,あなたがコントロールするクリーチャーは、あなたがコントロールする門１つにつき＋０/＋１の修整を受けるとともに警戒を持つ。,Creatures you control get +0/+1 for each Gate you control and have vigilance.,0,
+環境で強いクリーチャー,,abstract,6,Chromanticore,彩色マンティコア,Enchantment Creature — Manticore,"授与{2}{W}{U}{B}{R}{G}（このカードを授与コストで唱えた場合、これはエンチャント（クリーチャー）を持つオーラ・呪文である。クリーチャーについていないなら、これは再びクリーチャーになる。）
+飛行、先制攻撃、警戒、トランプル、絆魂
+エンチャントしているクリーチャーは＋４/＋４の修整を受け、飛行と先制攻撃と警戒とトランプルと絆魂を持つ。","Bestow {2}{W}{U}{B}{R}{G} (If you cast this card for its bestow cost, it's an Aura spell with enchant creature. It becomes a creature again if it's not attached.)
+Flying, first strike, vigilance, trample, lifelink
+Enchanted creature gets +4/+4 and has flying, first strike, vigilance, trample, and lifelink.",2,
+環境で強いクリーチャー,,abstract,7,Gift of Strength,活力の贈り物,Instant,クリーチャー１体を対象とする。ターン終了時まで、それは＋３/＋３の修整を受け到達を得る。,Target creature gets +3/+3 and gains reach until end of turn.,0,
+環境で強いクリーチャー,,abstract,8,Righteous Charge,正義の突撃,Sorcery,あなたがコントロールするクリーチャーは、ターン終了時まで＋２/＋２の修整を受ける。,Creatures you control get +2/+2 until end of turn.,0,
+環境で強いクリーチャー,,abstract,9,Inspired Charge,鼓舞する突撃,Instant,ターン終了時まで、あなたがコントロールしているすべてのクリーチャーは＋２/＋１の修整を受ける。,Creatures you control get +2/+1 until end of turn.,0,
+環境で強いクリーチャー,,abstract,10,Glorious Charge,栄光の突撃,Instant,あなたがコントロールするクリーチャーは、ターン終了時まで＋１/＋１の修整を受ける。,Creatures you control get +1/+1 until end of turn.,0,
+コンボに使えるカード,,abstract,1,Chord of Calling,召喚の調べ,Instant,"召集
+あなたのライブラリーから、マナ総量がＸ以下であるクリーチャー・カード１枚を探し、戦場に出す。その後、ライブラリーを切り直す。","Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)
+Search your library for a creature card with mana value X or less, put it onto the battlefield, then shuffle.",1,
+コンボに使えるカード,,abstract,2,Prismari Command,プリズマリの命令,Instant,"以下から２つを選ぶ。
+・１つを対象とする。プリズマリの命令はそれに２点のダメージを与える。
+・プレイヤー１人を対象とする。そのプレイヤーはカード２枚を引き、その後カード２枚を捨てる。
+・プレイヤー１人を対象とする。そのプレイヤーは宝物・トークン１つを生成する。
+・アーティファクト１つを対象とする。それを破壊する。","Choose two —
+• Prismari Command deals 2 damage to any target.
+• Target player draws two cards, then discards two cards.
+• Target player creates a Treasure token.
+• Destroy target artifact.",2,
+コンボに使えるカード,,abstract,3,Springheart Nantuko,春心のナントゥーコ,Enchantment Creature — Insect Monk,"授与 {1}{G}
+エンチャントしているクリーチャーは＋１/＋１の修整を受ける。
+上陸 ― 土地１つがあなたのコントロール下で戦場に出るたび、春心のナントゥーコがあなたがコントロールしているクリーチャーについているなら、{1}{G}を支払ってもよい。そうしたなら、そのクリーチャーのコピーであるトークン１つを生成する。これによりトークンを生成しなかったなら、緑の１/１の昆虫・クリーチャー・トークン１体を生成する。","Bestow {1}{G}
+Enchanted creature gets +1/+1.
+Landfall — Whenever a land you control enters, you may pay {1}{G} if this permanent is attached to a creature you control. If you do, create a token that's a copy of that creature. If you didn't create a token this way, create a 1/1 green Insect creature token.",3,
+コンボに使えるカード,,abstract,4,Charming Scoundrel,魅力的な悪漢,Creature — Human Rogue,"速攻
+魅力的な悪漢が戦場に出たとき、以下から１つを選ぶ。
+• カード１枚を捨てる。その後、カード１枚を引く。
+・宝物・トークン１つを生成する。
+・あなたがコントロールしているクリーチャー１体を対象とする。ひねくれ者・役割・トークン１つをそれについた状態で生成する。","Haste
+When this creature enters, choose one —
+• Discard a card, then draw a card.
+• Create a Treasure token.
+• Create a Wicked Role token attached to target creature you control.",4,
+コンボに使えるカード,,abstract,5,Confounding Riddle,困惑の謎掛け,Instant,"以下から１つを選ぶ。
+・あなたのライブラリーの一番上にあるカード４枚を見る。そのうち１枚をあなたの手札に、残りをあなたの墓地に置く。
+・呪文１つを対象とする。それのコントローラーが{4}を支払わないかぎり、それを打ち消す。","Choose one —
+• Look at the top four cards of your library. Put one of them into your hand and the rest into your graveyard.
+• Counter target spell unless its controller pays {4}.",6,
+コンボに使えるカード,,abstract,6,Atarka's Command,アタルカの命令,Instant,"以下から２つを選ぶ。
+・このターン、あなたの対戦相手はライフを得られない。
+・アタルカの命令は各対戦相手にそれぞれ３点のダメージを与える。
+・あなたは、あなたの手札にある土地・カード１枚を戦場に出してもよい。
+・ターン終了時まで、あなたがコントロールしているすべてのクリーチャーは＋１/＋１の修整を受け到達を得る。","Choose two —
+• Your opponents can't gain life this turn.
+• Atarka's Command deals 3 damage to each opponent.
+• You may put a land card from your hand onto the battlefield.
+• Creatures you control get +1/+1 and gain reach until end of turn.",7,
+コンボに使えるカード,,abstract,7,Sublime Epiphany,崇高な天啓,Instant,"以下から１つ以上を選ぶ。
+・呪文１つを対象とする。それを打ち消す。
+・起動型か誘発型である能力１つを対象とする。それを打ち消す。
+・土地でないパーマネント１つを対象とする。それをオーナーの手札に戻す。
+・あなたがコントロールしているクリーチャー１体を対象とする。それのコピーであるトークン１体を生成する。
+・プレイヤー１人を対象とする。そのプレイヤーはカード１枚を引く。","Choose one or more —
+• Counter target spell.
+• Counter target activated or triggered ability.
+• Return target nonland permanent to its owner's hand.
+• Create a token that's a copy of target creature you control.
+• Target player draws a card.",5,
+コンボに使えるカード,,abstract,8,Compass Gnome,コンパスのノーム,Artifact Creature — Gnome,コンパスのノームが戦場に出たとき、「あなたのライブラリーから基本土地・カードや洞窟・カードである１枚を探し、公開する。その後、ライブラリーを切り直し、そのカードを一番上に置く。」を選んでもよい。,"When this creature enters, you may search your library for a basic land card or Cave card, reveal it, then shuffle and put that card on top.",8,
+コンボに使えるカード,,abstract,9,Obscura Confluence,常夜会一家の合流点,Instant,"以下から３つを選ぶ。同じモードを２回以上選んでもよい。
+・クリーチャー１体を対象とする。ターン終了時まで、それはすべての能力を失い基本のパワーとタフネスが１/１になる。
+・クリーチャー１体を対象とする。それは謀議する。
+・プレイヤー１人を対象とする。そのプレイヤーは自分の墓地にあるクリーチャー・カード１枚を自分の手札に戻す。","Choose three. You may choose the same mode more than once.
+• Until end of turn, target creature loses all abilities and has base power and toughness 1/1.
+• Target creature connives. (Draw a card, then discard a card. If you discarded a nonland card, put a +1/+1 counter on that creature.)
+• Target player returns a creature card from their graveyard to their hand.",9,
+コンボに使えるカード,,abstract,10,Wretched Confluence,不憫の合流点,Instant,"以下から３つを選ぶ。同じモードを２回以上選んでもよい。
+・プレイヤー１人を対象とするｓ。そのプレイヤーはカード１枚を引き１点のライフを失う。
+・クリーチャー１体を対象とする。ターン終了時まで、それは－２/－２の修整を受ける。
+・あなたの墓地にあるクリーチャー・カード１枚を対象とする。それをあなたの手札に戻す。","Choose three. You may choose the same mode more than once.
+• Target player draws a card and loses 1 life.
+• Target creature gets -2/-2 until end of turn.
+• Return target creature card from your graveyard to your hand.",10,
+純粋に強いカード,,abstract,1,"Yawgmoth, Thran Physician",スランの医師、ヨーグモス,Legendary Creature — Human Cleric,"プロテクション（人間）
+１点のライフを支払う, これでないクリーチャー１体を生け贄に捧げる：クリーチャー最大１体を対象とする。それの上に－１/－１カウンター１個を置き、あなたはカード１枚を引く。
+{B}{B}, カード１枚を捨てる：増殖を行う。","Protection from Humans
+Pay 1 life, Sacrifice another creature: Put a -1/-1 counter on up to one target creature and draw a card.
+{B}{B}, Discard a card: Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",,
+純粋に強いカード,,abstract,2,Honest Rutstein,正直者のラトスタイン,Legendary Creature — Human Warlock,"正直者のラトスタインが戦場に出たとき、あなたの墓地にあるクリーチャー・カード１枚を対象とする。それをあなたの手札に戻す。
+あなたがクリーチャー・呪文を唱えるためのコストは{1}少なくなる。","When Honest Rutstein enters, return target creature card from your graveyard to your hand.
+Creature spells you cast cost {1} less to cast.",,
+純粋に強いカード,,abstract,3,"Hakoda, Selfless Commander",無私なる指揮官、ハコダ,Legendary Creature — Human Warrior Ally,"警戒
+あなたはあなたのライブラリーの一番上にあるカード１枚をいつ見てもよい。
+あなたはあなたのライブラリーの一番上にある同盟者・呪文を唱えてもよい。
+これを生け贄に捧げる：ターン終了時まで、あなたがコントロールしているすべてのクリーチャーは＋０/＋５の修整を受け破壊不能を得る。","Vigilance
+You may look at the top card of your library any time.
+You may cast Ally spells from the top of your library.
+Sacrifice Hakoda: Creatures you control get +0/+5 and gain indestructible until end of turn.",,
+純粋に強いカード,,abstract,4,"Masumaro, First to Live",初めて生きたもの、増麻呂,Legendary Creature — Spirit,初めて生きたもの、増麻呂のパワーとタフネスは、それぞれあなたの手札のカードの枚数の２倍に等しい。,Masumaro's power and toughness are each equal to twice the number of cards in your hand.,,
+純粋に強いカード,,abstract,5,Fight On!,更に闘う者達,Instant,あなたの墓地にあるクリーチャー・カード最大２枚を対象とする。それらをあなたの手札に戻す。,Return up to two target creature cards from your graveyard to your hand.,,
+純粋に強いカード,,abstract,6,"Adamaro, First to Desire",初めて欲したもの、仇麻呂,Legendary Creature — Spirit,初めて欲したもの、仇麻呂のパワーとタフネスはそれぞれ、手札のカードの枚数が最も多い対戦相手の手札のカードの枚数に等しい。,Adamaro's power and toughness are each equal to the number of cards in the hand of the opponent with the most cards in hand.,,
+純粋に強いカード,,abstract,7,Elite Guardmage,精鋭護衛魔道士,Creature — Human Wizard,"飛行
+精鋭護衛魔道士が戦場に出たとき、あなたは３点のライフを得て、カードを１枚引く。","Flying
+When this creature enters, you gain 3 life and draw a card.",,
+純粋に強いカード,,abstract,8,"Tishana, Voice of Thunder",轟く声、ティシャーナ,Legendary Creature — Merfolk Shaman,"轟く声、ティシャーナのパワーとタフネスは、それぞれあなたの手札にあるカードの枚数に等しい。
+あなたの手札の上限はなくなる。
+轟く声、ティシャーナが戦場に出たとき、あなたがコントロールしているクリーチャー１体につき１枚のカードを引く。","Tishana's power and toughness are each equal to the number of cards in your hand.
+You have no maximum hand size.
+When Tishana enters, draw a card for each creature you control.",,
+純粋に強いカード,,abstract,9,Fortuitous Find,偶然の発見,Sorcery,"以下から１つまたは両方を選ぶ。
+• あなたの墓地からアーティファクト・カード１枚を対象とし、それをあなたの手札に戻す。
+• あなたの墓地からクリーチャー・カード１枚を対象とし、それをあなたの手札に戻す。","Choose one or both —
+• Return target artifact card from your graveyard to your hand.
+• Return target creature card from your graveyard to your hand.",,
+純粋に強いカード,,abstract,10,Divergent Equation,発散する方程式,Instant,"あなたの墓地にあり、インスタントやソーサリーであるカード最大Ｘ枚を対象とする。それらをあなたの手札に戻す。
+発散する方程式を追放する。","Return up to X target instant and/or sorcery cards from your graveyard to your hand.
+Exile Divergent Equation.",,
+counter target spell,,bilingual,1,Counterspell,対抗呪文,Instant,呪文１つを対象とする。それを打ち消す。,Counter target spell.,,
+counter target spell,,bilingual,2,Thwart,妨害,Instant,,"You may return three Islands you control to their owner's hand rather than pay this spell's mana cost.
+Counter target spell.",,
+counter target spell,,bilingual,3,Intervene,介入,Instant,,Counter target spell that targets a creature.,,
+counter target spell,,bilingual,4,Unravel,解（と）きほぐし,Instant,,"Counter target spell. If the amount of mana spent to cast that spell was less than its mana value, you draw a card.",,
+counter target spell,,bilingual,5,Dispersal Shield,分散の盾,Instant,,Counter target spell if its mana value is less than or equal to the greatest mana value among permanents you control.,,
+counter target spell,,bilingual,6,Artifact Blast,,Instant,,Counter target artifact spell.,,
+counter target spell,,bilingual,7,Power Sink,魔力消沈,Instant,,"Counter target spell unless its controller pays {X}. If that player doesn't, they tap all lands with mana abilities they control and lose all unspent mana.",,
+counter target spell,,bilingual,8,Confound,打破,Instant,,"Counter target spell that targets a creature.
+Draw a card.",,
+counter target spell,,bilingual,9,Thrull Wizard,,Creature — Thrull Wizard,,{1}{B}: Counter target black spell unless that spell's controller pays {B} or {3}.,,
+counter target spell,,bilingual,10,Rethink,再考,Instant,,"Counter target spell unless its controller pays {X}, where X is its mana value.",,
+draw two cards,,bilingual,1,Careful Study,入念な研究,Sorcery,,"Draw two cards, then discard two cards.",,
+draw two cards,,bilingual,2,Truce,休戦,Instant,,"Each player may draw up to two cards. For each card less than two a player draws this way, that player gains 2 life.",,
+draw two cards,,bilingual,3,Words of Wisdom,金言,Instant,,"You draw two cards, then each other player draws a card.",,
+draw two cards,,bilingual,4,Dual-Sun Technique,双（そう）陽（よう）の妙（みょう）技（ぎ）,Instant,,"Target creature you control gains double strike until end of turn. If it has a +1/+1 counter on it, draw a card.",,
+draw two cards,,bilingual,5,Temporary Truce,一時休戦,Sorcery,,"Each player may draw up to two cards. For each card less than two a player draws this way, that player gains 2 life.",,
+draw two cards,,bilingual,6,Divination,予言,Sorcery,カードを２枚引く。,Draw two cards.,,
+draw two cards,,bilingual,7,Catalog,目録,Instant,カードを２枚引き、その後カード１枚を捨てる。,"Draw two cards, then discard a card.",,
+draw two cards,,bilingual,8,Bazaar of Baghdad,,Land,,"{T}: Draw two cards, then discard three cards.",,
+draw two cards,,bilingual,9,Wheel and Deal,権謀術数,Instant,,"Any number of target opponents each discard their hands, then draw seven cards.
+Draw a card.",,
+draw two cards,,bilingual,10,Donatello's Science Lesson,,Instant,,Tap up to two target creatures. Up to two target players each draw a card.,,
+destroy target creature,,bilingual,1,Tragic Trajectory,悲（ひ）劇（げき）の軌（き）跡（せき）,Sorcery,"Target creature gets -2/-2 until end of turn.
+Void - That creature gets -10/-10 until end of turn instead if a nonland permanent left the battlefield this turn or a spell was warped this turn.","Target creature gets -2/-2 until end of turn.
+Void — That creature gets -10/-10 until end of turn instead if a nonland permanent left the battlefield this turn or a spell was warped this turn.",,
+destroy target creature,,bilingual,2,Depressurize,減（げん）圧（あつ）,Instant,,"Target creature gets -3/-0 until end of turn. Then if that creature's power is 0 or less, destroy it.",,
+destroy target creature,,bilingual,3,Waste Away,やつれ,Instant,,"As an additional cost to cast this spell, discard a card.
+Target creature gets -5/-5 until end of turn.",,
+destroy target creature,,bilingual,4,Destructor Dragon,破壊するドラゴン,Creature — Dragon,"飛行
+破壊するドラゴンが死亡したとき、クリーチャーでないパーマネント１つを対象とし、それを破壊する。","Flying
+When this creature dies, destroy target noncreature permanent.",,
+destroy target creature,,bilingual,5,Mogg Cannon,モグの大砲,Artifact,,{T}: Target creature you control gets +1/+0 and gains flying until end of turn. Destroy that creature at the beginning of the next end step.,,
+destroy target creature,,bilingual,6,Goblin Settler,,Creature — Goblin,,"When this creature enters, destroy target land.",,
+destroy target creature,,bilingual,7,Destructive Tampering,破壊的細工,Sorcery,"以下から１つを選ぶ。
+・アーティファクト１つを対象とする。それを破壊する。
+• このターン、飛行を持たないクリーチャーではブロックできない。","Choose one —
+• Destroy target artifact.
+• Creatures without flying can't block this turn.",,
+destroy target creature,,bilingual,8,Dark Endurance,闇（やみ）の苦（く）難（なん）,Instant,,"This spell costs {1} less to cast if it targets a blocking creature.
+Target creature gets +2/+0 and gains indestructible until end of turn. (Damage and effects that say ""destroy"" don't destroy it.)",,
+destroy target creature,,bilingual,9,Goblin Sappers,,Creature — Goblin,,"{R}{R}, {T}: Target creature you control can't be blocked this turn. Destroy it and this creature at end of combat.
+{R}{R}{R}{R}, {T}: Target creature you control can't be blocked this turn. Destroy it at end of combat.",,
+destroy target creature,,bilingual,10,Cabal Torturer,陰謀団の拷問者,Creature — Human Minion,,"{B}, {T}: Target creature gets -1/-1 until end of turn.
+Threshold — {3}{B}{B}, {T}: Target creature gets -2/-2 until end of turn. Activate only if there are seven or more cards in your graveyard.",,
+flying creature,,bilingual,1,Flitterwing Nuisance,閃翼の嫌がらせ屋,Creature — Faerie Rogue,"飛行
+このクリーチャーは－１/－１カウンター１個が置かれた状態で戦場に出る。
+{2U}, このクリーチャーの上からカウンター１個を取り除く：このターン、あなたがコントロールしているクリーチャー１体がプレイヤーやプレインズウォーカーである１つに戦闘ダメージを与えるたび、あなたはカード１枚を引く。","Flying
+This creature enters with a -1/-1 counter on it.
+{2}{U}, Remove a counter from this creature: Whenever a creature you control deals combat damage to a player or planeswalker this turn, draw a card.",,
+flying creature,,bilingual,2,Flailing Drake,殻竿ドレイク,Creature — Drake,,"Flying
+Whenever this creature blocks or becomes blocked by a creature, that creature gets +1/+1 until end of turn.",,
+flying creature,,bilingual,3,Skystinger,空（そら）刺（さ）し,Creature — Insect Warrior,,"Reach
+Whenever this creature blocks a creature with flying, this creature gets +5/+0 until end of turn.",,
+flying creature,,bilingual,4,Station Monitor,基（き）地（ち）の監（かん）視（し）者（しゃ）,Creature — Lizard Artificer,,"Whenever you cast your second spell each turn, create a 1/1 colorless Drone artifact creature token with flying and ""This token can block only creatures with flying.""",,
+flying creature,,bilingual,5,Firefly,ホタル,Creature — Insect,,"Flying
+{R}: This creature gets +1/+0 until end of turn.",,
+flying creature,,bilingual,6,Fire-Omen Crane,,Creature — Bird Spirit,,"Flying (This creature can't be blocked except by creatures with flying or reach.)
+Whenever this creature attacks, it deals 1 damage to target creature an opponent controls.",,
+flying creature,,bilingual,7,Roterothopter,,Artifact Creature — Thopter,,"Flying
+{2}: This creature gets +1/+0 until end of turn. Activate no more than twice each turn.",,
+flying creature,,bilingual,8,First-Time Flyer,初めての飛行者,Creature — Human Pilot Ally,"飛行
+あなたの墓地に講義・カードがあるかぎり、このクリーチャーは＋１/＋１の修整を受ける。","Flying
+This creature gets +1/+1 as long as there's a Lesson card in your graveyard.",,
+flying creature,,bilingual,9,Utrom Monitor,,Artifact Creature — Utrom Scientist,,"Affinity for artifacts (This spell costs {1} less to cast for each artifact you control.)
+Flying (This creature can't be blocked except by creatures with flying or reach.)",,
+flying creature,,bilingual,10,Flying Dolphin-Fish,トビイルカ,Creature — Whale Fish,飛行（このクリーチャーは飛行や到達を持たないクリーチャーにはブロックされない。）,Flying (This creature can't be blocked except by creatures with flying or reach.),,

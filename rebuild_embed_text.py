@@ -33,6 +33,13 @@ from sentence_transformers import SentenceTransformer
 
 from db_config import DB_CONFIG
 
+FURIGANA_RE = re.compile(r'（[ぁ-んァ-ヶー]+）')
+JAPANESE_RE = re.compile(r'[ぁ-んァ-ン一-龯]')
+
+
+def is_japanese(text: str) -> bool:
+    return bool(JAPANESE_RE.search(text))
+
 HF_CACHE   = "/mnt/new_hdd/hf_cache"
 BATCH_SIZE = 64
 
@@ -88,8 +95,11 @@ def build_embed_text(row: dict, prefix: str, cooc_partners: list[str] = []) -> s
     power     = row["power"]
     toughness = row["toughness"]
     loyalty   = row["loyalty"]
-    ja_name   = row["japanese_name"] or ""
-    ja_text   = clean_text(row["japanese_oracle_text"] or "")
+    ja_name_raw = row["japanese_name"] or ""
+    ja_name     = FURIGANA_RE.sub('', ja_name_raw).strip()
+    ja_text_raw = clean_text(row["japanese_oracle_text"] or "")
+    # 英語が誤って入っている場合は空扱い（embedに英語を二重化しない）
+    ja_text     = ja_text_raw if is_japanese(ja_text_raw) else ""
 
     color_words = [COLOR_NAMES.get(c, c) for c in colors if c in COLOR_NAMES]
     main_types  = [t for t in IMPORTANT_TYPES if t in type_line]
@@ -134,11 +144,20 @@ def build_embed_text(row: dict, prefix: str, cooc_partners: list[str] = []) -> s
 
 # ─── Step1: embed_text カラムを更新 ──────────────────────────
 
-def update_embed_text():
+def update_embed_text(set_codes: list[str] | None = None,
+                      card_ids: list[int] | None = None):
     """
     mtg_cards_v2 の embed_text を日英混合 + 共起情報で再構築する。
+    set_codes 指定時はそのセットのみ更新（部分更新用）。
+    card_ids 指定時はその ID のみ更新（部分更新用）。
+    set_codes と card_ids の同時指定は不可。
     embedding は変えないので高速に完了する。
     """
+    if set_codes is not None and card_ids is not None:
+        raise ValueError("--set_codes と --card_ids_file は同時に指定できません")
+    if card_ids is not None and len(card_ids) == 0:
+        print("対象0件（card_ids が空）: 何もせず終了")
+        return
     conn = psycopg2.connect(**DB_CONFIG)
 
     # 共起情報を一括取得（大会データ優先）
@@ -161,17 +180,42 @@ def update_embed_text():
     print(f"共起情報あり: {len(cooc_map)} 件")
 
     with conn.cursor() as cur:
-        cur.execute("""
-            SELECT id, card_name, type_line, oracle_text,
-                   colors, keywords, rarity, power, toughness, loyalty,
-                   japanese_name, japanese_oracle_text
-            FROM mtg_cards_v2
-            ORDER BY id
-        """)
+        if set_codes:
+            cur.execute("""
+                SELECT id, card_name, type_line, oracle_text,
+                       colors, keywords, rarity, power, toughness, loyalty,
+                       japanese_name, japanese_oracle_text
+                FROM mtg_cards_v2
+                WHERE set_code IN %s
+                ORDER BY id
+            """, (tuple(set_codes),))
+        elif card_ids is not None:
+            cur.execute("""
+                SELECT id, card_name, type_line, oracle_text,
+                       colors, keywords, rarity, power, toughness, loyalty,
+                       japanese_name, japanese_oracle_text
+                FROM mtg_cards_v2
+                WHERE id = ANY(%s)
+                ORDER BY id
+            """, (card_ids,))
+        else:
+            cur.execute("""
+                SELECT id, card_name, type_line, oracle_text,
+                       colors, keywords, rarity, power, toughness, loyalty,
+                       japanese_name, japanese_oracle_text
+                FROM mtg_cards_v2
+                ORDER BY id
+            """)
         rows = cur.fetchall()
         cols = [d[0] for d in cur.description]
 
-    print(f"embed_text 更新対象: {len(rows)} 件")
+    if set_codes:
+        scope = f"set_codes={set_codes}"
+    elif card_ids is not None:
+        scope = f"card_ids {len(card_ids)} 件"
+    else:
+        scope = "全件"
+    print(f"embed_text 更新対象: {len(rows)} 件（{scope}）")
     prefix  = "passage: "
     updated = 0
 
@@ -208,11 +252,21 @@ def update_embed_text():
 
 # ─── Step2: embedding 再計算 ─────────────────────────────────
 
-def reembed(model_key: str):
+def reembed(model_key: str, set_codes: list[str] | None = None,
+            card_ids: list[int] | None = None):
     """
-    mtg_embeddings テーブルを TRUNCATE して再計算する。
+    embedding を再計算する。
+    set_codes 指定時は対象セットのみ ON CONFLICT UPDATE（TRUNCATE しない）。
+    card_ids 指定時は対象 ID のみ ON CONFLICT UPDATE（TRUNCATE しない）。
+    全件の場合は TRUNCATE して再計算。
     embed_text は既に更新済みであること。
     """
+    if set_codes is not None and card_ids is not None:
+        raise ValueError("--set_codes と --card_ids は同時に指定できません")
+    if card_ids is not None and len(card_ids) == 0:
+        print("対象0件（card_ids が空）: 何もせず終了（TRUNCATE しない）")
+        return
+
     cfg = MODEL_CONFIGS[model_key]
     table_embed = cfg["table_embed"]
     prefix      = cfg["prefix"]
@@ -222,21 +276,43 @@ def reembed(model_key: str):
 
     conn = psycopg2.connect(**DB_CONFIG)
 
-    # TRUNCATE して再計算
-    with conn.cursor() as cur:
-        cur.execute(f"TRUNCATE TABLE {table_embed};")
-    conn.commit()
-    print(f"{table_embed} を TRUNCATE しました")
+    if set_codes:
+        print(f"部分更新モード: set_codes={set_codes}（TRUNCATE しない）")
+    elif card_ids is not None:
+        print(f"部分更新モード: card_ids {len(card_ids)} 件（TRUNCATE しない）")
+    else:
+        # TRUNCATE して全件再計算
+        with conn.cursor() as cur:
+            cur.execute(f"TRUNCATE TABLE {table_embed};")
+        conn.commit()
+        print(f"{table_embed} を TRUNCATE しました")
 
-    # embed_text を全件取得
+    # embed_text を取得
     with conn.cursor() as cur:
-        cur.execute("""
-            SELECT id, embed_text FROM mtg_cards_v2 ORDER BY id
-        """)
+        if set_codes:
+            cur.execute("""
+                SELECT id, embed_text FROM mtg_cards_v2
+                WHERE set_code IN %s ORDER BY id
+            """, (tuple(set_codes),))
+        elif card_ids is not None:
+            cur.execute("""
+                SELECT id, embed_text FROM mtg_cards_v2
+                WHERE id = ANY(%s) ORDER BY id
+            """, (card_ids,))
+        else:
+            cur.execute("""
+                SELECT id, embed_text FROM mtg_cards_v2 ORDER BY id
+            """)
         rows = cur.fetchall()
 
     total = len(rows)
-    print(f"embedding 対象: {total} 件")
+    if set_codes:
+        scope = f"set_codes={set_codes}"
+    elif card_ids is not None:
+        scope = f"card_ids {len(card_ids)} 件"
+    else:
+        scope = "全件"
+    print(f"embedding 対象: {total} 件（{scope}）")
 
     done = 0
     for i in tqdm(range(0, total, BATCH_SIZE), desc=f"{model_key} embedding"):
@@ -311,15 +387,25 @@ if __name__ == "__main__":
                         help="embedding を再計算する")
     parser.add_argument("--model", choices=["SMALL_V2", "BASE_V2"],
                         default="SMALL_V2")
+    parser.add_argument("--set_codes", type=str, default=None,
+                        help="カンマ区切りで対象セットを限定（例: eoe,eoc,yeoe）")
+    parser.add_argument("--card_ids_file", type=str, default=None,
+                        help="reembed 対象の card_id を1行1件で書いたファイル")
     parser.add_argument("--status", action="store_true",
                         help="状況確認")
     args = parser.parse_args()
 
+    set_codes = [s.strip() for s in args.set_codes.split(",")] if args.set_codes else None
+    card_ids  = None
+    if args.card_ids_file:
+        with open(args.card_ids_file) as f:
+            card_ids = [int(line.strip()) for line in f if line.strip()]
+
     if args.status:
         check_status()
     elif args.update_text:
-        update_embed_text()
+        update_embed_text(set_codes=set_codes, card_ids=card_ids)
     elif args.reembed:
-        reembed(args.model)
+        reembed(args.model, set_codes=set_codes, card_ids=card_ids)
     else:
         parser.print_help()
