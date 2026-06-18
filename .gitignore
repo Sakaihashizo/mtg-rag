@@ -9,11 +9,18 @@ __pycache__/
 !requirements.txt
 *.zip
 
-# AI 引き継ぎ用の内部資料（公開不要・SSH/VM/旧パスワード等の内部情報を含むため push しない）
-docs/ai/
-# 本人用の出力・検証ファイル置き場（公開不要・push しない）
-docs/me/
+# docs/ 配下はすべて非公開（公開不要・push しない）
+#   docs/ai = AI 引き継ぎ用の内部資料（SSH/VM/旧パスワード等の内部情報を含む）
+#   docs/me = 本人用の出力・検証ファイル置き場
+docs/
 # 評価の候補プール（再生成可能な生成物）
 eval_pool_*.csv
+# バックアップ・一時ファイル（マージ作業の中間生成物・再生成可能）
+*.bak
+*.tmp
+*.premerge_bak
+*.rank_backup
+# Wisdom Guild の HTML スクレイプキャッシュ（再取得可能・サイズ大）
+wg_cache/
 # 旧 Chat(Sonnet) 日報。docs/ai に役割を引き継いだため不要・push しない
 Chat_log/

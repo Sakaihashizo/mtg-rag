@@ -1,0 +1,66 @@
+# MTG RAG: PostgreSQL Primary/Standby（pgvector pg18）
+#
+# 既存の .env（db_config.py と共用）の DB_* 変数を参照する。docker compose は
+# 同ディレクトリの .env を自動で読み込む。値の二重管理を避けるため POSTGRES_* は
+# DB_* から流し込む（移設済みデータを bind するので init はスキップされ実質未使用だが整合のため記載）。
+#
+# データ配置:
+#   Primary  -> /mnt/new_hdd/pg_primary_data （/ の逼迫を避けるため new_hdd へ移設）
+#   Standby  -> /mnt/new_hdd/pg_standby_data （pg_basebackup で再同期）
+#   WAL archive -> /mnt/new_hdd/5435wal （Primary の /archive にバインド）
+#
+# 再発防止: replication slot(standby_slot) + archive_mode=on + wal_compression + wal_keep_size。
+# 固定サブネット/IP で「bridge IP 直書き」の脆さを排除（サービス名 primary でも解決可）。
+
+services:
+  primary:
+    image: pgvector/pgvector:pg18
+    container_name: pg18-primary
+    restart: unless-stopped
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - /mnt/new_hdd/pg_primary_data:/var/lib/postgresql
+      - /mnt/new_hdd/5435wal:/archive
+    command:
+      - postgres
+      - -c
+      - archive_mode=on
+      - -c
+      - "archive_command=test ! -f /archive/%f && cp %p /archive/%f"
+      - -c
+      - wal_compression=on
+      - -c
+      - wal_keep_size=512MB
+    networks:
+      pgnet:
+        ipv4_address: 172.30.0.2
+
+  standby:
+    image: pgvector/pgvector:pg18
+    container_name: pg18-standby
+    restart: unless-stopped
+    depends_on:
+      - primary
+    ports:
+      - "5436:5432"
+    volumes:
+      - /mnt/new_hdd/pg_standby_data:/var/lib/postgresql
+    command:
+      - postgres
+      - -c
+      - primary_slot_name=standby_slot
+    networks:
+      pgnet:
+        ipv4_address: 172.30.0.3
+
+networks:
+  pgnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
