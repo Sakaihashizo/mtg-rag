@@ -14,7 +14,8 @@
 
 services:
   primary:
-    image: pgvector/pgvector:pg18
+    build: .
+    image: mtg-pg18-obs:local
     container_name: pg18-primary
     restart: unless-stopped
     ports:
@@ -36,12 +37,35 @@ services:
       - wal_compression=on
       - -c
       - wal_keep_size=512MB
+      # 観測性（pg_stat_statements / auto_explain / pg_store_plans + スロークエリログ）
+      - -c
+      - shared_preload_libraries=pg_stat_statements,auto_explain,pg_store_plans
+      - -c
+      - auto_explain.log_min_duration=500ms
+      - -c
+      - auto_explain.log_analyze=on
+      - -c
+      - auto_explain.log_buffers=on
+      - -c
+      - auto_explain.log_nested_statements=on
+      - -c
+      - auto_explain.log_format=text
+      - -c
+      - log_min_duration_statement=500ms
+      - -c
+      - logging_collector=on
+      - -c
+      - log_directory=log
+      - -c
+      - "log_filename=postgresql-%Y-%m-%d.log"
+      - -c
+      - log_rotation_age=1d
     networks:
       pgnet:
         ipv4_address: 172.30.0.2
 
   standby:
-    image: pgvector/pgvector:pg18
+    image: mtg-pg18-obs:local
     container_name: pg18-standby
     restart: unless-stopped
     depends_on:
@@ -54,6 +78,29 @@ services:
       - postgres
       - -c
       - primary_slot_name=standby_slot
+      # 観測性（Primary と同設定。Standby 側の読み取りクエリも計測/ログ）
+      - -c
+      - shared_preload_libraries=pg_stat_statements,auto_explain,pg_store_plans
+      - -c
+      - auto_explain.log_min_duration=500ms
+      - -c
+      - auto_explain.log_analyze=on
+      - -c
+      - auto_explain.log_buffers=on
+      - -c
+      - auto_explain.log_nested_statements=on
+      - -c
+      - auto_explain.log_format=text
+      - -c
+      - log_min_duration_statement=500ms
+      - -c
+      - logging_collector=on
+      - -c
+      - log_directory=log
+      - -c
+      - "log_filename=postgresql-%Y-%m-%d.log"
+      - -c
+      - log_rotation_age=1d
     networks:
       pgnet:
         ipv4_address: 172.30.0.3

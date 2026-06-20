@@ -1,0 +1,3 @@
+# Dockerfile は COPY/ADD を使わない（pg_store_plans を git clone でビルド）ため
+# ビルドコンテキストは空でよい。リポジトリ全体の送信を避ける。
+*
