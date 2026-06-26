@@ -297,14 +297,16 @@ def attr_filter_sql(cmc_min=None, cmc_max=None,
     値はすべて _safe_int で整数検証済みなので、f 文字列に埋めても SQL インジェクションは
     起きない（型で保証される）。断片に % を含まないため param/no-param どちらの実行でも安全。
 
-    mana_producer=True のときは Scryfall の produced_mana（マナ生成色の配列）が空でない
-    行＝実際にマナを生むカードだけに絞る。意味検索や手書きルールに頼らず、構造化データで
-    「マナを生むか」を厳密判定する（NULL・空配列はどちらも array_length が NULL になり除外）。
+    mana_producer=True のときは is_mana_boost=TRUE の行＝「マナブースト（ランプ）するカード」
+    だけに絞る。is_mana_boost は oracle 解析で「出すマナ − 払うマナ（土地は −1）> 0」を満たすか
+    で事前計算した構造化フラグ（TRUE=ブースト/誘発・儀式・宝物等も含む, FALSE=マナフィルター
+    〔Ceta Disciple 等の払って出す札〕, NULL=非産出）。＝「マナを出すか(produced_mana)」でなく
+    「マナを増やすか(boost)」で絞る。マナフィルターを排除し、マナクリーチャー/マナ加速クエリの
+    精度を上げる。「マナを出す(広い)」が必要になったら produced_mana 直で別フラグを足す。
     """
     frags: list[str] = []
     if mana_producer:
-        frags.append("AND c.produced_mana IS NOT NULL "
-                     "AND array_length(c.produced_mana, 1) > 0")
+        frags.append("AND c.is_mana_boost = TRUE")
     cmn, cmx = _safe_int(cmc_min), _safe_int(cmc_max)
     if cmn is not None or cmx is not None:
         conds = []
@@ -646,6 +648,7 @@ class MTGHybridSearcherV2:
 
     def search_with_hyde(
         self, query: str, hyde_text: str,
+        ja_hyde_text: str = "",
         top_k: int = 10,
         format: Optional[str] = None,
         tournament_boost_override: bool = False,
@@ -660,6 +663,12 @@ class MTGHybridSearcherV2:
         """
         HyDE（Hypothetical Document Embeddings）を使った検索。
         通常の検索結果と HyDE ベクトル検索結果を RRF でマージする。
+
+        ja_hyde_text が与えられた場合は「日本語の理想カードテキスト」も embedding
+        して3本目のランキングとして融合に足す。多言語 embedding なので、英語 HyDE
+        は英語クエリで日本語なしカードに偏りやすい（実測: コーパス0.87% vs プール3%）
+        のを、日本語 HyDE が日英両方を持つカードを公平に拾うことで相殺する狙い。
+        空/不在のときは英語 HyDE のみ＝従来挙動と完全一致（id=11 を再現できる）。
         """
         # 通常の検索結果を取得
         normal_results = self.search(
@@ -684,26 +693,53 @@ class MTGHybridSearcherV2:
         hyde_vec  = self._embed(hyde_text)
         hyde_rows = self._vector_search(hyde_vec, top_k * 2, fmt_sql, type_sql, attr_sql)
 
+        # 日本語 HyDE（任意）: 与えられたときだけ embedding して別ランキングを足す。
+        ja_hyde_rows = None
+        if ja_hyde_text:
+            ja_hyde_vec  = self._embed(ja_hyde_text)
+            ja_hyde_rows = self._vector_search(ja_hyde_vec, top_k * 2,
+                                               fmt_sql, type_sql, attr_sql)
+
+        # HyDE 総重みを保存する: 日本語を足すときは英/日それぞれ 0.5 にし、
+        # 英語のみ(=従来)のときは英語 1.0。これで id=11→id=12 の A/B で変わる変数を
+        # 「HyDE に日本語方向が入ったか」の一点に絞り、HyDE 全体の重み増という交絡を避ける。
+        en_w = 0.5 if ja_hyde_rows is not None else 1.0
+        ja_w = 0.5 if ja_hyde_rows is not None else 0.0
+
         # 通常検索結果を dict に変換
         normal_scores: dict[str, float] = {}
         for i, r in enumerate(normal_results):
             normal_scores[r.card_name] = 1.0 / (self.rrf_k + i + 1)
 
-        # HyDE 検索結果を RRF でマージ
+        # 英語 HyDE 検索結果を RRF でマージ
         hyde_scores: dict[str, float] = {}
         for row in hyde_rows:
             name = row["card_name"]
             r    = int(row["rank"])
-            hyde_scores[name] = 1.0 / (self.rrf_k + r)
+            hyde_scores[name] = en_w * (1.0 / (self.rrf_k + r))
+
+        # 日本語 HyDE 検索結果を RRF でマージ（あれば）
+        ja_hyde_scores: dict[str, float] = {}
+        if ja_hyde_rows is not None:
+            for row in ja_hyde_rows:
+                name = row["card_name"]
+                r    = int(row["rank"])
+                ja_hyde_scores[name] = ja_w * (1.0 / (self.rrf_k + r))
 
         # 統合スコア
-        all_names = set(normal_scores) | set(hyde_scores)
+        all_names = set(normal_scores) | set(hyde_scores) | set(ja_hyde_scores)
         merged = []
         for name in all_names:
-            score = normal_scores.get(name, 0) + hyde_scores.get(name, 0)
+            score = (normal_scores.get(name, 0)
+                     + hyde_scores.get(name, 0)
+                     + ja_hyde_scores.get(name, 0))
             merged.append((name, score))
 
-        merged.sort(key=lambda x: x[1], reverse=True)
+        # 同点を決定的に並べる: スコア降順 → カード名昇順。
+        # set 由来の並びはプロセス間でハッシュ乱択により変わるため、安定ソートだけでは
+        # 同点カードの top_k 境界が非決定になる（normal rank=i と hyde rank=i が同値で衝突）。
+        # 名前タイブレーカーで全順序にして再現性を担保する（FTS 側の c.id 同点処理と同型）。
+        merged.sort(key=lambda x: (-x[1], x[0]))
 
         # 通常検索結果から CardResult を取得
         result_map = {r.card_name: r for r in normal_results}

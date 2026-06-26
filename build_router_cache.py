@@ -94,7 +94,7 @@ def main():
         # 正常時は hyde_text が必ず生成されるため、空＝失敗として扱う。
         for attempt in range(len(RETRY_WAITS) + 1):
             try:
-                sq, hyde, tb, rm, cm, tf, rfmt, filters = rewrite_query(
+                sq, hyde, ja_hyde, tb, rm, cm, tf, rfmt, filters = rewrite_query(
                     query, api_key, raise_on_error=True)
             except Exception as err:
                 detail = f"{type(err).__name__}: {err}"
@@ -109,8 +109,8 @@ def main():
                               "クォータ回復後に再実行すると続きから取得します。")
                         sys.exit(3)
                 print(f"  [{i}] エラー: {detail}")
-                sq, hyde, tb, rm, cm, tf, rfmt, filters = (
-                    query, "", False, False, False, None,
+                sq, hyde, ja_hyde, tb, rm, cm, tf, rfmt, filters = (
+                    query, "", "", False, False, False, None,
                     detect_format(query), {})
             if hyde:
                 break
@@ -124,6 +124,7 @@ def main():
         entry = {
             "search_query":     sq,
             "hyde_text":        hyde,
+            "ja_hyde_text":     ja_hyde,
             "tournament_boost": tb,
             "removal_mode":     rm,
             "counter_mode":     cm,

@@ -126,10 +126,12 @@ def search_legal(searcher, conn, query, fmt, top_k: int, router_entry: dict = No
             type_filter_override=e.get("type_filter"),
             **(e.get("filters") or {}),
         )
-        sq   = e.get("search_query") or query
-        hyde = e.get("hyde_text") or ""
+        sq      = e.get("search_query") or query
+        hyde    = e.get("hyde_text") or ""
+        ja_hyde = e.get("ja_hyde_text") or ""   # 旧キャッシュには無い→""＝英語のみ(id=11 再現)
         if hyde:
-            results = searcher.search_with_hyde(query=sq, hyde_text=hyde, **kwargs)
+            results = searcher.search_with_hyde(query=sq, hyde_text=hyde,
+                                                ja_hyde_text=ja_hyde, **kwargs)
         else:
             results = searcher.search(sq, **kwargs)
     legal = []
@@ -350,11 +352,38 @@ def compute_metrics(system_results: list, gt: dict) -> dict:
     return metrics
 
 
+# ─── reranker（cross-encoder で候補を並べ替える・任意） ─────────────
+_RERANKER = None
+def _get_reranker():
+    """bge-reranker-v2-m3 を遅延ロード（初回のみ・キャッシュは /mnt/new_hdd/hf_cache）。"""
+    global _RERANKER
+    if _RERANKER is None:
+        import os
+        os.environ.setdefault("HF_HOME", "/mnt/new_hdd/hf_cache")
+        from sentence_transformers import CrossEncoder
+        _RERANKER = CrossEncoder("BAAI/bge-reranker-v2-m3", max_length=512)
+    return _RERANKER
+
+
+def rerank_results(query, results):
+    """cross-encoder で (query, カード全文) を採点し降順に並べ替える。
+    候補集合は不変（並べ替えのみ）＝coverage bias を生まない。query は元の自然文を使う。"""
+    if not results:
+        return results
+    ce = _get_reranker()
+    docs = ["%s | %s | %s | %s" % (r.card_name, r.type_line or "",
+                                   r.oracle_text or "", r.japanese_oracle_text or "")
+            for r in results]
+    scores = ce.predict([(query, d) for d in docs])
+    order = sorted(range(len(results)), key=lambda i: float(scores[i]), reverse=True)
+    return [results[i] for i in order]
+
+
 # ─── 評価実行 ─────────────────────────────────────────────────
 
 def run_eval(conn, gt_path: str, model_key: str, note: str = "",
              router_cache: dict = None, allow_partial: bool = False,
-             top_k: int = TOP_K):
+             top_k: int = TOP_K, rerank: bool = False):
     """
     編集済みGT CSVを読んで指標を計算し、eval_runs に保存する。
     router_cache 指定時はルーター/エージェント経路で検索する（キャッシュ利用・決定的）。
@@ -420,6 +449,8 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
         # pool 収集と同じ Vintage リーガルフィルタを通す（ラベルと評価対象を揃える）
         legal, _ = search_legal(searcher, conn, query, fmt, top_k,
                                 router_entry=entry)
+        if rerank:
+            legal = rerank_results(query, legal)
         system_results = [(r.card_name, i + 1) for i, r in enumerate(legal)]
         m = compute_metrics(system_results, gt)
         # GT に存在しないカード（ラベル付けプール外）の混入率。grade 0 扱いになるため、
@@ -452,6 +483,7 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
         "run_date": datetime.now().isoformat(),
         # 検索経路。searcher 直呼びとルーター経由の数値は条件が違うので比較しない
         "route": "router" if router_cache is not None else "searcher",
+        "rerank": rerank,
         "avg_unlabeled_10": avg_unlabeled,
         "per_query": all_metrics,
     }
@@ -551,6 +583,9 @@ def main():
     parser.add_argument("--partial", action="store_true",
                         help="キャッシュ未取得のクエリを除外して部分評価する"
                              "（キャッシュ未完成時の速報用）")
+    parser.add_argument("--rerank", action="store_true",
+                        help="検索結果の top_k を cross-encoder(bge-reranker-v2-m3)で"
+                             "並べ替える（候補集合は不変＝coverage bias なし）")
     args = parser.parse_args()
 
     conn = psycopg2.connect(**DB_CONFIG)
@@ -564,7 +599,7 @@ def main():
     elif args.run:
         run_eval(conn, gt_path=args.gt, model_key=args.model, note=args.note,
                  router_cache=router_cache, allow_partial=args.partial,
-                 top_k=args.top_k)
+                 top_k=args.top_k, rerank=args.rerank)
     elif args.show:
         show_runs(conn)
     else:
