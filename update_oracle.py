@@ -2,7 +2,7 @@
 update_oracle.py — Scryfall oracle_cards.json で最新オラクルテキストに更新
 =========================================================================
 Scryfall の oracle_cards.json は各カードの最新オラクルテキストを1件だけ収録。
-MTGJSON の all_cards.json は古いセットのテキストが混在するため、
+Scryfall の all_cards.json（全言語版バルク）は古いセットのテキストが混在するため、
 こちらで上書きすることで最新テキストに統一する。
 
 更新対象:

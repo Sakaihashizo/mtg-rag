@@ -217,24 +217,28 @@ def extract_keywords(query: str) -> tuple[list[str], list[str], Optional[str], b
     removal_mode: bool = False
     counter_mode: bool = False
 
-    for jp, terms in QUERY_EXPAND.items():
-        if jp in query:
-            en = terms.get("en", "")
-            if en:
-                en_keywords.append(en)
-            ja = terms.get("ja", [])
-            if isinstance(ja, list):
-                ja_keywords.extend(ja)
-            elif ja:
-                ja_keywords.append(ja)
-            if "type_filter" in terms and type_filter is None:
-                type_filter = terms["type_filter"]
-            if terms.get("tournament_boost"):
-                tournament_boost = True
-            if terms.get("removal_mode"):
-                removal_mode = True
-            if terms.get("counter_mode"):
-                counter_mode = True
+    # 一致キーを集め、別の(より長い)一致キーの部分文字列であるキーは捨てる。
+    # 例: 「トランプル」一致時に内部の「ランプ」(ramp→search for a land)を誤注入しない。
+    matched = [jp for jp in QUERY_EXPAND if jp in query]
+    matched = [k for k in matched if not any(k != o and k in o for o in matched)]
+    for jp in matched:
+        terms = QUERY_EXPAND[jp]
+        en = terms.get("en", "")
+        if en:
+            en_keywords.append(en)
+        ja = terms.get("ja", [])
+        if isinstance(ja, list):
+            ja_keywords.extend(ja)
+        elif ja:
+            ja_keywords.append(ja)
+        if "type_filter" in terms and type_filter is None:
+            type_filter = terms["type_filter"]
+        if terms.get("tournament_boost"):
+            tournament_boost = True
+        if terms.get("removal_mode"):
+            removal_mode = True
+        if terms.get("counter_mode"):
+            counter_mode = True
 
     return en_keywords, ja_keywords, type_filter, tournament_boost, removal_mode, counter_mode
 
@@ -467,6 +471,7 @@ class MTGHybridSearcherV2:
                 WHERE to_tsvector('english', COALESCE(c.oracle_text, ''))
                       @@ to_tsquery('english', $tsq$)
                   {fmt_sql} {type_sql} {attr_sql}
+                  AND c.set_code NOT IN ('msh', 'msc')  -- Marvel(行のみ・未reembed)は検索不適格。reembed後に外す
                 ORDER BY text_score DESC, c.id
                 LIMIT {top_k * 3};
             """
@@ -506,6 +511,7 @@ class MTGHybridSearcherV2:
                 WHERE to_tsvector('english', COALESCE(c.oracle_text, ''))
                       @@ plainto_tsquery('english', '{primary}')
                   {fmt_sql} {type_sql} {attr_sql}
+                  AND c.set_code NOT IN ('msh', 'msc')  -- Marvel(行のみ・未reembed)は検索不適格。reembed後に外す
                 ORDER BY text_score DESC, c.id
                 LIMIT {top_k * 3};
             """
