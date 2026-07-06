@@ -261,6 +261,15 @@ def format_filter_sql(fmt: Optional[str]) -> str:
     return f"AND c.legalities->>'{fmt}' = 'legal'"
 
 
+# router の format 値（小文字）→ card_format_strength.format_name（先頭大文字）。
+# 集計があるのは大会4フォーマットのみ。これ以外（vintage/pauper 等）は per-format 集計なし＝
+# 全4F合計にフォールバック（None 扱い）。
+CFS_FORMAT_MAP = {
+    "legacy": "Legacy", "modern": "Modern",
+    "pioneer": "Pioneer", "standard": "Standard",
+}
+
+
 VALID_TYPE_FILTERS = {
     "Creature", "Instant", "Sorcery",
     "Enchantment", "Artifact", "Land", "Planeswalker", "Battle",
@@ -573,6 +582,137 @@ class MTGHybridSearcherV2:
             print(f"  [ja_fts] エラー: {e}")
             return []
 
+    def _format_strength_map(
+        self, card_names: list[str], fmt: Optional[str]
+    ) -> dict[str, int]:
+        """card_name → play_decks を1クエリで引く（#22 boost 用）。
+        fmt が大会4フォーマットのいずれかならその format の play_decks、
+        それ以外（None・vintage 等）は全4フォーマット合計（R11 の GT 機械採点と同じ土俵）。
+        card_format_strength は card_id 基準なので card_name→id を JOIN で解決する。"""
+        if not card_names:
+            return {}
+        cfs_fmt = CFS_FORMAT_MAP.get((fmt or "").lower())
+        cfg = self.cfg
+        if cfs_fmt:
+            sql = f"""
+                SELECT c.card_name, cfs.play_decks
+                FROM {cfg['cards_table']} c
+                JOIN card_format_strength cfs ON cfs.card_id = c.id
+                WHERE c.card_name = ANY(%s) AND cfs.format_name = %s
+            """
+            params = (card_names, cfs_fmt)
+        else:
+            sql = f"""
+                SELECT c.card_name, SUM(cfs.play_decks) AS play_decks
+                FROM {cfg['cards_table']} c
+                JOIN card_format_strength cfs ON cfs.card_id = c.id
+                WHERE c.card_name = ANY(%s)
+                GROUP BY c.card_name
+            """
+            params = (card_names,)
+        try:
+            with self.conn.cursor() as cur:
+                cur.execute(sql, params)
+                return {r[0]: int(r[1]) for r in cur.fetchall()}
+        except Exception as e:
+            self.conn.rollback()
+            print(f"  [format_strength] エラー: {e}")
+            return {}
+
+    def _strength_candidates(
+        self, top_k: int, fmt: Optional[str],
+        fmt_sql: str, type_sql: str, attr_sql: str = "",
+        removal_mode: bool = False, counter_mode: bool = False,
+    ) -> list[dict]:
+        """tournament_boost クエリ用の第4候補腕（#22）。
+        play-rate 上位を「強いカードの仮説リスト」として RRF 融合に参加させる。
+        注意: play-rate 上位＝強い、ではない（Bowmasters 論）。ただし正解を含み
+        やすい集合ではある＝候補生成（recall 装置）。判定は融合・ペナルティ・
+        機能フィルタ（fmt/type/attr）の側が担う＝R11 の AND 構造の検索側の写し。
+        boost だけでは retrieval が連れてこなかった強カードを上げられない
+        （プール飢餓）ことへの対処。card_format_strength は土地除外済み。
+
+        役割ゲート（#a・R11 の AND を検索側で完成）: 役割つき superlative
+        （最強の"単体除去"・最強"カウンター"）では、強度腕にも役割フィルタを噛ませる。
+        噛ませないと FoW/Thoughtseize 等のフォーマット強カードが除去プールに注入され、
+        本人が正しく 0 採点する傷（最強の単体除去 0.33）になっていた。
+        removal_mode → 除去メカ有り かつ クリーチャーを討てる対象（creature/any/permanent）。
+        counter_mode → 呪文を対象に取る（target_types に spell）。"""
+        cfg = self.cfg
+        role_sql = ""
+        if removal_mode:
+            # 恒久除去のみ（bounce=soft は除外・本人判断 2026-07-06）。tuck（ライブラリ送り）は
+            # バウンスより硬いので除去に含める。恒久性スペクトラムを役割ゲートに反映。
+            role_sql = (" AND c.removal_types && ARRAY['destroy','exile','damage','minus','sacrifice','tuck']"
+                        " AND c.target_types && ARRAY['creature','any','permanent']")
+        elif counter_mode:
+            role_sql = " AND c.target_types @> ARRAY['spell']"
+        cfs_fmt = CFS_FORMAT_MAP.get((fmt or "").lower())
+        if cfs_fmt:
+            sql = f"""
+                SELECT
+                    c.card_name, c.type_line, c.oracle_text,
+                    c.japanese_name, c.japanese_oracle_text,
+                    c.mana_cost, c.rarity, c.tournament_score,
+                    ROW_NUMBER() OVER (
+                        ORDER BY cfs.play_decks DESC, c.id
+                    ) AS rank
+                FROM {cfg['cards_table']} c
+                JOIN card_format_strength cfs ON cfs.card_id = c.id
+                WHERE cfs.format_name = %s
+                  {fmt_sql} {type_sql} {attr_sql} {role_sql}
+                  AND c.set_code NOT IN ('msh', 'msc')  -- Marvel(未reembed)は検索不適格。reembed後に外す
+                ORDER BY cfs.play_decks DESC, c.id
+                LIMIT {top_k * 3};
+            """
+            params: tuple = (cfs_fmt,)
+        else:
+            sql = f"""
+                SELECT
+                    c.card_name, c.type_line, c.oracle_text,
+                    c.japanese_name, c.japanese_oracle_text,
+                    c.mana_cost, c.rarity, c.tournament_score,
+                    ROW_NUMBER() OVER (
+                        ORDER BY SUM(cfs.play_decks) DESC, c.id
+                    ) AS rank
+                FROM {cfg['cards_table']} c
+                JOIN card_format_strength cfs ON cfs.card_id = c.id
+                WHERE TRUE
+                  {fmt_sql} {type_sql} {attr_sql} {role_sql}
+                  AND c.set_code NOT IN ('msh', 'msc')  -- Marvel(未reembed)は検索不適格。reembed後に外す
+                GROUP BY c.id
+                ORDER BY SUM(cfs.play_decks) DESC, c.id
+                LIMIT {top_k * 3};
+            """
+            params = ()
+        try:
+            with self.conn.cursor() as cur:
+                cur.execute(sql, params)
+                if cur.description is None:
+                    return []
+                cols = [d[0] for d in cur.description]
+                return [dict(zip(cols, row)) for row in cur.fetchall()]
+        except Exception as e:
+            self.conn.rollback()
+            print(f"  [strength_arm] エラー: {e}")
+            return []
+
+    def _target_types_map(self, card_names: list[str]) -> dict[str, list]:
+        """card_name → target_types（構造化・enrich_removal.py 由来）を1クエリで引く。
+        counter_mode の減点判定用（呪文を対象に取るか）。"""
+        if not card_names:
+            return {}
+        try:
+            with self.conn.cursor() as cur:
+                cur.execute(
+                    f"SELECT card_name, target_types FROM {self.cfg['cards_table']} "
+                    f"WHERE card_name = ANY(%s)", (card_names,))
+                return {r[0]: (r[1] or []) for r in cur.fetchall()}
+        except Exception as e:
+            self.conn.rollback()
+            print(f"  [target_types] エラー: {e}")
+            return {}
+
     def _rrf_merge(
         self,
         v_rows: list[dict], en_rows: list[dict], ja_rows: list[dict],
@@ -580,6 +720,8 @@ class MTGHybridSearcherV2:
         tournament_boost: bool = False,
         removal_mode: bool = False,
         counter_mode: bool = False,
+        format: Optional[str] = None,
+        st_rows: Optional[list[dict]] = None,
     ) -> list[CardResult]:
         k      = self.rrf_k
         w_vec  = self.weight_vector
@@ -614,20 +756,36 @@ class MTGHybridSearcherV2:
             scores[name]["rrf"] += w_ja / (k + r)
             scores[name]["jr"]   = r
 
+        # 強度腕（#22・boost クエリのみ非空）。重みは暫定 1.0＝均等 RRF（#23 で再検証）
+        w_st = 1.0
+        for row in (st_rows or []):
+            name = row["card_name"]
+            r    = int(row["rank"])
+            if name not in scores:
+                scores[name] = {"row": row, "rrf": 0.0,
+                                "vr": None, "er": None, "jr": None}
+            scores[name]["rrf"] += w_st / (k + r)
+
         # 除去ルールのペナルティを適用（removal_mode の場合のみ）
         scores = apply_removal_penalties(scores, removal_mode)
-        # カウンター呪文ルールのペナルティを適用（counter_mode の場合のみ）
-        scores = apply_counter_penalties(scores, counter_mode)
+        # カウンター呪文: 構造化 target_types で減点（手書き護法キーワード規則を置換）。
+        # 本物のカウンターは「呪文を対象に取る」＝target_types に spell を持つ。護法は
+        # "counter that spell"（target を取らない誘発型）＝spell を持たない→自然に減点。
+        if counter_mode:
+            tmap = self._target_types_map(list(scores.keys()))
+            for name, data in scores.items():
+                if 'spell' not in (tmap.get(name) or []):
+                    data["rrf"] *= 0.1
 
-        # tournament_score ボーナスを RRF スコアに加算
-        # tournament_boost=True の場合（「最強」「環境」等のクエリ）は強く反映
+        # 大会 play-rate ボーナスを RRF スコアに加算（#22: card_format_strength へ配線替え）。
+        # 旧実装は stale な単一列 tournament_score を見ていた。fresh な per-format
+        # play_decks（format 指定時）／全4F合計（format なし）へ差し替え。
+        # tournament_boost=True（「最強」「環境」等）は強く、それ以外は弱く反映。
         boost_coef = 0.10 if tournament_boost else 0.03
-        max_ts = max(
-            (data["row"].get("tournament_score") or 0)
-            for data in scores.values()
-        ) or 1
-        for data in scores.values():
-            ts = data["row"].get("tournament_score") or 0
+        strength = self._format_strength_map(list(scores.keys()), format)
+        max_ts = max(strength.values(), default=0) or 1
+        for name, data in scores.items():
+            ts = strength.get(name, 0)
             data["rrf"] += (ts / max_ts) * boost_coef
 
         sorted_items = sorted(
@@ -842,15 +1000,25 @@ class MTGHybridSearcherV2:
         en_rows = self._en_text_search(en_kws, top_k, fmt_sql, type_sql, attr_sql,
                                           removal_mode=removal_mode)
         ja_rows = self._ja_text_search(ja_kws, top_k, fmt_sql, type_sql, attr_sql)
+        # #22: boost クエリは play-rate 上位を候補腕として追加（プール飢餓対策）
+        st_rows = (self._strength_candidates(top_k, format,
+                                             fmt_sql, type_sql, attr_sql,
+                                             removal_mode=removal_mode,
+                                             counter_mode=counter_mode)
+                   if tournament_boost else [])
 
         elapsed = (time.perf_counter() - t0) * 1000
         print(f"  vec:{len(v_rows)} en_fts:{len(en_rows)} "
-              f"ja_fts:{len(ja_rows)} ({elapsed:.0f}ms)")
+              f"ja_fts:{len(ja_rows)}"
+              + (f" strength:{len(st_rows)}" if st_rows else "")
+              + f" ({elapsed:.0f}ms)")
 
         return self._rrf_merge(v_rows, en_rows, ja_rows, top_k,
                                tournament_boost=tournament_boost,
                                removal_mode=removal_mode,
-                               counter_mode=counter_mode)
+                               counter_mode=counter_mode,
+                               format=format,
+                               st_rows=st_rows)
 
     def close(self):
         self.conn.close()

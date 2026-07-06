@@ -449,7 +449,11 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
         # pool 収集と同じ Vintage リーガルフィルタを通す（ラベルと評価対象を揃える）
         legal, _ = search_legal(searcher, conn, query, fmt, top_k,
                                 router_entry=entry)
-        if rerank:
+        # #22: boost クエリは reranker をスキップ（id=32 A/B で、boost の並びは
+        # reranker が判定できない上流信号＝通すと壊れることを確認済み。
+        # 非boostの25クエリは rerank が +0.024 稼ぐため、そちらだけ通す）。
+        boost_q = bool(entry and entry.get("tournament_boost"))
+        if rerank and not boost_q:
             legal = rerank_results(query, legal)
         system_results = [(r.card_name, i + 1) for i, r in enumerate(legal)]
         m = compute_metrics(system_results, gt)
