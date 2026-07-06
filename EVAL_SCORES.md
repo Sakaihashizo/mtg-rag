@@ -1,6 +1,6 @@
 # 評価スコア表（公開用要約）
 
-最終更新: 2026-07-06（正準 = eval_runs id=37）。ground truth（GT・人手採点 CSV）本体は公開していない。この表は正準評価 run（実行）のクエリ別指標の抜粋。
+最終更新: 2026-07-06（正準 = eval_runs id=37）。ground truth（GT・人手採点 CSV）本体はリポジトリの [eval_groundtruth_v2.csv](./eval_groundtruth_v2.csv)（1,060 採点ペア・採点規約は機能・機構ベースで明文化して運用）。この表は正準評価 run（実行）のクエリ別指標の抜粋。
 
 評価条件: n=30 クエリ / ルーター経路（キャッシュで決定的）/ cross-encoder reranker あり（ただし「最強」系の boost クエリはスキップ・後述）/ top_k=10 / 3 段階 relevance（2=ど真ん中・1=関連・0=的外れ）。NDCG@10 の ideal ranking は GT 全体から計算する（recall 込み。上位 10 件の並べ替えだけでは 1.0 にならず、正解カードを実際に取得できているかも問う定義）。
 

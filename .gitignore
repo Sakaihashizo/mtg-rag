@@ -24,3 +24,31 @@ eval_pool_*.csv
 wg_cache/
 # 旧 Chat(Sonnet) 日報。docs/ai に役割を引き継いだため不要・push しない
 Chat_log/
+
+# 役目を終えた一回きりスクリプト・重複・旧版（2026-07-06 にリポジトリから除外。ローカルには残置）
+add_face_cmcs.py
+add_face_names.py
+add_face_names_wiki.py
+add_new_cards.py
+backfill_japanese_full.py
+compare_bulk.py
+csv/eval_groundtruth.csv
+env.example
+fix_card_data.py
+fix_deck_links.py
+fix_ja_slots.py
+fix_layout.py
+ingest_marvel_en.py
+merge_gt_simple.py
+restore_missing_50.py
+scrape_wisdom_guild.py
+sh/merge_gt.sh
+sql/fix_face_names.sql
+
+# 採点マージ等のバックアップ・作業中間ファイル（push しない・status ノイズ対策）
+*.premerge_bak_*
+*.prer11_bak_*
+*.pregrade_bak
+regrade_keyword_sweep_*.csv
+WHISPER不一致.md
+md/
