@@ -39,6 +39,7 @@ fix_deck_links.py
 fix_ja_slots.py
 fix_layout.py
 ingest_marvel_en.py
+merge_gt.py
 merge_gt_simple.py
 restore_missing_50.py
 scrape_wisdom_guild.py
