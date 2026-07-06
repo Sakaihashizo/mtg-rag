@@ -47,7 +47,7 @@ from datetime import datetime
 import psycopg2
 
 sys.path.insert(0, '/mnt/mtg_rag')
-from mtg_hybrid_search_v2 import MTGHybridSearcherV2
+from mtg_hybrid_search_v2 import MTGHybridSearcherV2, extract_keywords
 
 from db_config import DB_CONFIG
 
@@ -453,7 +453,11 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
         # reranker が判定できない上流信号＝通すと壊れることを確認済み。
         # 非boostの25クエリは rerank が +0.024 稼ぐため、そちらだけ通す）。
         boost_q = bool(entry and entry.get("tournament_boost"))
-        if rerank and not boost_q:
+        # 構造化オンリー直行路（キーワード能力クエリ）も rerank スキップ:
+        # 並びは play-rate 順＝reranker が知らない上流信号（id=32 の boost と同じ原則）
+        _, _, _, tb_d, rm_d, cm_d, _, kw_only = extract_keywords(query)
+        structured_q = kw_only and not (tb_d or rm_d or cm_d)
+        if rerank and not boost_q and not structured_q:
             legal = rerank_results(query, legal)
         system_results = [(r.card_name, i + 1) for i, r in enumerate(legal)]
         m = compute_metrics(system_results, gt)

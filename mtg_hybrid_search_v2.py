@@ -161,18 +161,24 @@ QUERY_EXPAND = {
     "ランプ":          {"en": "search your library for a land", "ja": ["土地を戦場に出す"]},
     "土地加速":        {"en": "search your library for a land", "ja": ["あなたのライブラリーから土地"]},
     # クリーチャー能力（type_filter で Creature に絞る）
+    # "keyword" = Scryfall keywords 配列の表記（自身の生得能力のみ載る＝R8補足a の
+    # crisp な代理）。keyword_filter_sql() が全検索腕の WHERE に生得持ち条件を足す
+    # （ハードフィルタ。付与/除去意図のクエリでは extract_keywords 側のガードで不発）。
     "飛行を持つクリーチャー": {"en": "flying", "ja": ["飛行"],
-                               "type_filter": "Creature"},
+                               "type_filter": "Creature", "keyword": "Flying"},
     "飛行持ち":        {"en": "flying", "ja": ["飛行"],
-                        "type_filter": "Creature"},
-    "速攻":            {"en": "haste",        "ja": ["速攻"]},
-    "破壊不能":        {"en": "indestructible","ja": ["破壊不能"]},
-    "絆魂":            {"en": "lifelink",      "ja": ["絆魂"]},
-    "接死":            {"en": "deathtouch",    "ja": ["接死"]},
-    "先制攻撃":        {"en": "first strike",  "ja": ["先制攻撃"]},
-    "トランプル":      {"en": "trample",       "ja": ["トランプル"]},
+                        "type_filter": "Creature", "keyword": "Flying"},
+    "速攻":            {"en": "haste",        "ja": ["速攻"], "keyword": "Haste"},
+    "破壊不能":        {"en": "indestructible","ja": ["破壊不能"], "keyword": "Indestructible"},
+    "絆魂":            {"en": "lifelink",      "ja": ["絆魂"], "keyword": "Lifelink"},
+    "接死":            {"en": "deathtouch",    "ja": ["接死"], "keyword": "Deathtouch"},
+    "先制攻撃":        {"en": "first strike",  "ja": ["先制攻撃"], "keyword": "First strike"},
+    "トランプル":      {"en": "trample",       "ja": ["トランプル"], "keyword": "Trample"},
+    "威迫":            {"en": "menace",        "ja": ["威迫"], "keyword": "Menace"},
+    "到達":            {"en": "reach",         "ja": ["到達"], "keyword": "Reach"},
+    "警戒":            {"en": "vigilance",     "ja": ["警戒"], "keyword": "Vigilance"},
     # 飛行（単体キーワード → type_filter なし）
-    "飛行":            {"en": "flying",        "ja": ["飛行"]},
+    "飛行":            {"en": "flying",        "ja": ["飛行"], "keyword": "Flying"},
     # トークン系
     "トークン":        {"en": "create",        "ja": ["トークン"]},
     # コンボ系
@@ -205,11 +211,14 @@ QUERY_EXPAND = {
 }
 
 
-def extract_keywords(query: str) -> tuple[list[str], list[str], Optional[str], bool, bool, bool]:
+def extract_keywords(query: str) -> tuple[list[str], list[str], Optional[str], bool, bool, bool, list[str], bool]:
     """
     クエリからキーワードと各フラグを抽出する。
     戻り値: (英語キーワードリスト, 日本語キーワードリスト, type_filter,
-             tournament_boost, removal_mode, counter_mode)
+             tournament_boost, removal_mode, counter_mode, kw_abilities, kw_only)
+    kw_abilities = クエリが問うている生得キーワード能力（Scryfall keywords 表記）。
+    kw_only = 辞書レベルで「キーワード能力以外の意味語が無い」＝構造化オンリー候補
+    （最終判断は search() 側で boost/removal/counter の override 込みで行う）。
     """
     en_keywords: list[str] = []
     ja_keywords: list[str] = []
@@ -217,6 +226,8 @@ def extract_keywords(query: str) -> tuple[list[str], list[str], Optional[str], b
     tournament_boost: bool = False
     removal_mode: bool = False
     counter_mode: bool = False
+    kw_abilities: list[str] = []
+    other_semantic: bool = False
 
     # 一致キーを集め、別の(より長い)一致キーの部分文字列であるキーは捨てる。
     # 例: 「トランプル」一致時に内部の「ランプ」(ramp→search for a land)を誤注入しない。
@@ -240,12 +251,28 @@ def extract_keywords(query: str) -> tuple[list[str], list[str], Optional[str], b
             removal_mode = True
         if terms.get("counter_mode"):
             counter_mode = True
+        if terms.get("keyword"):
+            if terms["keyword"] not in kw_abilities:
+                kw_abilities.append(terms["keyword"])
+        elif en or ja:
+            # キーワード能力エントリ以外の意味語（除去/ドロー/マナ加速等）が混ざってる
+            other_semantic = True
 
-    return en_keywords, ja_keywords, type_filter, tournament_boost, removal_mode, counter_mode
+    # 生得キーワードのハードフィルタを発動しない条件（極性ガード）:
+    # (1) 除去/カウンター意図（例:「破壊不能を除去できるカード」＝答えは持たない側の呪文）
+    # (2) 付与意図（例:「破壊不能を付与するカード」＝答えは付与する側＝生得持ちでない）
+    if removal_mode or counter_mode or any(
+            w in query for w in ('付与', '与え', '得る', '得られ', '持たせ', '授け')):
+        kw_abilities = []
+
+    kw_only = bool(kw_abilities) and not other_semantic
+
+    return (en_keywords, ja_keywords, type_filter,
+            tournament_boost, removal_mode, counter_mode, kw_abilities, kw_only)
 
 
 def expand_query(query: str) -> str:
-    en_kws, _, _, _, _, _ = extract_keywords(query)
+    en_kws, _, _, _, _, _, _, _ = extract_keywords(query)
     if en_kws:
         return " ".join(en_kws[:3]) + " " + query
     return query
@@ -299,6 +326,20 @@ def is_creature_removal(removal_entries: Optional[list],
         if typ in ('damage', 'minus') and can_hit:
             return True
     return False
+
+
+def keyword_filter_sql(kw_abilities: Optional[list]) -> str:
+    """「○○を持つクリーチャー」系クエリの生得キーワード・ハードフィルタ。
+    front_keywords 配列（表面の生得能力のみ＝R8補足a/b の crisp 代理・
+    enrich_front_keywords.py 由来）を WHERE で要求する。カード単位の keywords は
+    裏面・変身後の能力を含む（デルバーの Flying 等）ため使わない＝「両面は表面の
+    本質で判定」の検索側の写し。crisp な条件は減点でなく SQL の門で解く
+    （cmc/is_mana_boost と同じ役割分担）＝ベクトル検索は「生得持ちの中の並び順」
+    だけを担当し、意味的に似てるだけの非該当カードは入口で消える。"""
+    if not kw_abilities:
+        return ""
+    kws = ", ".join("'" + k.replace("'", "''") + "'" for k in kw_abilities)
+    return f" AND c.front_keywords @> ARRAY[{kws}]::text[]"
 
 
 VALID_TYPE_FILTERS = {
@@ -744,6 +785,55 @@ class MTGHybridSearcherV2:
             print(f"  [role_map] エラー: {e}")
             return {}
 
+    def _structured_search(
+        self, top_k: int,
+        fmt_sql: str, type_sql: str, attr_sql: str,
+    ) -> list[CardResult]:
+        """構造化オンリー・クエリの直行路（意味検索を通さない）。
+        「破壊不能を持つクリーチャー」のように正解集合が構造化列（keywords/type/
+        format/cmc 等）の WHERE で完全に定義できるクエリは、ベクトル・FTS・HyDE・
+        RRF を使わない＝「事実上 SQL に LIMIT を付けただけのもの」（2026-07-06
+        本人の設計指摘）。意味検索は集合を定義できない上に、意味的に似てるだけの
+        非該当カードを注入する方向にしか働かないため。
+        並び順＝大会 play-rate 降順 → EDHREC 人気昇順 → id（決定的）。"""
+        cfg = self.cfg
+        sql = f"""
+            SELECT
+                c.card_name, c.type_line, c.oracle_text,
+                c.japanese_name, c.japanese_oracle_text,
+                c.mana_cost, c.rarity
+            FROM {cfg['cards_table']} c
+            LEFT JOIN (
+                SELECT card_id, SUM(play_decks) AS play_decks
+                FROM card_format_strength GROUP BY card_id
+            ) s ON s.card_id = c.id
+            WHERE TRUE {fmt_sql} {type_sql} {attr_sql}
+              AND c.set_code NOT IN ('msh', 'msc')  -- Marvel(未reembed)は検索不適格
+            ORDER BY COALESCE(s.play_decks, 0) DESC,
+                     c.edhrec_rank ASC NULLS LAST, c.id
+            LIMIT {top_k};
+        """
+        try:
+            with self.conn.cursor() as cur:
+                cur.execute(sql)
+                cols = [d[0] for d in cur.description]
+                rows = [dict(zip(cols, r)) for r in cur.fetchall()]
+        except Exception as e:
+            self.conn.rollback()
+            print(f"  [structured] エラー: {e}")
+            return []
+        return [CardResult(
+            card_name=r["card_name"],
+            type_line=r.get("type_line") or "",
+            oracle_text=r.get("oracle_text") or "",
+            japanese_name=r.get("japanese_name") or "",
+            japanese_oracle_text=r.get("japanese_oracle_text") or "",
+            mana_cost=r.get("mana_cost") or "",
+            rarity=r.get("rarity") or "",
+            vector_rank=None, en_text_rank=None, ja_text_rank=None,
+            rrf_score=0.0,
+        ) for r in rows]
+
     def _rrf_merge(
         self,
         v_rows: list[dict], en_rows: list[dict], ja_rows: list[dict],
@@ -802,6 +892,8 @@ class MTGHybridSearcherV2:
         #          （ブリンク=permanent:false・墓地追放=対象が creature でない・置物専用、が自然に落ちる）。
         # counter: 本物のカウンターは「呪文を対象に取る」＝target_types に spell を持つ。護法は
         #          "counter that spell"（target を取らない誘発型）＝spell を持たない→自然に減点。
+        # （キーワード系クエリの生得判定は keyword_filter_sql のハードフィルタ＝入口で解決。
+        #   減点方式は採らない: crisp な条件は WHERE の門で、減点は曖昧な役割判定にだけ使う）
         if removal_mode or counter_mode:
             rmap = self._role_map(list(scores.keys()))
             for name, data in scores.items():
@@ -888,6 +980,16 @@ class MTGHybridSearcherV2:
                                    power_min, power_max,
                                    toughness_min, toughness_max,
                                    mana_producer=mana_producer)
+        # キーワード系クエリは HyDE 腕にも生得持ちハードフィルタを適用（search() 本体と対。
+        # HyDE 単独ヒットは最終マージに入るため、ここに門が無いと非該当が再流入する）
+        (_, _, _, _tb, _rm, _cm, _kw_abilities, _kw_only) = extract_keywords(query)
+        # 構造化オンリー直行路なら normal_results が既に SQL 直行の並び＝HyDE を重ねない
+        # （重ねると意味検索の並びが play-rate 順を汚す・search() 本体の分岐と対）
+        if _kw_only and not (_tb or tournament_boost_override) \
+                and not (_rm or removal_mode_override) \
+                and not (_cm or counter_mode_override):
+            return normal_results[:top_k]
+        attr_sql += keyword_filter_sql(_kw_abilities)
         hyde_vec  = self._embed(hyde_text)
         hyde_rows = self._vector_search(hyde_vec, top_k * 2, fmt_sql, type_sql, attr_sql)
 
@@ -997,7 +1099,8 @@ class MTGHybridSearcherV2:
               + (f" [{format}]" if format else ""))
         t0 = time.perf_counter()
 
-        en_kws, ja_kws, type_filter, tournament_boost, removal_mode, counter_mode = extract_keywords(query)
+        (en_kws, ja_kws, type_filter, tournament_boost,
+         removal_mode, counter_mode, kw_abilities, kw_only) = extract_keywords(query)
 
         # override フラグが True の場合は強制的に有効化
         tournament_boost = tournament_boost or tournament_boost_override
@@ -1026,8 +1129,15 @@ class MTGHybridSearcherV2:
                                    power_min, power_max,
                                    toughness_min, toughness_max,
                                    mana_producer=mana_producer)
+        attr_sql += keyword_filter_sql(kw_abilities)
         if attr_sql:
             print(f"  構造化フィルタ:{attr_sql}")
+
+        # 構造化オンリー直行路: キーワード能力クエリで、他の意味語・boost・役割意図が
+        # 無ければ意味検索を通さない（override 込みの最終判断はここで行う）
+        if kw_only and not (tournament_boost or removal_mode or counter_mode):
+            print("  構造化オンリー直行路（意味検索スキップ・play-rate順）")
+            return self._structured_search(top_k, fmt_sql, type_sql, attr_sql)
 
         vec     = self._embed(expanded)
         v_rows  = self._vector_search(vec, top_k, fmt_sql, type_sql, attr_sql)
