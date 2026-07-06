@@ -54,27 +54,37 @@ def parse(oracle):
                 target_types.update(ts)
                 idx = next((k for k, w in enumerate(words)
                             if re.match(r'^' + base + r's?$', w)), len(words) - 1)
-                ph = ' '.join(words[:idx + 1])
-                qual = ph.replace(base + 's', '').replace(base, '').strip()
-                target_detail.append({"phrase": ph, "type": base, "qualifier": qual or None})
+                # 後置修飾（you control / an opponent controls 等）も qualifier に保持する。
+                # 型の単語で切り詰めると「creature you control」の you control（自陣対象＝
+                # 除去でない判定の材料）が消えるため。
+                qual = ' '.join(words[:idx] + words[idx + 1:]).strip()
+                target_detail.append({"phrase": phrase, "type": base,
+                                      "qualifier": qual or None})
     if 'any target' in tl:
         target_types.add('any')
 
     removal = []
 
     def obj(v):
-        m = re.search(v + r' (?:target |all |each |up to \w+ )?((?:[a-z\-]+ ?){1,3})', tl)
+        m = re.search(v + r' (?:another )?(?:target |all |each |up to \w+ )?((?:[a-z\-]+ ?){1,3})', tl)
         ts = find_types(m.group(1)) if m else []
         return ts[0] if ts else None
 
-    m = re.search(r'destroy (target|all|each|up to)', tl)
+    m = re.search(r'destroy (?:another )?(target|all|each|up to)', tl)
     if m:
         removal.append({"type": "destroy", "targeted": m.group(1) == "target",
                         "object": obj("destroy"), "permanent": True})
-    m = re.search(r'exile (target|all|each|up to)', tl)
+    m = re.search(r'exile (?:another )?(target|all|each|up to)', tl)
     if m:
+        # ブリンク（追放して戦場に戻す＝除去でない・R1で0）は permanent:false。
+        # 「until end of turn / until the next」型に加えて「(then) return it/that card/
+        # those cards/them to the battlefield」型を検知する。アンカー型の
+        # 「When ~ leaves the battlefield, return the exiled card ...」は代名詞でなく
+        # "the exiled card" なのでここに掛からない＝恒久寄りのまま（R1 で 1〜2）。
+        blink = re.search(r'return (it|that card|those cards|them) to the battlefield', tl)
         removal.append({"type": "exile", "targeted": m.group(1) == "target", "object": obj("exile"),
-                        "permanent": not re.search(r'exile[^.]*until (end of turn|the next)', tl)})
+                        "permanent": not (blink or re.search(
+                            r'exile[^.]*until (end of turn|the next)', tl))})
     m = re.search(r'deals? (\d+|x) damage', tl)
     if m:
         removal.append({"type": "damage",

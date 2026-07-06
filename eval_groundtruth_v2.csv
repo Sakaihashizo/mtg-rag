@@ -3205,3 +3205,36 @@ Whenever one or more other Cats you control die, you may exile Ajani, then retur
 0: Create a 2/1 white Cat Warrior creature token. When you do, if you control a red permanent other than Ajani, he deals damage equal to the number of creatures you control to any target.
 −4: Each opponent chooses an artifact, a creature, an enchantment, and a planeswalker from among the nonland permanents they control, then sacrifices the rest.",0,
 最強の単体除去,,removal,7,Swords to Plowshares,剣を鍬に,Instant,クリーチャー１体を対象とする。それを追放する。それのコントローラーは、それのパワーに等しい点数のライフを得る。,Exile target creature. Its controller gains life equal to its power.,2,役割ゲート surface・R11(exile無条件∧play501)
+最強の単体除去,,removal,9,Requiting Hex,報いの呪詛,Instant,"この呪文を唱えるための追加コストとして、枯朽１を行ってもよい。（あなたがコントロールしているクリーチャー１体の上に－１/－１カウンター１個を置いてもよい。）
+マナ総量が２以下であるクリーチャー１体を対象とする。それを破壊する。この呪文の追加コストが支払われていたなら、あなたは２点のライフを得る。","As an additional cost to cast this spell, you may blight 1. (You may put a -1/-1 counter on a creature you control.)
+Destroy target creature with mana value 2 or less. If this spell's additional cost was paid, you gain 2 life.",1,
+モダンの単体除去,modern,removal,9,Wrenn and Six,レンと六番,Legendary Planeswalker — Wrenn,"＋１：あなたの墓地にある土地・カード最大１枚を対象とする。それをあなたの手札に戻す。
+－１：クリーチャーやプレインズウォーカーやプレイヤーのうち１つを対象とする。レンと六番はそれに１点のダメージを与える。
+－７：あなたは「あなたの墓地にありインスタントやソーサリーであるすべてのカードは回顧を持つ。」を持つ紋章を得る。","+1: Return up to one target land card from your graveyard to your hand.
+−1: Wrenn and Six deals 1 damage to any target.
+−7: You get an emblem with ""Instant and sorcery cards in your graveyard have retrace."" (You may cast instant and sorcery cards from your graveyard by discarding a land card in addition to paying their other costs.)",1,
+クリーチャーを追放する除去,,removal,10,Goblin Bombardment,ゴブリンの砲撃,Enchantment,クリーチャー１体を生け贄に捧げる：１つを対象とする。このエンチャントはそれに１点のダメージを与える。,Sacrifice a creature: This enchantment deals 1 damage to any target.,0,
+クリーチャーを破壊する除去,,removal,9,Goblin Bombardment,ゴブリンの砲撃,Enchantment,クリーチャー１体を生け贄に捧げる：１つを対象とする。このエンチャントはそれに１点のダメージを与える。,Sacrifice a creature: This enchantment deals 1 damage to any target.,1,
+スタンダードの単体除去,standard,removal,4,Glorious Decay,栄光ある腐朽,Instant,"以下から１つを選ぶ。
+・アーティファクト１つを対象とする。それを破壊する。
+・飛行を持つクリーチャー１体を対象とする。栄光ある腐朽はそれに４点のダメージを与える。
+・墓地にあるカード１枚を対象とする。それを追放する。カード１枚を引く。","Choose one —
+• Destroy target artifact.
+• Glorious Decay deals 4 damage to target creature with flying.
+• Exile target card from a graveyard. Draw a card.",1,
+destroy target creature,,bilingual,9,Elesh Norn // The Argent Etchings,エリシュ・ノーン // 銀白の刻文,Legendary Creature — Phyrexian Praetor // Enchantment — Saga,"警戒
+対戦相手がコントロールしている発生源１つがあなたやあなたがコントロールしているパーマネント１つにダメージを与えるたび、そのプレイヤーが{1}を支払わないかぎり、その発生源のコントローラーは２点のライフを失う。
+{2}{W}, これでないクリーチャー３体を生け贄に捧げる：エリシュ・ノーンを追放する。その後、これをオーナーのコントロール下で変身させた状態で戦場に戻す。起動はソーサリーとしてのみ行う。 // （この英雄譚が出た際とあなたのドロー・ステップの後に、伝承カウンター１個を加える。）
+I — 培養２を５回行う。その後、あなたがコントロールしているすべての培養器・トークンを変身させる。
+II — ターン終了時まで、あなたがコントロールしているすべてのクリーチャーは＋１/＋１の修整を受け二段攻撃を得る。
+III — アーティファクトでも土地でもファイレクシアンでもこれでもないすべてのパーマネントを破壊する。銀白の刻文を追放する。その後、これを（第１面を表にして）戦場に戻す。","Vigilance
+Whenever a source an opponent controls deals damage to you or a permanent you control, that source's controller loses 2 life unless they pay {1}.
+{2}{W}, Sacrifice three other creatures: Exile Elesh Norn, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery. // (As this Saga enters and after your draw step, add a lore counter.)
+I — Incubate 2 five times, then transform all Incubator tokens you control.
+II — Creatures you control get +1/+1 and gain double strike until end of turn.
+III — Destroy all other permanents except for artifacts, lands, and Phyrexians. Exile this Saga, then return it to the battlefield (front face up).",0,
+destroy target creature,,bilingual,10,Mutual Destruction,相互破壊,Sorcery,"あなたが瞬速を持つパーマネントをコントロールしているかぎり、この呪文は瞬速を持つ。
+この呪文を唱えるための追加コストとして、クリーチャー１体を生け贄に捧げる。
+クリーチャー１体を対象とし、それを破壊する。","This spell has flash as long as you control a permanent with flash.
+As an additional cost to cast this spell, sacrifice a creature.
+Destroy target creature.",2,

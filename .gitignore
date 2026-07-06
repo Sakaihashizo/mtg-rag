@@ -45,6 +45,11 @@ restore_missing_50.py
 scrape_wisdom_guild.py
 sh/merge_gt.sh
 sql/fix_face_names.sql
+# 2026-07-06 の構造化置換で死んだ手書き規則モジュール（役割判定は target_types/removal 列へ移行）
+mtg_removal_rules.py
+mtg_counter_rules.py
+# 一回きりの GT マージスクリプト（採点ラウンドごとに使い捨て）
+merge_gt_*.py
 
 # 採点マージ等のバックアップ・作業中間ファイル（push しない・status ノイズ対策）
 *.premerge_bak_*

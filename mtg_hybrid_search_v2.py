@@ -25,8 +25,9 @@ from typing import Optional
 
 import psycopg2
 from sentence_transformers import SentenceTransformer
-from mtg_removal_rules import apply_removal_penalties
-from mtg_counter_rules import apply_counter_penalties
+# 役割判定（removal/counter）は構造化列 target_types / removal（enrich_removal.py 由来）
+# へ移行済み（P1: 正しさ＞点数）。旧 mtg_removal_rules / mtg_counter_rules の手書き
+# 文字列マッチはもう使わない。
 
 # DB 接続設定は db_config.py に一元化（.env から読み込む）。
 # 既存の import 互換のためここで再エクスポートする。
@@ -268,6 +269,36 @@ CFS_FORMAT_MAP = {
     "legacy": "Legacy", "modern": "Modern",
     "pioneer": "Pioneer", "standard": "Standard",
 }
+
+
+def is_creature_removal(removal_entries: Optional[list],
+                        target_types: Optional[list]) -> bool:
+    """クリーチャーを討てる恒久除去メカを1つでも持つか（R10 の検索側の写し）。
+    removal_mode の減点判定用。構造化列 removal(jsonb) / target_types で判定する。
+    - sacrifice（エディクト型）は対象を取らせない機構＝それだけで除去（R6）。
+    - destroy/exile/tuck は permanent が false（ブリンク・一時追放・R1で0）なら数えない。
+      object（対象クラス）が creature/permanent ならクリーチャーを討てる（R10・Vindicate型OK、
+      artifact/enchantment 専用の Naturalize 型は落ちる）。object 不明時は target_types で代用。
+    - damage/minus は「クリーチャーに向くか」だけ target_types で確認（致死かどうかの
+      スケール判定＝R7 はしない。順位づけは検索の上流と採点に任せ、ここは偽陽性の門番だけ）。
+      minus の permanent は修整の持続時間であって死亡の恒久性でないため見ない。"""
+    tt = set(target_types or [])
+    can_hit = bool(tt & {'creature', 'any', 'permanent'})
+    for e in (removal_entries or []):
+        typ = e.get('type')
+        if typ == 'sacrifice':
+            return True
+        if typ in ('destroy', 'exile', 'tuck'):
+            if e.get('permanent') is False:
+                continue
+            objv = e.get('object')
+            if objv in ('creature', 'permanent'):
+                return True
+            if objv is None and can_hit:
+                return True
+        if typ in ('damage', 'minus') and can_hit:
+            return True
+    return False
 
 
 VALID_TYPE_FILTERS = {
@@ -697,20 +728,20 @@ class MTGHybridSearcherV2:
             print(f"  [strength_arm] エラー: {e}")
             return []
 
-    def _target_types_map(self, card_names: list[str]) -> dict[str, list]:
-        """card_name → target_types（構造化・enrich_removal.py 由来）を1クエリで引く。
-        counter_mode の減点判定用（呪文を対象に取るか）。"""
+    def _role_map(self, card_names: list[str]) -> dict[str, tuple]:
+        """card_name → (target_types, removal)（構造化・enrich_removal.py 由来）を1クエリで引く。
+        counter_mode（呪文を対象に取るか）と removal_mode（除去メカと恒久性）の減点判定用。"""
         if not card_names:
             return {}
         try:
             with self.conn.cursor() as cur:
                 cur.execute(
-                    f"SELECT card_name, target_types FROM {self.cfg['cards_table']} "
+                    f"SELECT card_name, target_types, removal FROM {self.cfg['cards_table']} "
                     f"WHERE card_name = ANY(%s)", (card_names,))
-                return {r[0]: (r[1] or []) for r in cur.fetchall()}
+                return {r[0]: (r[1] or [], r[2] or []) for r in cur.fetchall()}
         except Exception as e:
             self.conn.rollback()
-            print(f"  [target_types] エラー: {e}")
+            print(f"  [role_map] エラー: {e}")
             return {}
 
     def _rrf_merge(
@@ -766,15 +797,18 @@ class MTGHybridSearcherV2:
                                 "vr": None, "er": None, "jr": None}
             scores[name]["rrf"] += w_st / (k + r)
 
-        # 除去ルールのペナルティを適用（removal_mode の場合のみ）
-        scores = apply_removal_penalties(scores, removal_mode)
-        # カウンター呪文: 構造化 target_types で減点（手書き護法キーワード規則を置換）。
-        # 本物のカウンターは「呪文を対象に取る」＝target_types に spell を持つ。護法は
-        # "counter that spell"（target を取らない誘発型）＝spell を持たない→自然に減点。
-        if counter_mode:
-            tmap = self._target_types_map(list(scores.keys()))
+        # 役割ペナルティ（P2: 偽陽性は強く沈める・×0.1）。手書き文字列規則を構造化列で置換済み。
+        # removal: クリーチャーを討てる恒久除去メカを持たないカードを沈める
+        #          （ブリンク=permanent:false・墓地追放=対象が creature でない・置物専用、が自然に落ちる）。
+        # counter: 本物のカウンターは「呪文を対象に取る」＝target_types に spell を持つ。護法は
+        #          "counter that spell"（target を取らない誘発型）＝spell を持たない→自然に減点。
+        if removal_mode or counter_mode:
+            rmap = self._role_map(list(scores.keys()))
             for name, data in scores.items():
-                if 'spell' not in (tmap.get(name) or []):
+                tt, rem = rmap.get(name, ([], []))
+                if removal_mode and not is_creature_removal(rem, tt):
+                    data["rrf"] *= 0.1
+                if counter_mode and 'spell' not in tt:
                     data["rrf"] *= 0.1
 
         # 大会 play-rate ボーナスを RRF スコアに加算（#22: card_format_strength へ配線替え）。
