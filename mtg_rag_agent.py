@@ -21,6 +21,7 @@ question.txt の書き方:
 """
 
 import argparse
+import re
 import sys
 import os
 import time
@@ -220,7 +221,11 @@ def rewrite_query(query: str, api_key: str, raise_on_error: bool = False):
         ],
         "generationConfig": {
             "maxOutputTokens": 256,
-            "temperature": 0.1,
+            # 構造化抽出は創造性ゼロでいい仕事＝貪欲デコード。0.1 の残留サンプリングは
+            # ハードフィルタ行きフィールド（cmc/type等）を稀に揺らすリスクでしかない
+            # （2026-07-07 安定性試験 hammer_router.py と同時に 0.1→0 へ）。
+            # 回答生成側の 0.7 は別（あちらは創造性が仕事）。
+            "temperature": 0.0,
         }
     }
     try:
@@ -261,11 +266,18 @@ def rewrite_query(query: str, api_key: str, raise_on_error: bool = False):
                 return None
             return n if 0 <= n <= 99 else None
         filters = {}
-        for k in ("cmc_min", "cmc_max", "power_min", "power_max",
-                  "toughness_min", "toughness_max"):
-            v = _vint(k)
-            if v is not None:
-                filters[k] = v
+        # 数値幻覚ガード（2026-07-07・構造的裁可）: クエリ本文に数字が無いのに LLM が
+        # 数値制約を出したら全部捨てる。プロンプト規則（「強い」「コンボ」等から数値を
+        # 発明しない）は貪欲経路の揺れで破られうると実測済み（hammer_router: コンボで
+        # cmc0-2・フィルタリングで power4・環境で強いで 4/4 と、規則を足すたび別クエリへ
+        # 引っ越すもぐら叩き）→ LLM に頼まず数字の有無で機械判定。ハードフィルタ行きの
+        # フィールドは「LLM が提案・決定的コードが裁可」で守る。
+        if re.search(r'[0-9０-９一二三四五六七八九十]', query):
+            for k in ("cmc_min", "cmc_max", "power_min", "power_max",
+                      "toughness_min", "toughness_max"):
+                v = _vint(k)
+                if v is not None:
+                    filters[k] = v
         # mana_producer は bool フラグ。True のときだけ filters に載せて
         # **filters 経由で門番（searcher）の mana_producer 引数へ渡す。
         if bool(parsed.get("mana_producer", False)):

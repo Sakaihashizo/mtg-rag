@@ -52,7 +52,7 @@ FABLE_PROMPT = """あなたはMagic: The Gathering検索クエリの解析器。
 6. removal_mode = 除去（破壊・追放・対処）を探すクエリなら true。counter_mode = 打ち消し呪文を探すクエリなら true。
 7. type_filter: クリーチャーを探す→"Creature" ／ カウンター呪文を探す→"Instant" ／ 明示があれば ソーサリー→"Sorcery"・エンチャント→"Enchantment"・アーティファクト→"Artifact" ／ **除去を探すクエリは null**（除去はインスタントとソーサリーの両方にある）／ 指定なし→null。「クリーチャーを破壊/追放する」はクリーチャーを探すのではなく除去を探すクエリ→null。
 8. format: スタンダード→"standard" ／ パイオニア→"pioneer" ／ モダン→"modern" ／ レガシー→"legacy" ／ ヴィンテージ→"vintage" ／ パウパー→"pauper" ／ 指定なし→null。フォーマット語は search_query から除く。
-9. 数値: 「Nマナ」→cmc_min=N かつ cmc_max=N ／「Nマナ以下」→cmc_max=N ／「Nマナ以上」→cmc_min=N。パワー・タフネスも同様。**クエリに数字が書かれていなければ、cmc/power/toughness は必ず全部 null（下の例の数値を流用しない）。**「強い」「重い」等の曖昧語は数値ではない。
+9. 数値: 「Nマナ」→cmc_min=N かつ cmc_max=N ／「Nマナ以下」→cmc_max=N ／「Nマナ以上」→cmc_min=N。パワー・タフネスも同様。**クエリに数字が書かれていなければ、cmc/power/toughness は必ず全部 null（下の例の数値を流用しない）。**「強い」「重い」等の曖昧語は数値ではない。**「コンボ」「シナジー」「アグロ」等の戦略語からコストを推測するのも禁止**（例:「コンボに使えるカード」→ cmc/power/toughness は全部 null。コンボパーツが軽い"傾向"はクエリの数値指定ではない）。**「ドロー」「フィルタリング」「手札補充」等の能力語からも数値を発明しない**（例:「ドローしながらフィルタリングできるカード」→ 全部 null）。規則3の機構の具体化は hyde_text / ja_hyde_text の中だけで行い、数値フィールドには反映しない。
 10. mana_producer = マナクリーチャー・マナ加速・マナを生む/出す/伸ばす系のクエリなら true。
 
 用語辞書（日本語→英語。hyde_text ではこの英語を使うこと）:
@@ -88,7 +88,7 @@ def call_ollama(cond: str, query: str, timeout=180):
         "model": MODEL,
         "messages": [{"role": "user", "content": build_prompt(cond, query)}],
         "stream": False,
-        "options": {"temperature": 0.1, "num_predict": 512},
+        "options": {"temperature": 0.0, "seed": 42, "num_predict": 512},
     }
     if cond == "b":
         body["format"] = "json"   # 制約デコード＝調教の一部（条件Bのみ）
