@@ -51,21 +51,34 @@ PostgreSQL + pgvector を中心に、ベクトル検索・全文検索・RRF・H
 
 ## アーキテクチャ（現行・ローカル）
 
+クエリが「誰に渡され、どの経路で DB に到達するか」の行先マップ（紫 = LLM・意味検索が担う曖昧な仕事 ／ 緑 = Python・SQL が担う決定的な仕事。各処理の担当ファイル付き）:
+
+![クエリの行先マップ](./assets/query_routing_map.svg)
+
+設計の要点は 2 つ。(1) **LLM は SQL を書かない** — LLM の出力は常に「データ」（JSON）として扱い、検証・許可リストを通した決定的な Python コードだけが SQL を生成する。(2) **crisp な条件は SQL の門で解き、意味検索は曖昧な意味にだけ使う** — 構造化列（keywords / type / format / cmc 等）だけで答えの集合を完全に定義できるクエリは、意味検索・HyDE・reranker を一切通らず SQL 直行路（大会 play-rate 順・決定的）で返す。キーワード能力系のクエリ（「飛行を持つクリーチャー」等 6 本）はこの経路で NDCG@10 1.000 に到達した。
+
+ハイブリッド経路の詳細フロー:
+
 ```mermaid
 flowchart TB
     User["ユーザー (日本語/英語クエリ)"] --> Router["LLM-as-Query-Router"]
     Router -->|JSON 出力| Parsed["search_query + intent flags + type_filter(validated) + 数値/属性フィルタ + HyDE texts(en/ja)"]
-    Parsed --> Hard["SQL hard filters before search: cmc / face_cmcs / power / toughness / mana_producer / is_mana_boost"]
+    Parsed --> Gate{"構造化オンリー?"}
+    Gate -->|"はい (キーワード系)"| Direct["構造化オンリー直行路: front_keywords 等の SQL WHERE + 大会 play-rate 順"]
+    Direct --> TopK
+    Gate -->|"いいえ"| Hard["SQL hard filters before search: cmc / face_cmcs / power / toughness / mana_producer / is_mana_boost / front_keywords"]
     Hard --> Search3["通常検索（3 系統）"]
     Hard --> HyDESearch["HyDE 検索（4 系統目）"]
     Search3 --> Vector["ベクトル検索 (pgvector HNSW)"]
     Search3 --> FTSEN["英語 FTS (to_tsvector + GIN)"]
     Search3 --> FTSJA["日本語 KW (LIKE + 境界明示)"]
     HyDESearch --> VectorHyDE["仮想カードテキストのベクトル検索"]
+    Hard --> Strength["強度腕 (play-rate 上位を候補注入・boost クエリのみ・役割ゲート付き)"]
     Vector --> RRF["RRF (k=60, 均等重み)"]
     FTSEN --> RRF
     FTSJA --> RRF
     VectorHyDE --> RRF
+    Strength --> RRF
     RRF --> Soft["Post-search ranking adjustments: type_filter / tournament_boost / counter_mode / removal_mode"]
     Soft --> CandidateTopK[候補 TOP-K]
     CandidateTopK --> Reranker["Cross-encoder reranker (bge-reranker-v2-m3)"]
@@ -82,7 +95,7 @@ flowchart TB
     Reembed[reembed プロセス] -. フラグファイルで切替 .-> Standby
 ```
 
-ハードフィルタ（数値・属性条件）は検索前に SQL WHERE 句で適用し、ランキング調整（intent flags 等）は検索後に適用する。「意味検索とハード制約の分離」がこの構成の要点。
+ハードフィルタ（数値・属性条件）は検索前に SQL WHERE 句で適用し、ランキング調整（intent flags 等）は検索後に適用する。「意味検索とハード制約の分離」がこの構成の要点。役割ペナルティ（removal / counter）は手書きキーワード規則ではなく、oracle テキストから導出した構造化列（target_types / removal）による判定。reranker は「自分が判定できない上流信号を壊さない」原則で、boost クエリと構造化オンリー直行路には適用しない。
 
 ---
 

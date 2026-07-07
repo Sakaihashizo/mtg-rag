@@ -1,0 +1,119 @@
+<svg width="680" viewBox="0 0 680 1140" role="img" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system, 'Segoe UI', 'Hiragino Sans', 'Noto Sans JP', sans-serif">
+<title>MTG RAG クエリの行先マップ</title>
+<desc>ユーザーのクエリが LLM ルーターと Python 辞書で構造化され、SQL コンパイラを経て、構造化オンリー直行路またはハイブリッド経路（4腕検索、RRF 融合、reranker）で top-k 回答に至る流れ図。紫は LLM と意味検索（曖昧担当）、緑は Python と SQL（決定的担当）。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+<rect x="0" y="0" width="680" height="1140" fill="#FFFFFF"/>
+
+<rect x="40" y="46" width="12" height="12" rx="3" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text x="58" y="56" font-size="12" fill="#5F5E5A">LLM・意味検索（曖昧担当）</text>
+<rect x="40" y="66" width="12" height="12" rx="3" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="58" y="76" font-size="12" fill="#5F5E5A">Python・SQL（決定的担当）</text>
+
+<rect x="190" y="44" width="300" height="56" rx="4" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="340" y="67" font-size="14" font-weight="500" fill="#2C2C2A" text-anchor="middle">ユーザーのクエリ</text>
+<text x="340" y="86" font-size="12" fill="#5F5E5A" text-anchor="middle">例:「破壊不能を持つクリーチャー」</text>
+
+<line x1="290" y1="100" x2="210" y2="136" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="390" y1="100" x2="480" y2="136" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<rect x="50" y="140" width="290" height="68" rx="4" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text x="195" y="164" font-size="14" font-weight="500" fill="#3C3489" text-anchor="middle">LLM ルーター（Gemini・7B可）</text>
+<text x="195" y="182" font-size="12" fill="#534AB7" text-anchor="middle">曖昧な解釈を JSON 15欄に</text>
+<text x="195" y="199" font-size="12" fill="#534AB7" text-anchor="middle" font-family="ui-monospace, monospace">mtg_rag_agent.py</text>
+
+<rect x="370" y="140" width="250" height="68" rx="4" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="495" y="164" font-size="14" font-weight="500" fill="#085041" text-anchor="middle">extract_keywords（辞書）</text>
+<text x="495" y="182" font-size="12" fill="#0F6E56" text-anchor="middle">意図フラグ・キーワード能力</text>
+<text x="495" y="199" font-size="12" fill="#0F6E56" text-anchor="middle" font-family="ui-monospace, monospace">mtg_hybrid_search_v2.py</text>
+
+<line x1="160" y1="208" x2="152" y2="244" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="250" y1="208" x2="340" y2="244" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="495" y1="208" x2="495" y2="328" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<rect x="60" y="248" width="180" height="56" rx="4" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text x="150" y="271" font-size="14" font-weight="500" fill="#3C3489" text-anchor="middle">HyDE 英/日</text>
+<text x="150" y="290" font-size="12" fill="#534AB7" text-anchor="middle">理想カードの創作文</text>
+
+<rect x="270" y="248" width="180" height="56" rx="4" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="360" y="271" font-size="14" font-weight="500" fill="#085041" text-anchor="middle">構造化 JSON</text>
+<text x="360" y="290" font-size="12" fill="#0F6E56" text-anchor="middle">cmc・type・format 等</text>
+
+<line x1="150" y1="304" x2="150" y2="340" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+<line x1="360" y1="304" x2="400" y2="340" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<rect x="50" y="344" width="200" height="68" rx="4" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text x="150" y="368" font-size="14" font-weight="500" fill="#3C3489" text-anchor="middle">埋め込み（e5）</text>
+<text x="150" y="386" font-size="12" fill="#534AB7" text-anchor="middle">384 次元ベクトル</text>
+<text x="150" y="403" font-size="12" fill="#534AB7" text-anchor="middle" font-family="ui-monospace, monospace">mtg_hybrid_search_v2.py</text>
+
+<rect x="270" y="344" width="350" height="68" rx="4" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="445" y="368" font-size="14" font-weight="500" fill="#085041" text-anchor="middle">SQL コンパイラ（*_filter_sql 群）</text>
+<text x="445" y="386" font-size="12" fill="#0F6E56" text-anchor="middle">検証・許可リストで WHERE 片に</text>
+<text x="445" y="403" font-size="12" fill="#0F6E56" text-anchor="middle" font-family="ui-monospace, monospace">mtg_hybrid_search_v2.py</text>
+
+<line x1="445" y1="412" x2="365" y2="452" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<rect x="190" y="456" width="300" height="68" rx="4" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="340" y="480" font-size="14" font-weight="500" fill="#2C2C2A" text-anchor="middle">構造化オンリー？</text>
+<text x="340" y="498" font-size="12" fill="#5F5E5A" text-anchor="middle">キーワードのみ・boost/役割なし</text>
+<text x="340" y="515" font-size="12" fill="#5F5E5A" text-anchor="middle" font-family="ui-monospace, monospace">search()</text>
+
+<line x1="280" y1="524" x2="235" y2="536" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="216" y="544" font-size="12" fill="#5F5E5A">いいえ</text>
+<line x1="400" y1="524" x2="465" y2="536" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="452" y="544" font-size="12" fill="#5F5E5A">はい</text>
+<line x1="150" y1="412" x2="150" y2="568" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<rect x="50" y="572" width="280" height="68" rx="4" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text x="190" y="596" font-size="14" font-weight="500" fill="#3C3489" text-anchor="middle">4腕検索（候補生成）</text>
+<text x="190" y="614" font-size="12" fill="#534AB7" text-anchor="middle">vec・FTS英・FTS日・強度腕</text>
+<text x="190" y="631" font-size="12" fill="#534AB7" text-anchor="middle" font-family="ui-monospace, monospace">mtg_hybrid_search_v2.py</text>
+
+<rect x="360" y="572" width="280" height="68" rx="4" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="500" y="596" font-size="14" font-weight="500" fill="#085041" text-anchor="middle">構造化オンリー直行路</text>
+<text x="500" y="614" font-size="12" fill="#0F6E56" text-anchor="middle">SQL 一発・play-rate 順</text>
+<text x="500" y="631" font-size="12" fill="#0F6E56" text-anchor="middle" font-family="ui-monospace, monospace">_structured_search()</text>
+
+<line x1="190" y1="640" x2="190" y2="676" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<rect x="50" y="680" width="280" height="68" rx="4" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text x="190" y="704" font-size="14" font-weight="500" fill="#3C3489" text-anchor="middle">RRF 融合＋役割ペナルティ</text>
+<text x="190" y="722" font-size="12" fill="#534AB7" text-anchor="middle">play-rate boost 加算</text>
+<text x="190" y="739" font-size="12" fill="#534AB7" text-anchor="middle" font-family="ui-monospace, monospace">_rrf_merge()</text>
+
+<line x1="190" y1="748" x2="190" y2="784" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<rect x="50" y="788" width="280" height="68" rx="4" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text x="190" y="812" font-size="14" font-weight="500" fill="#3C3489" text-anchor="middle">reranker（bge-v2-m3）</text>
+<text x="190" y="830" font-size="12" fill="#534AB7" text-anchor="middle">top-10 並べ替え・boost系は不通</text>
+<text x="190" y="847" font-size="12" fill="#534AB7" text-anchor="middle" font-family="ui-monospace, monospace">eval_framework.py</text>
+
+<line x1="190" y1="856" x2="285" y2="896" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M500 640 V872 L390 896" fill="none" stroke="#5F5E5A" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+<rect x="240" y="900" width="200" height="52" rx="4" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="340" y="922" font-size="14" font-weight="500" fill="#2C2C2A" text-anchor="middle">top-k 回答</text>
+<text x="340" y="940" font-size="12" fill="#5F5E5A" text-anchor="middle">決定的・評価可能</text>
+
+<line x1="90" y1="856" x2="90" y2="992" stroke="#888780" stroke-width="0.5" stroke-dasharray="4 3"/>
+<line x1="600" y1="640" x2="600" y2="992" stroke="#888780" stroke-width="0.5" stroke-dasharray="4 3"/>
+
+<rect x="40" y="996" width="600" height="124" rx="4" fill="none" stroke="#888780" stroke-width="0.5" stroke-dasharray="4 3"/>
+<text x="52" y="1018" font-size="12" fill="#5F5E5A">PostgreSQL + pgvector（Primary/Standby・docker compose）</text>
+
+<rect x="60" y="1030" width="180" height="64" rx="4" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="150" y="1053" font-size="14" font-weight="500" fill="#2C2C2A" text-anchor="middle">mtg_cards_v2</text>
+<text x="150" y="1071" font-size="12" fill="#5F5E5A" text-anchor="middle">構造化列・front_keywords</text>
+<text x="150" y="1087" font-size="12" fill="#5F5E5A" text-anchor="middle" font-family="ui-monospace, monospace">enrich_*.py</text>
+
+<rect x="255" y="1030" width="180" height="64" rx="4" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="345" y="1053" font-size="14" font-weight="500" fill="#2C2C2A" text-anchor="middle">embeddings</text>
+<text x="345" y="1071" font-size="12" fill="#5F5E5A" text-anchor="middle">HNSW・384次元</text>
+<text x="345" y="1087" font-size="12" fill="#5F5E5A" text-anchor="middle" font-family="ui-monospace, monospace">rebuild_embed_text.py</text>
+
+<rect x="450" y="1030" width="180" height="64" rx="4" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="540" y="1053" font-size="14" font-weight="500" fill="#2C2C2A" text-anchor="middle">format_strength</text>
+<text x="540" y="1071" font-size="12" fill="#5F5E5A" text-anchor="middle">大会 play-rate</text>
+<text x="540" y="1087" font-size="12" fill="#5F5E5A" text-anchor="middle" font-family="ui-monospace, monospace">recompute_*.py</text>
+</svg>
