@@ -31,7 +31,7 @@ import textwrap
 import requests
 
 sys.path.insert(0, '/mnt/mtg_rag')
-from mtg_hybrid_search_v2 import MTGHybridSearcherV2
+from mtg_hybrid_search_v2 import MTGHybridSearcherV2, extract_keywords
 
 # ─── 設定 ─────────────────────────────────────────────────────
 GEMINI_MODEL   = "gemini-2.5-flash-lite"
@@ -63,6 +63,21 @@ FORMAT_KEYWORDS = {
     "ヴィンテージ": "vintage",  "vintage":  "vintage",
     "パウパー":     "pauper",   "pauper":   "pauper",
 }
+
+
+def structured_direct_gate(query: str) -> bool:
+    """LLM ルーターを呼ばずに構造化オンリー直行路へ行けるクエリかの入口判定（2026-07-07）。
+    辞書（extract_keywords）で完結するキーワード系クエリは、Gemini を呼んでも
+    HyDE が直行路で捨てられるだけ＝レイテンシとクォータの無駄なのでスキップする。
+    ガードは2枚:
+      (1) kw_only ＝ キーワード能力のみ・他の意味語なし・boost/除去/カウンター/付与の意図なし
+          （extract_keywords 側の極性ガード込み）
+      (2) クエリに数字なし ＝ 数値抽出（cmc 等）は現状ルーターの仕事なので、
+          数字があるときはルーターに任せる（迷ったら高い方＝正確な方に倒す）
+    format 語（「モダンの〜」）は search_cards 側の決定的フォールバックが拾うため妨げない。"""
+    _, _, _, tb, rm, cm, _, kw_only = extract_keywords(query)
+    return (kw_only and not (tb or rm or cm)
+            and not re.search(r'[0-9０-９一二三四五六七八九十]', query))
 
 
 def detect_format(text: str) -> str | None:
@@ -484,6 +499,11 @@ def process_question(searcher, question, fmt, top_k, api_key,
     type_filter      = None
     router_format    = None
     filters          = {}
+
+    # 辞書で完結するキーワード系クエリは LLM ルーターを呼ばない（直行路の入口版）
+    if use_rewrite and structured_direct_gate(question):
+        print("  構造化オンリー: LLM ルーターをスキップ（辞書で完結・SQL 直行路へ）")
+        use_rewrite = False
 
     if use_rewrite:
         print("  意図解析中...", end="", flush=True)
