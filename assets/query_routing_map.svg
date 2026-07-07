@@ -5,10 +5,10 @@
 
 <rect x="0" y="0" width="680" height="1140" fill="#FFFFFF"/>
 
-<rect x="40" y="46" width="12" height="12" rx="3" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
-<text x="58" y="56" font-size="12" fill="#5F5E5A">LLM・意味検索（曖昧担当）</text>
-<rect x="40" y="66" width="12" height="12" rx="3" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
-<text x="58" y="76" font-size="12" fill="#5F5E5A">Python・SQL（決定的担当）</text>
+<rect x="40" y="18" width="12" height="12" rx="3" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text x="58" y="28" font-size="12" fill="#5F5E5A">LLM・意味検索（曖昧担当）</text>
+<rect x="260" y="18" width="12" height="12" rx="3" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="278" y="28" font-size="12" fill="#5F5E5A">Python・SQL（決定的担当）</text>
 
 <rect x="190" y="44" width="300" height="56" rx="4" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
 <text x="340" y="67" font-size="14" font-weight="500" fill="#2C2C2A" text-anchor="middle">ユーザーのクエリ</text>
