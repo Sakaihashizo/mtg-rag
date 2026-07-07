@@ -47,6 +47,19 @@ def parse(oracle):
                 target_types.add('noncreature_spell')
             target_detail.append({"phrase": ' '.join(words[:i + 1]), "type": "spell",
                                   "qualifier": (q if q not in (None, 'target') else None)})
+            # 条件付きカウンター判定（R12 の4類型のうち機械化できる3つ・2026-07-07）:
+            #  (a) 対象制限 = spell の前後に修飾語。前置=「noncreature spell」型／
+            #      後置=「spell that targets ...」「spell with mana value ...」型
+            #  (b) MV 制限 = "spell with mana value" 型（後置に含まれる）
+            #  (c) ソフト  = "unless ... pays" 型（Mana Leak / Force Void 系）
+            # 状態依存（"if you control..."）は言い回しが多様なので v1 では拾わない（過小
+            # 検出側に倒れる＝条件付きが plain 扱いになるだけ・偽陽性は出ない）。
+            # ピッチ等の代替コストは「唱えること」への条件＝打ち消しは無条件（R12・FoW）
+            # なので、ここでは counter 句の修飾と unless だけを見る。
+            if (q not in (None, 'target')
+                    or i + 1 < len(words)
+                    or re.search(r'unless[^.]{0,60}pays?', tl)):
+                target_types.add('spell_conditional')
         else:
             ts = find_types(phrase)
             if ts:

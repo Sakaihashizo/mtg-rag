@@ -17,6 +17,7 @@ mtg_hybrid_search_v2.py — ハイブリッド検索 v2（日本語 FTS + フォ
 import sys
 import json
 import os
+import re
 import time
 import datetime
 import argparse
@@ -326,6 +327,31 @@ def is_creature_removal(removal_entries: Optional[list],
         if typ in ('damage', 'minus') and can_hit:
             return True
     return False
+
+
+def removal_mech_filter_sql(query: str, removal_mode: bool) -> str:
+    """機構指定つき除去クエリのハードフィルタ（2026-07-07）。
+    「追放除去」「クリーチャーを破壊する除去」のようにクエリが除去の機構を明示して
+    いるときは、`removal_types`（enrich_removal.py 由来・GIN）で候補集合ごと機構に
+    絞る——キーワード層で確立した「crisp な条件は WHERE の門」の除去版。
+    追放除去 0.265 の正体は候補生成（ブリンクを沈めても本物の追放除去が retrieval に
+    居ない）だったため、門で機構を固定して意味検索を「機構内の並び順」係に縮める。
+    ブリンクは removal_types に exile を持ち門を通るが、恒久性ペナルティ
+    （is_creature_removal）が沈める二段構え。機構語が無い「単体除去」は R10 どおり
+    機構不問＝フィルタなし。"""
+    if not removal_mode:
+        return ""
+    # 「破壊不能（を除去…）」の「破壊」を機構と誤検知しない
+    q = query.replace('破壊不能', '').lower()
+    mechs = []
+    if '追放' in q or 'exile' in q:
+        mechs.append('exile')
+    if '破壊' in q or 'destroy' in q:
+        mechs.append('destroy')
+    if not mechs:
+        return ""
+    ms = ", ".join("'" + m + "'" for m in mechs)
+    return f" AND c.removal_types && ARRAY[{ms}]::text[]"
 
 
 def keyword_filter_sql(kw_abilities: Optional[list]) -> str:
@@ -843,6 +869,7 @@ class MTGHybridSearcherV2:
         counter_mode: bool = False,
         format: Optional[str] = None,
         st_rows: Optional[list[dict]] = None,
+        counter_align: Optional[str] = None,
     ) -> list[CardResult]:
         k      = self.rrf_k
         w_vec  = self.weight_vector
@@ -902,6 +929,13 @@ class MTGHybridSearcherV2:
                     data["rrf"] *= 0.1
                 if counter_mode and 'spell' not in tt:
                     data["rrf"] *= 0.1
+                elif counter_mode and counter_align and not tournament_boost:
+                    # R12 の整合: 極性が合わないカードは grade 1 相当の降格
+                    # （×0.5・偽陽性の ×0.1 より緩い）。crisp 修飾つきクエリでは
+                    # counter_align=None で不発。boost クエリも R11 判定なので触らない。
+                    is_cond = 'spell_conditional' in tt
+                    if is_cond != (counter_align == 'conditional'):
+                        data["rrf"] *= 0.5
 
         # 大会 play-rate ボーナスを RRF スコアに加算（#22: card_format_strength へ配線替え）。
         # 旧実装は stale な単一列 tournament_score を見ていた。fresh な per-format
@@ -990,6 +1024,8 @@ class MTGHybridSearcherV2:
                 and not (_cm or counter_mode_override):
             return normal_results[:top_k]
         attr_sql += keyword_filter_sql(_kw_abilities)
+        # 機構指定つき除去クエリの門は HyDE 腕にも（search() 本体と対・単独ヒット再流入防止）
+        attr_sql += removal_mech_filter_sql(query, _rm or removal_mode_override)
         hyde_vec  = self._embed(hyde_text)
         hyde_rows = self._vector_search(hyde_vec, top_k * 2, fmt_sql, type_sql, attr_sql)
 
@@ -1130,6 +1166,19 @@ class MTGHybridSearcherV2:
                                    toughness_min, toughness_max,
                                    mana_producer=mana_producer)
         attr_sql += keyword_filter_sql(kw_abilities)
+        attr_sql += removal_mech_filter_sql(query, removal_mode)
+        # カウンター条件の整合（R12 の検索側・2026-07-08 採点で極性を精密化）:
+        #   「条件付き〜」明示 → 条件付きがど真ん中（無条件を降格）
+        #   無修飾（format も数値も無い）→ 無条件がど真ん中（条件付きを降格）
+        #   crisp 修飾つき（「2マナ以下の」「レガシーの」等）→ 整合を発動しない。
+        #     本人採点の実測: これらのクエリでは Keep Safe/Daze 等の条件付きも 2＝
+        #     「crisp 制約を満たすカウンター」であることが本質で、条件性は grade に効かない
+        counter_align = None
+        if counter_mode:
+            if '条件付き' in query or 'conditional' in query.lower():
+                counter_align = 'conditional'
+            elif format is None and not re.search(r'[0-9０-９一二三四五六七八九十]', query):
+                counter_align = 'unconditional'
         if attr_sql:
             print(f"  構造化フィルタ:{attr_sql}")
 
@@ -1162,7 +1211,8 @@ class MTGHybridSearcherV2:
                                removal_mode=removal_mode,
                                counter_mode=counter_mode,
                                format=format,
-                               st_rows=st_rows)
+                               st_rows=st_rows,
+                               counter_align=counter_align)
 
     def close(self):
         self.conn.close()

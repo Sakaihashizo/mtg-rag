@@ -3373,3 +3373,84 @@ You may exert this creature as it attacks. When you do, it deals 4 damage to tar
 破壊不能を持つクリーチャー,,keyword_creature,10,Blightsteel Colossus,荒廃鋼の巨像,Artifact Creature — Phyrexian Golem,"トランプル、感染、破壊不能
 荒廃鋼の巨像がいずれかの領域から墓地に置かれるなら、代わりに、荒廃鋼の巨像を公開し、オーナーのライブラリーに加えて切り直す。","Trample, infect, indestructible
 If Blightsteel Colossus would be put into a graveyard from anywhere, reveal Blightsteel Colossus and shuffle it into its owner's library instead.",2,本人判断2（生得キーワード・チャットで委任 2026-07-06）
+2マナ以下のカウンター呪文,,counter,8,Disruption Protocol,攪乱プロトコル,Instant,"この呪文を唱えるための追加コストとして、あなたがコントロールしていてアンタップ状態のアーティファクト１つをタップするか{1}を支払う。
+呪文１つを対象とする。それを打ち消す。","As an additional cost to cast this spell, tap an untapped artifact you control or pay {1}.
+Counter target spell.",2,
+クリーチャーを追放する除去,,removal,4,Aerial Extortionist,天駆ける恐喝者,Creature — Bird Soldier,"飛行
+天駆ける恐喝者が戦場に出るかプレイヤー１人に戦闘ダメージを与えるたび、土地でないパーマネント最大１つを対象とする。それを追放する。そのカードが追放され続けているかぎり、それのオーナーはそれを唱えてもよい。
+あなたでないプレイヤーが自分の手札以外から呪文を唱えるたび、あなたはカード１枚を引く。","Flying
+Whenever this creature enters or deals combat damage to a player, exile up to one target nonland permanent. For as long as that card remains exiled, its owner may cast it.
+Whenever another player casts a spell from anywhere other than their hand, draw a card.",2,
+クリーチャーを追放する除去,,removal,5,Avenger en-Dal,ダルの報復者,Creature — Human Spellshaper,"(２)(白),(Ｔ),カードを１枚捨てる：攻撃しているクリーチャー１体を対象とし、それを追放する。それのコントローラーは、そのタフネスに等しい点数のライフを得る。","{2}{W}, {T}, Discard a card: Exile target attacking creature. Its controller gains life equal to its toughness.",1,
+クリーチャーを追放する除去,,removal,6,Leyline Binding,力線の束縛,Enchantment,"瞬速
+版図 - この呪文を唱えるためのコストは、あなたがコントロールしている土地の中の基本土地タイプ１種類につき{1}少なくなる。
+このエンチャントが戦場に出たとき、対戦相手がコントロールしていて土地でないパーマネント１つを対象とする。このエンチャントが戦場を離れるまで、それを追放する。","Flash
+Domain — This spell costs {1} less to cast for each basic land type among lands you control.
+When this enchantment enters, exile target nonland permanent an opponent controls until this enchantment leaves the battlefield.",2,
+クリーチャーを追放する除去,,removal,7,Invasion of Innistrad // Deluge of the Dead,イニストラードへの侵攻 // 死者の氾濫,Battle — Siege // Enchantment,"（包囲戦１つが戦場に出るに際し、それを守る対戦相手１人を選ぶ。あなたや他のプレイヤーはそれを攻撃できる。それが倒されたとき、それを追放する。その後、それを変身させた状態で唱える。）
+瞬速
+イニストラードへの侵攻が戦場に出たとき、対戦相手がコントロールしているクリーチャー１体を対象とする。ターン終了時まで、それは－13/－13の修整を受ける。 // 死者の氾濫が戦場に出たとき、黒の２/２のゾンビ・クリーチャー・トークン２体を生成する。
+{2}{B}：墓地にあるカード１枚を対象とする。それを追放する。それがクリーチャー・カードなら、黒の２/２のゾンビ・クリーチャー・トークン１体を生成する。","(As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)
+Flash
+When this Siege enters, target creature an opponent controls gets -13/-13 until end of turn. // When this enchantment enters, create two 2/2 black Zombie creature tokens.
+{2}{B}: Exile target card from a graveyard. If it was a creature card, create a 2/2 black Zombie creature token.",0,
+クリーチャーを追放する除去,,removal,8,"Lukka, Coppercoat Outcast",銅纏いののけ者、ルーカ,Legendary Planeswalker — Lukka,"+1：あなたのライブラリーの一番上からカードを３枚追放する。これにより追放されたクリーチャー・カードは「あなたがルーカ・プレインズウォーカーをコントロールしているかぎり、あなたは追放領域からこのカードを唱えてもよい。」を得る。
+-2：あなたがコントロールしているクリーチャー１体を対象とし、それを追放する。その後、点数で見たマナ・コストがそれよりも大きいクリーチャー・カードが公開されるまで、あなたのライブラリーの一番上からカードを１枚ずつ公開する。そのカードを戦場に出し、残りをあなたのライブラリーの一番下に無作為の順番で置く。
+-7：あなたがコントロールしている各クリーチャーは各対戦相手に、それぞれ自身のパワーに等しい点数のダメージを与える。","+1: Exile the top three cards of your library. Creature cards exiled this way gain ""You may cast this card from exile as long as you control a Lukka planeswalker.""
+−2: Exile target creature you control, then reveal cards from the top of your library until you reveal a creature card with greater mana value. Put that card onto the battlefield and the rest on the bottom of your library in a random order.
+−7: Each creature you control deals damage equal to its power to each opponent.",0,
+クリーチャーを追放する除去,,removal,9,Unite the Coalition,連合よ団結せよ,Instant,"以下から５つを選ぶ。同じモードを２回以上選んでもよい。
+• パーマネント１つを対象とする。それはフェイズ・アウトする。
+• プレイヤー１人を対象とする。そのプレイヤーはカード１枚を引く。
+• プレイヤー１人を対象とする。そのプレイヤーの墓地を追放する。
+• クリーチャーやプレインズウォーカーやプレイヤーのうち１つを対象とする。連合よ団結せよはそれに２点のダメージを与える。
+• アーティファクトやエンチャントのうち１つを対象とする。それを破壊する。","Choose five. You may choose the same mode more than once.
+• Target permanent phases out.
+• Target player draws a card.
+• Exile target player's graveyard.
+• Unite the Coalition deals 2 damage to any target.
+• Destroy target artifact or enchantment.",0,
+クリーチャーを追放する除去,,removal,10,Excoriate,剥離,Sorcery,タップ状態のクリーチャー１体を対象とし、それを追放する。,Exile target tapped creature.,1,
+クリーチャーを破壊する除去,,removal,2,Just Fate,公正な運命,Instant,この呪文は攻撃クリーチャー指定ステップの間で、あなたがこのステップで攻撃されているならば唱えられる。 攻撃クリーチャー１体を対象とし、それを破壊する。,"Cast this spell only during the declare attackers step and only if you've been attacked this step.
+Destroy target attacking creature.",1,
+クリーチャーを破壊する除去,,removal,3,Mutual Destruction,相互破壊,Sorcery,"あなたが瞬速を持つパーマネントをコントロールしているかぎり、この呪文は瞬速を持つ。
+この呪文を唱えるための追加コストとして、クリーチャー１体を生け贄に捧げる。
+クリーチャー１体を対象とし、それを破壊する。","This spell has flash as long as you control a permanent with flash.
+As an additional cost to cast this spell, sacrifice a creature.
+Destroy target creature.",2,
+クリーチャーを破壊する除去,,removal,4,"Grist, the Hunger Tide",飢餓の潮流、グリスト,Legendary Planeswalker — Grist,"飢餓の潮流、グリストが戦場に無いかぎり、これは他のタイプに加えて１/１の昆虫・クリーチャーである。
++1：黒緑の１/１の昆虫・クリーチャー・トークン１体を生成し、その後、カード１枚を切削する。これにより昆虫・カードが切削されたなら、飢餓の潮流、グリストの上に忠誠カウンター１個を置き、この手順を繰り返す。
+-2：クリーチャー１体を生け贄に捧げてもよい。そうしたとき、クリーチャーやプレインズウォーカーである１体を対象とする。それを破壊する。
+-5：各対戦相手はそれぞれ、あなたの墓地にあるクリーチャー・カードの枚数に等しい点数のライフを失う。","As long as Grist isn't on the battlefield, it's a 1/1 Insect creature in addition to its other types.
++1: Create a 1/1 black and green Insect creature token, then mill a card. If an Insect card was milled this way, put a loyalty counter on Grist and repeat this process.
+−2: You may sacrifice a creature. When you do, destroy target creature or planeswalker.
+−5: Each opponent loses life equal to the number of creature cards in your graveyard.",2,
+クリーチャーを破壊する除去,,removal,5,Attrition,漸減,Enchantment,"{B}, クリーチャーを１体生け贄に捧げる：黒でないクリーチャー１体を対象とし、それを破壊する。","{B}, Sacrifice a creature: Destroy target nonblack creature.",2,
+クリーチャーを破壊する除去,,removal,6,Shatter the Source,元凶の粉砕,Instant,"召集（あなたのクリーチャーが、この呪文を唱える助けとなる。この呪文を唱える段階であなたがタップした各クリーチャーはそれぞれ{1}かそのクリーチャーの色のマナ１点を支払う。）
+以下から１つを選ぶ。
+・クリーチャーやプレインズウォーカーやバトルのうち１つを対象とする。元凶の粉砕はそれに６点のダメージを与える。
+・アーティファクト１つを対象とする。それを破壊する。","Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)
+Choose one —
+• Shatter the Source deals 6 damage to target creature, planeswalker, or battle.
+• Destroy target artifact.",1,
+クリーチャーを破壊する除去,,removal,9,Get Lost,失せろ,Instant,"クリーチャーやエンチャントやプレインズウォーカーである１つを対象とする。それを破壊する。それのコントローラーは地図・トークン２つを生成する。（それは「{1}, {T}, このアーティファクトを生け贄に捧げる：あなたがコントロールしているクリーチャー１体を対象とする。それは探検を行う。起動はソーサリーとしてのみ行う。」を持つアーティファクトである。）","Destroy target creature, enchantment, or planeswalker. Its controller creates two Map tokens. (They're artifacts with ""{1}, {T}, Sacrifice this token: Target creature you control explores. Activate only as a sorcery."")",2,
+counter target spell,,bilingual,3,Contradict,否定,Instant,"呪文１つを対象とし、それを打ち消す。
+カードを１枚引く。","Counter target spell.
+Draw a card.",2,
+counter target spell,,bilingual,8,Sublime Epiphany,崇高な天啓,Instant,"以下から１つ以上を選ぶ。
+・呪文１つを対象とする。それを打ち消す。
+・起動型か誘発型である能力１つを対象とする。それを打ち消す。
+・土地でないパーマネント１つを対象とする。それをオーナーの手札に戻す。
+・あなたがコントロールしているクリーチャー１体を対象とする。それのコピーであるトークン１体を生成する。
+・プレイヤー１人を対象とする。そのプレイヤーはカード１枚を引く。","Choose one or more —
+• Counter target spell.
+• Counter target activated or triggered ability.
+• Return target nonland permanent to its owner's hand.
+• Create a token that's a copy of target creature you control.
+• Target player draws a card.",2,
+destroy target creature,,bilingual,5,Clear a Path,障害排除,Sorcery,防衛を持つクリーチャー１体を対象とし、それを破壊する。,Destroy target creature with defender.,1,
+destroy target creature,,bilingual,8,Defenestrate,窓からの放り投げ,Instant,飛行を持たないクリーチャー１体を対象とする。それを破壊する。,Destroy target creature without flying.,1,
+destroy target creature,,bilingual,9,Assassin's Strike,暗殺者の一撃,Sorcery,クリーチャー１体を対象とし、それを破壊する。それのコントローラーはカード１枚を捨てる。,Destroy target creature. Its controller discards a card.,2,
+destroy target creature,,bilingual,10,Lurking Deadeye,隠れ潜む名射手,Creature — Human Assassin,"瞬速
+隠れ潜む名射手が戦場に出たとき、このターンにダメージを受けたクリーチャー１体を対象とする。それを破壊する。","Flash
+When this creature enters, destroy target creature that was dealt damage this turn.",1,

@@ -50,9 +50,9 @@ mtg_removal_rules.py
 mtg_counter_rules.py
 # 一回きりの GT マージスクリプト（採点ラウンドごとに使い捨て）
 merge_gt_*.py
-# 一回きりの分析・確認スクリプト（出力は docs/me に保存済み）
+# 一回きりの分析・確認スクリプト（出力は docs/me に保存済み・採点ラウンドごとの使い捨て）
 analyze_90s_20260706.py
-check_pool_20260706.py
+check_pool_*.py
 
 # 採点マージ等のバックアップ・作業中間ファイル（push しない・status ノイズ対策）
 *.premerge_bak_*
