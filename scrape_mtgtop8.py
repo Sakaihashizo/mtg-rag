@@ -31,6 +31,15 @@ scrape_mtgtop8.py — MTGTop8 大会デッキスクレイパー
 
 メタコード（モダン）:
   276=2024, 315=2025, 246=2023, 236=2022
+
+メタコード（Duel Commander）:
+  343=2026, 310=2025, 283=2024, 252=2023
+
+EDH（Duel Commander）の特記:
+  - .dec に統率者専用マーカーは無く、統率者は「SB:」行で出力される
+    （Duel Commander にサイドボードは無いため SB: 行＝統率者。共闘は2行）。
+    そのため EDH では SB: 行を board='commander' として保存する。
+  - source は 'mtgtop8_edh' に自動分離（既存4フォーマットの 'mtgtop8' とは別系統）。
 """
 
 import argparse
@@ -130,10 +139,12 @@ def get_deck_ids(event_id: int) -> list[tuple[int, str, str]]:
     return results
 
 
-def parse_dec(dec_text: str) -> tuple[str, str, list[tuple[str, int, str]]]:
+def parse_dec(dec_text: str, sb_board: str = "side") -> tuple[str, str, list[tuple[str, int, str]]]:
     """
     .dec テキストをパースしてカードリストを返す。
     戻り値: (deck_name, format_name, [(card_name, count, board), ...])
+    sb_board: SB: 行に割り当てる board 値。EDH では統率者が SB: 行で
+              出力されるため 'commander' を渡す（既定は 'side' で従来どおり）。
     """
     deck_name   = ""
     format_name = ""
@@ -152,10 +163,10 @@ def parse_dec(dec_text: str) -> tuple[str, str, list[tuple[str, int, str]]]:
                 format_name = line.split(":", 1)[-1].strip()
             continue
 
-        # サイドボード
+        # サイドボード（EDH では統率者行）
         if line.upper().startswith("SB:"):
             line  = line[3:].strip()
-            board = "side"
+            board = sb_board
         else:
             board = "main"
 
@@ -170,25 +181,25 @@ def parse_dec(dec_text: str) -> tuple[str, str, list[tuple[str, int, str]]]:
     return deck_name, format_name, cards
 
 
-def get_deck_cards(deck_id: int) -> list[tuple[str, int, str]]:
+def get_deck_cards(deck_id: int, sb_board: str = "side") -> list[tuple[str, int, str]]:
     """デッキIDから .dec を取得してカードリストを返す"""
     url      = f"{BASE_URL}/dec?d={deck_id}"
     dec_text = fetch(url)
     if not dec_text:
         return []
-    _, _, cards = parse_dec(dec_text)
+    _, _, cards = parse_dec(dec_text, sb_board=sb_board)
     return cards
 
 
 # ─── DB 操作 ──────────────────────────────────────────────────
 
-def get_scraped_event_ids(conn) -> set[int]:
+def get_scraped_event_ids(conn, source: str = SOURCE) -> set[int]:
     """既に取り込み済みのイベントIDを取得（再開用）"""
     with conn.cursor() as cur:
         cur.execute("""
             SELECT DISTINCT tournament_event_id FROM deck_list
             WHERE source = %s AND tournament_event_id IS NOT NULL
-        """, (SOURCE,))
+        """, (source,))
         return {row[0] for row in cur.fetchall()}
 
 
@@ -212,7 +223,7 @@ def ensure_columns(conn):
 def save_deck(conn, event_id: int, event_name: str,
               deck_id: int, deck_name: str, player_name: str,
               format_code: str, cards: list[tuple[str, int, str]],
-              archetype: str = "") -> bool:
+              archetype: str = "", source: str = SOURCE) -> bool:
     """デッキを DB に保存する。重複の場合は False を返す"""
     unique_name = f"mtgtop8_{event_id}_{deck_id}"
     source_url  = f"{BASE_URL}/event?e={event_id}&d={deck_id}&f={format_code}"
@@ -226,7 +237,7 @@ def save_deck(conn, event_id: int, event_name: str,
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (deck_name) DO NOTHING
             RETURNING id;
-        """, (unique_name, format_code, SOURCE, event_name,
+        """, (unique_name, format_code, source, event_name,
               player_name, FORMAT_NAMES.get(format_code, format_code),
               source_url, event_id, archetype or None))
         result = cur.fetchone()
@@ -256,11 +267,19 @@ def scrape(format_code: str, meta: int, year: int):
     conn = psycopg2.connect(**DB_CONFIG)
     ensure_columns(conn)
 
+    # EDH（Duel Commander）は source を分離し、SB: 行を統率者として扱う
+    if format_code == "EDH":
+        source   = "mtgtop8_edh"
+        sb_board = "commander"
+    else:
+        source   = SOURCE
+        sb_board = "side"
+
     # 取得済みイベントをスキップ
-    scraped = get_scraped_event_ids(conn)
+    scraped = get_scraped_event_ids(conn, source=source)
 
     print(f"フォーマット: {FORMAT_NAMES.get(format_code, format_code)} "
-          f"(meta={meta}, year={year})")
+          f"(meta={meta}, year={year}, source={source})")
     print(f"イベントID取得中...")
 
     event_ids = get_event_ids(format_code, meta)
@@ -280,7 +299,7 @@ def scrape(format_code: str, meta: int, year: int):
         event_name = f"MTGTop8 Event {event_id} ({year} {format_code})"
 
         for deck_id, archetype, player_name in deck_infos:
-            cards = get_deck_cards(deck_id)
+            cards = get_deck_cards(deck_id, sb_board=sb_board)
             if not cards:
                 continue
 
@@ -288,7 +307,7 @@ def scrape(format_code: str, meta: int, year: int):
                 conn, event_id, event_name,
                 deck_id, archetype, player_name,
                 format_code, cards,
-                archetype=archetype,
+                archetype=archetype, source=source,
             )
             if saved:
                 total_decks += 1
