@@ -158,7 +158,11 @@ QUERY_EXPAND = {
     "バウンス": {"en": "return target creature to its owner hand",
                  "ja": ["クリーチャー１体を対象とし、そのオーナーの手札に戻す"]},
     # マナ系
-    "マナ加速":        {"en": "add mana",               "ja": ["マナを加える"]},
+    # mana_struct: このカードは is_mana_boost（構造化列・ネットマナ判定）で表現できる＝
+    #   意味検索を必要としない "構造化に落ちる" 意味語。EDH 直行路の fuzzy 判定で構造化扱い。
+    #   （「ランプ」「土地加速」＝土地サーチは is_mana_boost の net-mana 定義と一致しない
+    #    ことがあるので tag しない＝fuzzy 扱いのまま・保守的に）
+    "マナ加速":        {"en": "add mana",               "ja": ["マナを加える"], "mana_struct": True},
     "ランプ":          {"en": "search your library for a land", "ja": ["土地を戦場に出す"]},
     "土地加速":        {"en": "search your library for a land", "ja": ["あなたのライブラリーから土地"]},
     # クリーチャー能力（type_filter で Creature に絞る）
@@ -279,6 +283,26 @@ def expand_query(query: str) -> str:
     return query
 
 
+def has_fuzzy_semantic(query: str) -> bool:
+    """クエリに「構造化列で表現できない意味語」（fuzzy な意味）が在るか。
+    fuzzy = ドロー・コンボ・トークン・バウンス・土地ランプ等＝意味検索が要る概念。
+    構造化に落ちる語（キーワード能力=front_keywords / マナ加速=is_mana_boost /
+    tournament_boost・removal・counter＝別途フラグで処理）は fuzzy に数えない。
+    EDH 直行路（意味検索スキップ）を「意味の残余が構造化フラグだけ」のときに限る門番。
+    extract_keywords の署名を変えずに読み取るための独立ヘルパー（呼び出し元を巻き込まない）。"""
+    matched = [jp for jp in QUERY_EXPAND if jp in query]
+    matched = [k for k in matched if not any(k != o and k in o for o in matched)]
+    for jp in matched:
+        terms = QUERY_EXPAND[jp]
+        if (terms.get("keyword") or terms.get("mana_struct")
+                or terms.get("tournament_boost")
+                or terms.get("removal_mode") or terms.get("counter_mode")):
+            continue  # 構造化フラグ or 別処理される役割意図＝fuzzy でない
+        if terms.get("en") or terms.get("ja"):
+            return True  # 構造化に落ちない意味語が在る
+    return False
+
+
 def format_filter_sql(fmt: Optional[str]) -> str:
     """legalities フィルタの SQL 断片を生成する"""
     if not fmt:
@@ -297,6 +321,97 @@ CFS_FORMAT_MAP = {
     "legacy": "Legacy", "modern": "Modern",
     "pioneer": "Pioneer", "standard": "Standard",
 }
+
+
+# ─── EDH（統率者戦）固有色・ブラケット検出（R13・2026-07-08） ──────────
+# 固有色（color identity）クエリはフォーマットゲートの同族＝crisp なハードゲート。
+# 「◯◯カラーで使える」= color_identity ⊆ クエリ色集合（はみ出しは 0・単色/無色も
+# 通過＝「デッキに入るか」の判定・R13 本人裁定）。検出は決定的な辞書/正規表現
+# （フォーマット語の決定的フォールバックと同じ型＝ルーター無改修で効く）。
+# 注意: 単独の色文字（「青いカード」）では発動しない。あれは colors（カードの色）族で
+# 固有色とは別物（R13 の区別。実例: Bosh, Iron Golem は colors=[] / identity=[R]）。
+
+_CI_LETTER = {'白': 'W', '青': 'U', '黒': 'B', '赤': 'R', '緑': 'G'}
+
+COLOR_IDENTITY_MAP = {
+    # ギルド（2色）
+    'アゾリウス': 'WU', 'ディミーア': 'UB', 'ラクドス': 'BR', 'グルール': 'RG',
+    'セレズニア': 'GW', 'オルゾフ': 'WB', 'イゼット': 'UR', 'ゴルガリ': 'BG',
+    'ボロス': 'RW', 'シミック': 'GU',
+    'azorius': 'WU', 'dimir': 'UB', 'rakdos': 'BR', 'gruul': 'RG',
+    'selesnya': 'GW', 'orzhov': 'WB', 'izzet': 'UR', 'golgari': 'BG',
+    'boros': 'RW', 'simic': 'GU',
+    # 断片（アラーラの弧・3色）
+    'バント': 'GWU', 'エスパー': 'WUB', 'グリクシス': 'UBR',
+    'ジャンド': 'BRG', 'ナヤ': 'RGW',
+    'bant': 'GWU', 'esper': 'WUB', 'grixis': 'UBR', 'jund': 'BRG', 'naya': 'RGW',
+    # 楔（タルキール・3色）
+    'アブザン': 'WBG', 'ジェスカイ': 'URW', 'スゥルタイ': 'BGU',
+    'マルドゥ': 'RWB', 'ティムール': 'GUR',
+    'abzan': 'WBG', 'jeskai': 'URW', 'sultai': 'BGU', 'mardu': 'RWB', 'temur': 'GUR',
+}
+
+
+def detect_color_identity(query: str) -> Optional[list[str]]:
+    """クエリから固有色の色集合を決定的に検出する。
+    発動: ギルド/断片/楔の名前・色文字の連なり（「青黒」）・「◯単」・「無色」。
+    不発（誤発動ゼロ側に倒す非対称設計）: 単独の色文字（「青いカード」= colors 族）・
+    「好きな色」「色を選ぶ」等の非指定表現。
+    戻り値: WUBRG のソート済みリスト（無色クエリは []・不発は None）。"""
+    # 非指定表現ガード（色の話だが特定の色集合を指定していない）
+    for w in ('好きな色', '色を選', 'いずれかの色', '各色', '多色'):
+        if w in query:
+            return None
+    q = query.lower()
+    letters: set[str] = set()
+    for name, ci in COLOR_IDENTITY_MAP.items():
+        if name in q:
+            letters.update(ci)
+    # 色文字の連なり（2〜5色・「青黒」「白青黒」型）。単独の色文字では発動しない
+    for m in re.findall(r'[白青黒赤緑]{2,5}', query):
+        letters.update(_CI_LETTER[ch] for ch in m)
+    # 「◯単」（緑単・白単デッキ型）
+    for m in re.findall(r'([白青黒赤緑])単', query):
+        letters.add(_CI_LETTER[m])
+    if letters:
+        return sorted(letters)
+    # 無色（「無色マナ」はマナ種の話＝固有色指定ではないので除く）
+    if '無色' in query.replace('無色マナ', ''):
+        return []
+    return None
+
+
+def detect_bracket(query: str) -> Optional[int]:
+    """公式ブラケット文言（「ブラケット2」等）を検出する（R13補足a）。"""
+    m = re.search(r'(?:ブラケット|bracket)\s*([1-5１-５])', query, re.IGNORECASE)
+    if not m:
+        return None
+    return int(m.group(1).translate(str.maketrans('１２３４５', '12345')))
+
+
+def color_identity_filter_sql(ci: Optional[list]) -> str:
+    """固有色ハードゲート（R13）: color_identity ⊆ クエリ色集合なら通過。
+    単色・無色（空配列）も通過（Sol Ring はどの固有色クエリでも 2 になり得る＝
+    本人裁定）。ci=[]（無色クエリ）は「固有色が空のカードのみ」に正しく縮む。"""
+    if ci is None:
+        return ""
+    letters = [c for c in ci if c in ('W', 'U', 'B', 'R', 'G')]
+    arr = ", ".join("'" + c + "'" for c in letters)
+    return f" AND c.color_identity <@ ARRAY[{arr}]::text[]"
+
+
+def edh_gate_sql(edh_intent: bool, bracket: Optional[int]) -> str:
+    """EDH 意図クエリの合法性ゲート（R13）。
+    commander banned はブラケット指定の有無に関わらず「使えない」＝除外（全ブラ
+    ケット共通の前提）。ブラケット1〜2 指定時のみ game_changer もハードゲート。
+    公式ブラケットの他の軸（マスランド破壊・チューター量・2枚コンボ等）は構造化列が
+    無いため写さない＝crisp に写せる部分だけ厳格に（R13補足a・偽の精密さを避ける）。"""
+    if not edh_intent:
+        return ""
+    sql = " AND c.legalities->>'commander' = 'legal'"
+    if bracket is not None and bracket <= 2:
+        sql += " AND c.game_changer IS NOT TRUE"
+    return sql
 
 
 def is_creature_removal(removal_entries: Optional[list],
@@ -795,6 +910,55 @@ class MTGHybridSearcherV2:
             print(f"  [strength_arm] エラー: {e}")
             return []
 
+    def _edh_candidates(
+        self, top_k: int,
+        fmt_sql: str, type_sql: str, attr_sql: str = "",
+        removal_mode: bool = False, counter_mode: bool = False,
+    ) -> list[dict]:
+        """EDH 意図クエリ（固有色/ブラケット・R13）用の候補腕 v1（2026-07-09）。
+        edhrec_rank 上位を「EDH で使われるカードの仮説リスト」として RRF 融合に
+        参加させる。#22 の強度腕と同じ設計思想＝ベクトル/FTS は EDH 定番を連れて
+        来ない（Sol Ring の日本語オラクルに「マナを加える」の字面が無い等）ため、
+        ゲート内の候補プールが飢える——candidate generation（recall 装置）と
+        判定（融合・ペナルティ）の分離で解く。
+        注意: edhrec_rank は統率者不問のカジュアル人気＝「このデッキに合う」では
+        ない。統率者別の接地は mtgtop8_edh デッキ共起（取り込み中）で後段 v2。
+        役割ゲートは強度腕と同一（除去/カウンタークエリで非該当の定番注入を防ぐ）。
+        attr_sql には色ゲート・banned・GC ゲートが入ってくる＝この腕も同じ門を通る。"""
+        cfg = self.cfg
+        role_sql = ""
+        if removal_mode:
+            role_sql = (" AND c.removal_types && ARRAY['destroy','exile','damage','minus','sacrifice','tuck']"
+                        " AND c.target_types && ARRAY['creature','any','permanent']")
+        elif counter_mode:
+            role_sql = " AND c.target_types @> ARRAY['spell']"
+        sql = f"""
+            SELECT
+                c.card_name, c.type_line, c.oracle_text,
+                c.japanese_name, c.japanese_oracle_text,
+                c.mana_cost, c.rarity, c.tournament_score,
+                ROW_NUMBER() OVER (
+                    ORDER BY c.edhrec_rank ASC, c.id
+                ) AS rank
+            FROM {cfg['cards_table']} c
+            WHERE c.edhrec_rank IS NOT NULL
+              {fmt_sql} {type_sql} {attr_sql} {role_sql}
+              AND c.set_code NOT IN ('msh', 'msc')  -- Marvel(未reembed)は検索不適格
+            ORDER BY c.edhrec_rank ASC, c.id
+            LIMIT {top_k * 3};
+        """
+        try:
+            with self.conn.cursor() as cur:
+                cur.execute(sql)
+                if cur.description is None:
+                    return []
+                cols = [d[0] for d in cur.description]
+                return [dict(zip(cols, row)) for row in cur.fetchall()]
+        except Exception as e:
+            self.conn.rollback()
+            print(f"  [edh_arm] エラー: {e}")
+            return []
+
     def _role_map(self, card_names: list[str]) -> dict[str, tuple]:
         """card_name → (target_types, removal)（構造化・enrich_removal.py 由来）を1クエリで引く。
         counter_mode（呪文を対象に取るか）と removal_mode（除去メカと恒久性）の減点判定用。"""
@@ -814,6 +978,7 @@ class MTGHybridSearcherV2:
     def _structured_search(
         self, top_k: int,
         fmt_sql: str, type_sql: str, attr_sql: str,
+        edh_order: bool = False,
     ) -> list[CardResult]:
         """構造化オンリー・クエリの直行路（意味検索を通さない）。
         「破壊不能を持つクリーチャー」のように正解集合が構造化列（keywords/type/
@@ -821,8 +986,13 @@ class MTGHybridSearcherV2:
         RRF を使わない＝「事実上 SQL に LIMIT を付けただけのもの」（2026-07-06
         本人の設計指摘）。意味検索は集合を定義できない上に、意味的に似てるだけの
         非該当カードを注入する方向にしか働かないため。
-        並び順＝大会 play-rate 降順 → EDHREC 人気昇順 → id（決定的）。"""
+        並び順＝大会 play-rate 降順 → EDHREC 人気昇順 → id（決定的）。
+        EDH 意図クエリ（固有色/ブラケット・R13）は EDHREC 人気を主にする
+        （play-rate は4フォーマット大会由来＝EDH の実勢とは別物）。"""
         cfg = self.cfg
+        order = ("c.edhrec_rank ASC NULLS LAST, COALESCE(s.play_decks, 0) DESC, c.id"
+                 if edh_order else
+                 "COALESCE(s.play_decks, 0) DESC, c.edhrec_rank ASC NULLS LAST, c.id")
         sql = f"""
             SELECT
                 c.card_name, c.type_line, c.oracle_text,
@@ -835,8 +1005,7 @@ class MTGHybridSearcherV2:
             ) s ON s.card_id = c.id
             WHERE TRUE {fmt_sql} {type_sql} {attr_sql}
               AND c.set_code NOT IN ('msh', 'msc')  -- Marvel(未reembed)は検索不適格
-            ORDER BY COALESCE(s.play_decks, 0) DESC,
-                     c.edhrec_rank ASC NULLS LAST, c.id
+            ORDER BY {order}
             LIMIT {top_k};
         """
         try:
@@ -1167,26 +1336,53 @@ class MTGHybridSearcherV2:
                                    mana_producer=mana_producer)
         attr_sql += keyword_filter_sql(kw_abilities)
         attr_sql += removal_mech_filter_sql(query, removal_mode)
+        # EDH 固有色・ブラケットゲート（R13・決定的検出＝ルーター無改修で効く）。
+        # attr_sql に足すことで全腕（vec/FTS/強度腕）と直行路に同時に掛かる
+        ci = detect_color_identity(query)
+        bracket = detect_bracket(query)
+        edh_intent = ci is not None or bracket is not None
+        attr_sql += color_identity_filter_sql(ci)
+        attr_sql += edh_gate_sql(edh_intent, bracket)
+        if ci is not None:
+            label = ",".join(ci) if ci else "無色"
+            print(f"  固有色ゲート: ⊆ {{{label}}}（banned 除外"
+                  + (f"・ブラケット{bracket}" + ("＝GC 除外" if bracket <= 2 else "")
+                     if bracket is not None else "") + "）")
+        elif bracket is not None:
+            print(f"  ブラケット{bracket}ゲート（banned 除外"
+                  + ("・GC 除外" if bracket <= 2 else "・GC 可") + "）")
         # カウンター条件の整合（R12 の検索側・2026-07-08 採点で極性を精密化）:
         #   「条件付き〜」明示 → 条件付きがど真ん中（無条件を降格）
         #   無修飾（format も数値も無い）→ 無条件がど真ん中（条件付きを降格）
         #   crisp 修飾つき（「2マナ以下の」「レガシーの」等）→ 整合を発動しない。
         #     本人採点の実測: これらのクエリでは Keep Safe/Daze 等の条件付きも 2＝
         #     「crisp 制約を満たすカウンター」であることが本質で、条件性は grade に効かない
+        #   固有色修飾（「青黒で使える」）も crisp 修飾＝同じ理由で不発（R13）
         counter_align = None
         if counter_mode:
             if '条件付き' in query or 'conditional' in query.lower():
                 counter_align = 'conditional'
-            elif format is None and not re.search(r'[0-9０-９一二三四五六七八九十]', query):
+            elif (format is None and ci is None
+                    and not re.search(r'[0-9０-９一二三四五六七八九十]', query)):
                 counter_align = 'unconditional'
         if attr_sql:
             print(f"  構造化フィルタ:{attr_sql}")
 
-        # 構造化オンリー直行路: キーワード能力クエリで、他の意味語・boost・役割意図が
-        # 無ければ意味検索を通さない（override 込みの最終判断はここで行う）
-        if kw_only and not (tournament_boost or removal_mode or counter_mode):
-            print("  構造化オンリー直行路（意味検索スキップ・play-rate順）")
-            return self._structured_search(top_k, fmt_sql, type_sql, attr_sql)
+        # 構造化オンリー直行路: 正解集合が構造化列の WHERE で完全に定義できる＝意味検索を
+        # 通さない（override 込みの最終判断はここで行う）。2経路:
+        #  (1) キーワード能力クエリ（kw_only・従来）
+        #  (2) EDH 意図クエリで意味の残余が構造化フラグだけ（色⊆＋is_mana_boost 等・R13）。
+        #      「ラクドスカラーのマナ加速」は色ゲート∧is_mana_boost で crisp＝ただの SQL。
+        #      意味検索はここで Sol Ring 等の EDH 定番を連れて来られない（プール飢餓）ため、
+        #      直行路（edhrec 順）の方が正しく返る（重み調整で殴らない＝周転円回避・design ledger）。
+        edh_direct = (edh_intent
+                      and (mana_producer or kw_only)
+                      and not has_fuzzy_semantic(query))
+        if not (tournament_boost or removal_mode or counter_mode) and (kw_only or edh_direct):
+            print("  構造化オンリー直行路（意味検索スキップ・"
+                  + ("EDH＝edhrec順" if edh_intent else "play-rate順") + "）")
+            return self._structured_search(top_k, fmt_sql, type_sql, attr_sql,
+                                           edh_order=edh_intent)
 
         vec     = self._embed(expanded)
         v_rows  = self._vector_search(vec, top_k, fmt_sql, type_sql, attr_sql)
@@ -1199,11 +1395,18 @@ class MTGHybridSearcherV2:
                                              removal_mode=removal_mode,
                                              counter_mode=counter_mode)
                    if tournament_boost else [])
+        # R13: EDH 意図クエリは edhrec_rank 上位を候補腕として追加（EDH 版プール飢餓対策）。
+        # 複数腕は連結で RRF に参加（同一カードは両腕から寄与を受ける＝RRF の自然な挙動）
+        edh_rows = (self._edh_candidates(top_k, fmt_sql, type_sql, attr_sql,
+                                         removal_mode=removal_mode,
+                                         counter_mode=counter_mode)
+                    if edh_intent else [])
 
         elapsed = (time.perf_counter() - t0) * 1000
         print(f"  vec:{len(v_rows)} en_fts:{len(en_rows)} "
               f"ja_fts:{len(ja_rows)}"
               + (f" strength:{len(st_rows)}" if st_rows else "")
+              + (f" edh:{len(edh_rows)}" if edh_rows else "")
               + f" ({elapsed:.0f}ms)")
 
         return self._rrf_merge(v_rows, en_rows, ja_rows, top_k,
@@ -1211,7 +1414,7 @@ class MTGHybridSearcherV2:
                                removal_mode=removal_mode,
                                counter_mode=counter_mode,
                                format=format,
-                               st_rows=st_rows,
+                               st_rows=st_rows + edh_rows,
                                counter_align=counter_align)
 
     def close(self):
