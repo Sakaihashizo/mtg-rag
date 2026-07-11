@@ -455,7 +455,7 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
         boost_q = bool(entry and entry.get("tournament_boost"))
         # 構造化オンリー直行路（キーワード能力クエリ）も rerank スキップ:
         # 並びは play-rate 順＝reranker が知らない上流信号（id=32 の boost と同じ原則）
-        _, _, _, tb_d, rm_d, cm_d, _, kw_only = extract_keywords(query)
+        _, _, _, tb_d, rm_d, cm_d, _, _, kw_only = extract_keywords(query)
         structured_q = kw_only and not (tb_d or rm_d or cm_d)
         if rerank and not boost_q and not structured_q:
             legal = rerank_results(query, legal)

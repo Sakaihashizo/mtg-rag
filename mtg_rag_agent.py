@@ -75,7 +75,7 @@ def structured_direct_gate(query: str) -> bool:
       (2) クエリに数字なし ＝ 数値抽出（cmc 等）は現状ルーターの仕事なので、
           数字があるときはルーターに任せる（迷ったら高い方＝正確な方に倒す）
     format 語（「モダンの〜」）は search_cards 側の決定的フォールバックが拾うため妨げない。"""
-    _, _, _, tb, rm, cm, _, kw_only = extract_keywords(query)
+    _, _, _, tb, rm, cm, _, _, kw_only = extract_keywords(query)
     return (kw_only and not (tb or rm or cm)
             and not re.search(r'[0-9０-９一二三四五六七八九十]', query))
 

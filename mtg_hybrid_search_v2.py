@@ -216,12 +216,39 @@ QUERY_EXPAND = {
 }
 
 
-def extract_keywords(query: str) -> tuple[list[str], list[str], Optional[str], bool, bool, bool, list[str], bool]:
+# 日本語のカードタイプ語 → type_line フィルタ（2026-07-11・本人の実地テストが発見した
+# 「直行路は type 語が見えない」穴への対応）。検出は「クエリ末尾の名詞句主要部」に限る:
+#   「速攻を持つアーティファクト」  → 末尾＝答えのタイプ ＝ 立てる
+#   「アーティファクトを破壊するカード」→ 末尾は「カード」＝ 立てない（答えは呪文側。
+#     対象語（を格）を type にすると 7/9 Nova の有害誤付与と同じ間違いを決定的コードで犯す）
+#   「土地加速」→ 末尾は「加速」＝ 複合語も自然に不発
+TYPE_WORDS_JA = {
+    "クリーチャー":         "Creature",
+    "アーティファクト":     "Artifact",
+    "エンチャント":         "Enchantment",
+    "インスタント":         "Instant",
+    "ソーサリー":           "Sorcery",
+    "プレインズウォーカー": "Planeswalker",
+    "土地":                 "Land",
+    "バトル":               "Battle",
+}
+
+# キーワード能力の否定表現（「〈kw〉を持たない」等・キーワードキー直後のみ）。
+# embedding/FTS は否定が原理的に見えない（「持つ」と「持たない」がほぼ同じベクトル）
+# ＝ crisp な否定は SQL の NOT で解く（2026-07-11・設計思想どおりの置き場所）
+_NEG_AFTER_KW = r'(?:を|は)?(?:持たない|持ってない|持っていない|が\s*無い|がない|無し|なし|以外)'
+
+
+def extract_keywords(query: str) -> tuple[list[str], list[str], Optional[str], bool, bool, bool, list[str], list[str], bool]:
     """
     クエリからキーワードと各フラグを抽出する。
     戻り値: (英語キーワードリスト, 日本語キーワードリスト, type_filter,
-             tournament_boost, removal_mode, counter_mode, kw_abilities, kw_only)
-    kw_abilities = クエリが問うている生得キーワード能力（Scryfall keywords 表記）。
+             tournament_boost, removal_mode, counter_mode,
+             kw_abilities, neg_kw_abilities, kw_only)
+    kw_abilities     = クエリが「持つ」ことを求める生得キーワード（front_keywords @> の門）
+    neg_kw_abilities = クエリが「持たない」ことを求める生得キーワード（NOT && の門・
+                       2026-07-11 否定形対応）。keyword エントリ以外（除去等）の否定は
+                       複雑度が高いため対象外＝従来どおりルーター/意味検索に任せる（保守的）
     kw_only = 辞書レベルで「キーワード能力以外の意味語が無い」＝構造化オンリー候補
     （最終判断は search() 側で boost/removal/counter の override 込みで行う）。
     """
@@ -232,6 +259,7 @@ def extract_keywords(query: str) -> tuple[list[str], list[str], Optional[str], b
     removal_mode: bool = False
     counter_mode: bool = False
     kw_abilities: list[str] = []
+    neg_kw_abilities: list[str] = []
     other_semantic: bool = False
 
     # 一致キーを集め、別の(より長い)一致キーの部分文字列であるキーは捨てる。
@@ -240,6 +268,13 @@ def extract_keywords(query: str) -> tuple[list[str], list[str], Optional[str], b
     matched = [k for k in matched if not any(k != o and k in o for o in matched)]
     for jp in matched:
         terms = QUERY_EXPAND[jp]
+        kw = terms.get("keyword")
+        # 否定文脈（「速攻を持たない」等）: keyword エントリに限り negative へ回す。
+        # en/ja の意味検索注入もスキップ＝検索を正極性（持つ側）へ引っ張らない
+        if kw and re.search(re.escape(jp) + _NEG_AFTER_KW, query):
+            if kw not in neg_kw_abilities:
+                neg_kw_abilities.append(kw)
+            continue
         en = terms.get("en", "")
         if en:
             en_keywords.append(en)
@@ -256,28 +291,39 @@ def extract_keywords(query: str) -> tuple[list[str], list[str], Optional[str], b
             removal_mode = True
         if terms.get("counter_mode"):
             counter_mode = True
-        if terms.get("keyword"):
-            if terms["keyword"] not in kw_abilities:
-                kw_abilities.append(terms["keyword"])
+        if kw:
+            if kw not in kw_abilities:
+                kw_abilities.append(kw)
         elif en or ja:
             # キーワード能力エントリ以外の意味語（除去/ドロー/マナ加速等）が混ざってる
             other_semantic = True
 
+    # 日本語 type 語の検出（末尾ルール・辞書エントリ由来の type_filter が無いときだけ補完）
+    if type_filter is None:
+        stripped = query.strip().rstrip('?？。！!、．.　 ')
+        for jp_type, en_type in TYPE_WORDS_JA.items():
+            if stripped.endswith(jp_type):
+                type_filter = en_type
+                break
+
     # 生得キーワードのハードフィルタを発動しない条件（極性ガード）:
     # (1) 除去/カウンター意図（例:「破壊不能を除去できるカード」＝答えは持たない側の呪文）
     # (2) 付与意図（例:「破壊不能を付与するカード」＝答えは付与する側＝生得持ちでない）
+    # negative 側も同時に消す（除去/付与と否定の複合クエリは複雑度が高い＝保守的に全降ろし）
     if removal_mode or counter_mode or any(
             w in query for w in ('付与', '与え', '得る', '得られ', '持たせ', '授け')):
         kw_abilities = []
+        neg_kw_abilities = []
 
-    kw_only = bool(kw_abilities) and not other_semantic
+    kw_only = bool(kw_abilities or neg_kw_abilities) and not other_semantic
 
     return (en_keywords, ja_keywords, type_filter,
-            tournament_boost, removal_mode, counter_mode, kw_abilities, kw_only)
+            tournament_boost, removal_mode, counter_mode,
+            kw_abilities, neg_kw_abilities, kw_only)
 
 
 def expand_query(query: str) -> str:
-    en_kws, _, _, _, _, _, _, _ = extract_keywords(query)
+    en_kws, _, _, _, _, _, _, _, _ = extract_keywords(query)
     if en_kws:
         return " ".join(en_kws[:3]) + " " + query
     return query
@@ -469,18 +515,29 @@ def removal_mech_filter_sql(query: str, removal_mode: bool) -> str:
     return f" AND c.removal_types && ARRAY[{ms}]::text[]"
 
 
-def keyword_filter_sql(kw_abilities: Optional[list]) -> str:
+def keyword_filter_sql(kw_abilities: Optional[list],
+                       neg_kw_abilities: Optional[list] = None) -> str:
     """「○○を持つクリーチャー」系クエリの生得キーワード・ハードフィルタ。
     front_keywords 配列（表面の生得能力のみ＝R8補足a/b の crisp 代理・
     enrich_front_keywords.py 由来）を WHERE で要求する。カード単位の keywords は
     裏面・変身後の能力を含む（デルバーの Flying 等）ため使わない＝「両面は表面の
     本質で判定」の検索側の写し。crisp な条件は減点でなく SQL の門で解く
     （cmc/is_mana_boost と同じ役割分担）＝ベクトル検索は「生得持ちの中の並び順」
-    だけを担当し、意味的に似てるだけの非該当カードは入口で消える。"""
-    if not kw_abilities:
-        return ""
-    kws = ", ".join("'" + k.replace("'", "''") + "'" for k in kw_abilities)
-    return f" AND c.front_keywords @> ARRAY[{kws}]::text[]"
+    だけを担当し、意味的に似てるだけの非該当カードは入口で消える。
+
+    neg_kw_abilities（2026-07-11 否定形対応）: 「○○を持たない」は NOT (&&) の門。
+    front_keywords が NULL のカード（キーワード無し）こそ「持たない」正解集合の主役
+    なので COALESCE で空配列に落としてから判定する（素の NOT(NULL &&) は NULL に
+    なって行ごと消える＝正解を全滅させる罠）。"""
+    sql = ""
+    if kw_abilities:
+        kws = ", ".join("'" + k.replace("'", "''") + "'" for k in kw_abilities)
+        sql += f" AND c.front_keywords @> ARRAY[{kws}]::text[]"
+    if neg_kw_abilities:
+        kws = ", ".join("'" + k.replace("'", "''") + "'" for k in neg_kw_abilities)
+        sql += (f" AND NOT (COALESCE(c.front_keywords, '{{}}') && "
+                f"ARRAY[{kws}]::text[])")
+    return sql
 
 
 VALID_TYPE_FILTERS = {
@@ -1185,14 +1242,15 @@ class MTGHybridSearcherV2:
                                    mana_producer=mana_producer)
         # キーワード系クエリは HyDE 腕にも生得持ちハードフィルタを適用（search() 本体と対。
         # HyDE 単独ヒットは最終マージに入るため、ここに門が無いと非該当が再流入する）
-        (_, _, _, _tb, _rm, _cm, _kw_abilities, _kw_only) = extract_keywords(query)
+        (_, _, _, _tb, _rm, _cm, _kw_abilities, _neg_kw,
+         _kw_only) = extract_keywords(query)
         # 構造化オンリー直行路なら normal_results が既に SQL 直行の並び＝HyDE を重ねない
         # （重ねると意味検索の並びが play-rate 順を汚す・search() 本体の分岐と対）
         if _kw_only and not (_tb or tournament_boost_override) \
                 and not (_rm or removal_mode_override) \
                 and not (_cm or counter_mode_override):
             return normal_results[:top_k]
-        attr_sql += keyword_filter_sql(_kw_abilities)
+        attr_sql += keyword_filter_sql(_kw_abilities, _neg_kw)
         # 機構指定つき除去クエリの門は HyDE 腕にも（search() 本体と対・単独ヒット再流入防止）
         attr_sql += removal_mech_filter_sql(query, _rm or removal_mode_override)
         hyde_vec  = self._embed(hyde_text)
@@ -1305,7 +1363,8 @@ class MTGHybridSearcherV2:
         t0 = time.perf_counter()
 
         (en_kws, ja_kws, type_filter, tournament_boost,
-         removal_mode, counter_mode, kw_abilities, kw_only) = extract_keywords(query)
+         removal_mode, counter_mode, kw_abilities, neg_kw_abilities,
+         kw_only) = extract_keywords(query)
 
         # override フラグが True の場合は強制的に有効化
         tournament_boost = tournament_boost or tournament_boost_override
@@ -1334,7 +1393,9 @@ class MTGHybridSearcherV2:
                                    power_min, power_max,
                                    toughness_min, toughness_max,
                                    mana_producer=mana_producer)
-        attr_sql += keyword_filter_sql(kw_abilities)
+        if neg_kw_abilities:
+            print(f"  否定キーワード: {neg_kw_abilities}（持たない側＝SQL NOT 門）")
+        attr_sql += keyword_filter_sql(kw_abilities, neg_kw_abilities)
         attr_sql += removal_mech_filter_sql(query, removal_mode)
         # EDH 固有色・ブラケットゲート（R13・決定的検出＝ルーター無改修で効く）。
         # attr_sql に足すことで全腕（vec/FTS/強度腕）と直行路に同時に掛かる
@@ -1530,7 +1591,9 @@ if __name__ == "__main__":
 
         # ファイル出力用データ収集
         if args.output:
-            en_kws, ja_kws, _, _, _, _ = extract_keywords(q)
+            # （2026-07-11 修正: 従来 8 タプルを 6 個で unpack する既存バグ＝
+            #   --output 指定時のみ ValueError で落ちるデモ経路だった）
+            en_kws, ja_kws, _, _, _, _, _, _, _ = extract_keywords(q)
             all_output.append({
                 "query":          q,
                 "format":         f,
