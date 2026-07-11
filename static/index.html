@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MTG RAG Search — カード検索</title>
+<style>
+  :root {
+    --bg: #14161a;
+    --panel: #1d2026;
+    --panel-edge: #2a2e36;
+    --text: #e8e6e0;
+    --text-dim: #9a978f;
+    --accent: #c9a54c;           /* 金枠＝レア */
+    --w: #f5f0d8; --u: #9ec6e0; --b: #a89c94; --r: #e08a63; --g: #93b483;
+    font-size: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Noto Sans JP", sans-serif;
+    min-height: 100vh;
+  }
+  header {
+    padding: 2.2rem 1rem 1.2rem;
+    text-align: center;
+    background:
+      linear-gradient(180deg, rgba(201,165,76,.08), transparent 70%);
+  }
+  header h1 {
+    font-size: 1.7rem;
+    letter-spacing: .06em;
+    font-weight: 700;
+  }
+  header h1 .mana-dots { letter-spacing: .12em; font-size: 1.2rem; vertical-align: middle; }
+  header p { color: var(--text-dim); margin-top: .4rem; font-size: .85rem; }
+
+  .search-box {
+    max-width: 720px;
+    margin: 1.2rem auto 0;
+    padding: 0 1rem;
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+  }
+  .search-box input[type=text] {
+    flex: 1 1 320px;
+    padding: .8rem 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--panel-edge);
+    background: var(--panel);
+    color: var(--text);
+    font-size: 1rem;
+    outline: none;
+  }
+  .search-box input[type=text]:focus { border-color: var(--accent); }
+  .search-box select {
+    padding: .8rem .6rem;
+    border-radius: 10px;
+    border: 1px solid var(--panel-edge);
+    background: var(--panel);
+    color: var(--text);
+  }
+  .search-box button {
+    padding: .8rem 1.6rem;
+    border-radius: 10px;
+    border: none;
+    background: var(--accent);
+    color: #14161a;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .search-box button:disabled { opacity: .5; cursor: wait; }
+
+  .status {
+    max-width: 720px;
+    margin: .8rem auto 0;
+    padding: 0 1rem;
+    color: var(--text-dim);
+    font-size: .85rem;
+    min-height: 1.4em;
+  }
+  .status .route-badge {
+    display: inline-block;
+    padding: .15em .6em;
+    border-radius: 99px;
+    font-size: .78rem;
+    margin-right: .5em;
+    border: 1px solid var(--panel-edge);
+  }
+  .route-structured_direct { color: #8fd18f; border-color: #3a5c3a !important; }
+  .route-router            { color: #9ec6e0; border-color: #33506a !important; }
+  .route-no_rewrite        { color: var(--text-dim); }
+
+  main {
+    max-width: 720px;
+    margin: 1rem auto 4rem;
+    padding: 0 1rem;
+    display: grid;
+    gap: .8rem;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--panel-edge);
+    border-left: 4px solid var(--rarity, var(--panel-edge));
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+  }
+  .card .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: .6rem;
+    flex-wrap: wrap;
+  }
+  .card .names { font-weight: 700; font-size: 1.05rem; }
+  .card .names .en { color: var(--text-dim); font-weight: 400; font-size: .85rem; margin-left: .5em; }
+  .mana { white-space: nowrap; }
+  .mana span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.35em; height: 1.35em;
+    border-radius: 50%;
+    font-size: .78rem;
+    font-weight: 700;
+    color: #222;
+    background: #cfcfcf;
+    margin-left: .15em;
+    border: 1px solid rgba(0,0,0,.35);
+  }
+  .mana .mw { background: var(--w); } .mana .mu { background: var(--u); }
+  .mana .mb { background: var(--b); } .mana .mr { background: var(--r); }
+  .mana .mg { background: var(--g); }
+  .card .typeline {
+    color: var(--text-dim);
+    font-size: .84rem;
+    margin-top: .3rem;
+    display: flex;
+    justify-content: space-between;
+    gap: .6rem;
+  }
+  .card .pt { color: var(--text); font-weight: 700; }
+  .card .oracle {
+    margin-top: .6rem;
+    font-size: .92rem;
+    line-height: 1.65;
+    white-space: pre-wrap;
+  }
+  .card .oracle.en { color: var(--text-dim); font-size: .82rem; margin-top: .4rem; }
+  .card .archetypes { margin-top: .6rem; }
+  .card .archetypes span {
+    display: inline-block;
+    font-size: .75rem;
+    color: var(--text-dim);
+    border: 1px solid var(--panel-edge);
+    border-radius: 99px;
+    padding: .1em .6em;
+    margin: 0 .3em .3em 0;
+  }
+  .empty, .error {
+    text-align: center;
+    color: var(--text-dim);
+    padding: 2rem 0;
+  }
+  .error { color: #e08a63; }
+  footer {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: .75rem;
+    padding: 1rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span class="mana-dots">⚪🔵⚫🔴🟢</span> MTG RAG Search</h1>
+  <p>日本語で聞ける Magic: The Gathering カード検索 — ハイブリッド検索 + 構造化フィルタ</p>
+</header>
+
+<div class="search-box">
+  <input id="q" type="text" placeholder="例: 速攻を持たないクリーチャー / モダンの単体除去"
+         autocomplete="off">
+  <select id="format">
+    <option value="">フォーマット指定なし</option>
+    <option value="standard">スタンダード</option>
+    <option value="pioneer">パイオニア</option>
+    <option value="modern">モダン</option>
+    <option value="legacy">レガシー</option>
+    <option value="vintage">ヴィンテージ</option>
+    <option value="pauper">パウパー</option>
+  </select>
+  <button id="go">検索</button>
+</div>
+
+<div class="status" id="status"></div>
+<main id="results"></main>
+
+<footer>ローカル開発ビルド — ルーター: 7B (Ollama) / DB: PostgreSQL+pgvector</footer>
+
+<script>
+const $q = document.getElementById("q");
+const $go = document.getElementById("go");
+const $fmt = document.getElementById("format");
+const $status = document.getElementById("status");
+const $results = document.getElementById("results");
+
+const RARITY_COLOR = {
+  mythic: "#e05e26", rare: "#c9a54c", uncommon: "#a9bcc4", common: "#5a5e66",
+};
+const ROUTE_LABEL = {
+  structured_direct: "辞書直行（LLM不使用）",
+  router: "ルーター解析",
+  no_rewrite: "素の検索",
+};
+
+// {2}{W}{U} → 丸チップ列
+function manaHtml(cost) {
+  if (!cost) return "";
+  const sym = { W: "mw", U: "mu", B: "mb", R: "mr", G: "mg" };
+  return (cost.match(/{[^}]+}/g) || []).map(t => {
+    const v = t.slice(1, -1);
+    const cls = sym[v] || "";
+    return `<span class="${cls}">${v}</span>`;
+  }).join("");
+}
+
+function esc(s) {
+  return (s || "").replace(/[&<>"']/g,
+    c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+}
+
+function cardHtml(c) {
+  const rarity = RARITY_COLOR[(c.rarity || "").toLowerCase()] || "var(--panel-edge)";
+  const ja = c.japanese_name ? esc(c.japanese_name) : esc(c.card_name);
+  const en = c.japanese_name ? `<span class="en">${esc(c.card_name)}</span>` : "";
+  const pt = (c.power != null && c.toughness != null)
+    ? `<span class="pt">${esc(String(c.power))}/${esc(String(c.toughness))}</span>` : "";
+  const oracleJa = c.japanese_oracle_text
+    ? `<div class="oracle">${esc(c.japanese_oracle_text)}</div>` : "";
+  const oracleEn = c.oracle_text
+    ? `<div class="oracle en">${esc(c.oracle_text)}</div>` : "";
+  const arch = (c.archetypes && c.archetypes.length)
+    ? `<div class="archetypes">${c.archetypes.map(a => `<span>${esc(a)}</span>`).join("")}</div>` : "";
+  return `<div class="card" style="--rarity:${rarity}">
+    <div class="head">
+      <div class="names">${ja}${en}</div>
+      <div class="mana">${manaHtml(c.mana_cost)}</div>
+    </div>
+    <div class="typeline"><span>${esc(c.type_line)}</span>${pt}</div>
+    ${oracleJa}${oracleEn}${arch}
+  </div>`;
+}
+
+async function search() {
+  const query = $q.value.trim();
+  if (!query) return;
+  $go.disabled = true;
+  $results.innerHTML = "";
+  $status.textContent = "検索中…（ルーター解析が入る場合は十数秒かかります）";
+  const t0 = performance.now();
+  try {
+    const resp = await fetch("/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query,
+        format: $fmt.value || null,
+        top_k: 10,
+      }),
+    });
+    if (!resp.ok) {
+      const detail = (await resp.json().catch(() => ({}))).detail || resp.statusText;
+      throw new Error(detail);
+    }
+    const data = await resp.json();
+    const ms = Math.round(performance.now() - t0);
+    const routeLabel = ROUTE_LABEL[data.route] || data.route;
+    const backend = data.router_backend ? ` / ${data.router_backend}` : "";
+    $status.innerHTML =
+      `<span class="route-badge route-${esc(data.route)}">${esc(routeLabel)}${esc(backend)}</span>` +
+      `${data.cards.length}件 · ${ms}ms` +
+      (data.detected_format ? ` · フォーマット: ${esc(data.detected_format)}` : "");
+    $results.innerHTML = data.cards.length
+      ? data.cards.map(cardHtml).join("")
+      : `<div class="empty">該当するカードが見つかりませんでした。</div>`;
+  } catch (e) {
+    $status.textContent = "";
+    $results.innerHTML = `<div class="error">エラー: ${esc(e.message)}</div>`;
+  } finally {
+    $go.disabled = false;
+  }
+}
+
+$go.addEventListener("click", search);
+$q.addEventListener("keydown", e => { if (e.key === "Enter") search(); });
+$q.focus();
+</script>
+</body>
+</html>

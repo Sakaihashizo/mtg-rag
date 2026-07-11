@@ -27,8 +27,10 @@ import os
 import threading
 import time
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from db import make_db
@@ -153,3 +155,10 @@ def ask(req: SearchRequest):
         _log_query("/ask", req, result,
                    int((time.perf_counter() - t0) * 1000))
     return {**result, "answer": answer}
+
+
+# 静的フロント（static/index.html）。ルート定義の後に mount する＝
+# /search /ask /health は API が先勝ちし、それ以外を静的配信が受ける。
+# 本番（C案）では S3+CloudFront がこの役割を担う＝この mount はローカル開発用。
+app.mount("/", StaticFiles(directory=Path(__file__).parent / "static",
+                           html=True), name="static")
