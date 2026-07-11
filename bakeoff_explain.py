@@ -105,12 +105,10 @@ QUERIES = [
 def fetch_cards_by_name(searcher, names):
     """手組みプール用: 指定カードを DB から検索経路と同じ形で取得（指定順を保持）。"""
     from mtg_rag_agent import get_archetypes
-    with searcher.conn.cursor() as cur:
-        cur.execute(
-            "SELECT card_name, japanese_name, type_line, mana_cost, power, toughness,"
-            " oracle_text, japanese_oracle_text, rarity"
-            " FROM mtg_cards_v2 WHERE card_name = ANY(%s)", (names,))
-        rows = {r[0]: r for r in cur.fetchall()}
+    rows = {r[0]: r for r in searcher.db.query(
+        "SELECT card_name, japanese_name, type_line, mana_cost, power, toughness,"
+        " oracle_text, japanese_oracle_text, rarity"
+        " FROM mtg_cards_v2 WHERE card_name = ANY(%s)", (names,))}
     cards = []
     for n in names:
         r = rows.get(n)
@@ -122,7 +120,7 @@ def fetch_cards_by_name(searcher, names):
             "mana_cost": r[3], "power": r[4], "toughness": r[5],
             "oracle_text": r[6], "japanese_oracle_text": r[7], "rarity": r[8],
             "rrf_score": 0.0,
-            "archetypes": get_archetypes(r[0], searcher.conn),
+            "archetypes": get_archetypes(r[0], searcher.db),
         })
     return cards
 

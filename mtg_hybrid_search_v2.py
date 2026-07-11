@@ -26,6 +26,8 @@ from typing import Optional
 
 import psycopg2
 from sentence_transformers import SentenceTransformer
+
+from db import make_db  # DB ドライバ切替層（psycopg2 / Aurora Data API・2026-07-12）
 # 役割判定（removal/counter）は構造化列 target_types / removal（enrich_removal.py 由来）
 # へ移行済み（P1: 正しさ＞点数）。旧 mtg_removal_rules / mtg_counter_rules の手書き
 # 文字列マッチはもう使わない。
@@ -700,17 +702,17 @@ class MTGHybridSearcherV2:
         self.model      = SentenceTransformer(
             cfg["model_name"], cache_folder="/mnt/new_hdd/hf_cache"
         )
-        self.conn = psycopg2.connect(**get_db_config())
+        # DB アクセスはドライバ切替層（db.py）経由＝ローカル psycopg2 / 本番 Data API を
+        # DB_BACKEND 環境変数で切替（2026-07-12 移行・旧 self.conn 直書きは全廃）
+        self.db = make_db()
         # HNSW 近似検索 + 構造化フィルタ併用時の取りこぼし対策（pgvector 0.8+）。
         # 既定の近似スキャンだと ef_search 件の近傍を見てから WHERE で絞るため、
         # cmc=1 等の選択的フィルタでは候補がほぼ脱落して数件しか残らない。
         # iterative_scan を有効化し、フィルタを満たす件数が揃うまで反復スキャンさせる。
         try:
-            with self.conn.cursor() as _cur:
-                _cur.execute("SET hnsw.iterative_scan = relaxed_order")
-            self.conn.commit()
+            self.db.execute("SET hnsw.iterative_scan = relaxed_order")
         except Exception:
-            self.conn.rollback()  # pgvector < 0.8 では未対応 → 無視
+            pass  # pgvector < 0.8 では未対応 → 無視（rollback は db 層が実施済み）
         print(f"[MTGHybridSearcherV2] {model_key} ({cfg['model_name']})")
 
     def _embed(self, text: str) -> list[float]:
@@ -740,12 +742,7 @@ class MTGHybridSearcherV2:
             ORDER BY e.embedding <=> '{vec_str}'::vector
             LIMIT {top_k * 3};
         """
-        with self.conn.cursor() as cur:
-            cur.execute(sql)
-            if cur.description is None:
-                return []
-            cols = [d[0] for d in cur.description]
-            return [dict(zip(cols, row)) for row in cur.fetchall()]
+        return self.db.query_dicts(sql)
 
     def _en_text_search(
         self, en_keywords: list[str], top_k: int,
@@ -785,18 +782,10 @@ class MTGHybridSearcherV2:
                 LIMIT {top_k * 3};
             """
             try:
-                with self.conn.cursor() as cur:
-                    # $tsq$ dollar quoting で特殊文字を安全に渡す
-                    cur.execute(
-                        sql.replace("$tsq$", "%s"),
-                        (tsquery, tsquery, tsquery)
-                    )
-                    if cur.description is None:
-                        return []
-                    cols = [d[0] for d in cur.description]
-                    return [dict(zip(cols, row)) for row in cur.fetchall()]
+                # $tsq$ dollar quoting で特殊文字を安全に渡す
+                return self.db.query_dicts(sql.replace("$tsq$", "%s"),
+                                           (tsquery, tsquery, tsquery))
             except Exception as e:
-                self.conn.rollback()
                 print(f"  [en_fts removal] エラー: {e}")
                 return []
         else:
@@ -825,14 +814,8 @@ class MTGHybridSearcherV2:
                 LIMIT {top_k * 3};
             """
             try:
-                with self.conn.cursor() as cur:
-                    cur.execute(sql)
-                    if cur.description is None:
-                        return []
-                    cols = [d[0] for d in cur.description]
-                    return [dict(zip(cols, row)) for row in cur.fetchall()]
+                return self.db.query_dicts(sql)
             except Exception as e:
-                self.conn.rollback()
                 print(f"  [en_fts] エラー: {e}")
                 return []
 
@@ -871,14 +854,8 @@ class MTGHybridSearcherV2:
             LIMIT {top_k * 3};
         """
         try:
-            with self.conn.cursor() as cur:
-                cur.execute(sql, params)
-                if cur.description is None:
-                    return []
-                cols = [d[0] for d in cur.description]
-                return [dict(zip(cols, row)) for row in cur.fetchall()]
+            return self.db.query_dicts(sql, params)
         except Exception as e:
-            self.conn.rollback()
             print(f"  [ja_fts] エラー: {e}")
             return []
 
@@ -911,11 +888,8 @@ class MTGHybridSearcherV2:
             """
             params = (card_names,)
         try:
-            with self.conn.cursor() as cur:
-                cur.execute(sql, params)
-                return {r[0]: int(r[1]) for r in cur.fetchall()}
+            return {r[0]: int(r[1]) for r in self.db.query(sql, params)}
         except Exception as e:
-            self.conn.rollback()
             print(f"  [format_strength] エラー: {e}")
             return {}
 
@@ -986,14 +960,8 @@ class MTGHybridSearcherV2:
             """
             params = ()
         try:
-            with self.conn.cursor() as cur:
-                cur.execute(sql, params)
-                if cur.description is None:
-                    return []
-                cols = [d[0] for d in cur.description]
-                return [dict(zip(cols, row)) for row in cur.fetchall()]
+            return self.db.query_dicts(sql, params)
         except Exception as e:
-            self.conn.rollback()
             print(f"  [strength_arm] エラー: {e}")
             return []
 
@@ -1035,14 +1003,8 @@ class MTGHybridSearcherV2:
             LIMIT {top_k * 3};
         """
         try:
-            with self.conn.cursor() as cur:
-                cur.execute(sql)
-                if cur.description is None:
-                    return []
-                cols = [d[0] for d in cur.description]
-                return [dict(zip(cols, row)) for row in cur.fetchall()]
+            return self.db.query_dicts(sql)
         except Exception as e:
-            self.conn.rollback()
             print(f"  [edh_arm] エラー: {e}")
             return []
 
@@ -1052,13 +1014,11 @@ class MTGHybridSearcherV2:
         if not card_names:
             return {}
         try:
-            with self.conn.cursor() as cur:
-                cur.execute(
-                    f"SELECT card_name, target_types, removal FROM {self.cfg['cards_table']} "
-                    f"WHERE card_name = ANY(%s)", (card_names,))
-                return {r[0]: (r[1] or [], r[2] or []) for r in cur.fetchall()}
+            rows = self.db.query(
+                f"SELECT card_name, target_types, removal FROM {self.cfg['cards_table']} "
+                f"WHERE card_name = ANY(%s)", (card_names,))
+            return {r[0]: (r[1] or [], r[2] or []) for r in rows}
         except Exception as e:
-            self.conn.rollback()
             print(f"  [role_map] エラー: {e}")
             return {}
 
@@ -1096,12 +1056,8 @@ class MTGHybridSearcherV2:
             LIMIT {top_k};
         """
         try:
-            with self.conn.cursor() as cur:
-                cur.execute(sql)
-                cols = [d[0] for d in cur.description]
-                rows = [dict(zip(cols, r)) for r in cur.fetchall()]
+            rows = self.db.query_dicts(sql)
         except Exception as e:
-            self.conn.rollback()
             print(f"  [structured] エラー: {e}")
             return []
         return [CardResult(
@@ -1341,16 +1297,13 @@ class MTGHybridSearcherV2:
         hyde_only = [n for n, _ in merged[:top_k] if n not in result_map]
         if hyde_only:
             placeholders = ",".join(["%s"] * len(hyde_only))
-            with self.conn.cursor() as cur:
-                cur.execute(f"""
+            hyde_rows = self.db.query_dicts(f"""
                     SELECT card_name, type_line, oracle_text, japanese_name,
                            japanese_oracle_text, mana_cost, rarity
                     FROM {self.cfg['cards_table']}
                     WHERE card_name IN ({placeholders})
                 """, hyde_only)
-                cols = [d[0] for d in cur.description]
-                for row_t in cur.fetchall():
-                    row = dict(zip(cols, row_t))
+            for row in hyde_rows:
                     result_map[row["card_name"]] = CardResult(
                         card_name=row["card_name"],
                         type_line=row.get("type_line") or "",
@@ -1509,7 +1462,7 @@ class MTGHybridSearcherV2:
                                counter_align=counter_align)
 
     def close(self):
-        self.conn.close()
+        self.db.close()
 
 
 # ─── ファイル出力 ─────────────────────────────────────────────

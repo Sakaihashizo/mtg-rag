@@ -339,11 +339,12 @@ def rewrite_query_ollama(query: str, raise_on_error: bool = False, timeout: int 
             raise
         return query, "", "", False, False, False, None, detect_format(query), {}
 
-def get_archetypes(card_name: str, conn) -> list[str]:
-    """カードが使われているアーキタイプ TOP5 を取得する"""
+def get_archetypes(card_name: str, db) -> list[str]:
+    """カードが使われているアーキタイプ TOP5 を取得する。
+    db は db.py のドライバ（2026-07-12 移行。旧 conn 渡しは rollback 漏れで
+    失敗時に接続を壊す既存バグがあった＝db 層の rollback 内包でついでに解消）。"""
     try:
-        with conn.cursor() as cur:
-            cur.execute("""
+        rows = db.query("""
                 SELECT d.archetype, COUNT(*) as cnt
                 FROM deck_cards dc
                 JOIN deck_list d ON dc.deck_id = d.id
@@ -355,8 +356,7 @@ def get_archetypes(card_name: str, conn) -> list[str]:
                 ORDER BY cnt DESC
                 LIMIT 5
             """, (card_name,))
-            rows = cur.fetchall()
-            return [row[0] for row in rows]
+        return [row[0] for row in rows]
     except Exception:
         return []
 
@@ -404,19 +404,17 @@ def search_cards(searcher, query, top_k, fmt,
     # 文脈にスタッツが無いと LLM が記憶から補完して間違える → DB の実測値を渡す）
     pt = {}
     try:
-        with searcher.conn.cursor() as cur:
-            cur.execute(
-                "SELECT card_name, power, toughness FROM mtg_cards_v2"
-                " WHERE card_name = ANY(%s)",
-                ([r.card_name for r in results],))
-            pt = {n: (p, t) for n, p, t in cur.fetchall()}
+        pt = {n: (p, t) for n, p, t in searcher.db.query(
+            "SELECT card_name, power, toughness FROM mtg_cards_v2"
+            " WHERE card_name = ANY(%s)",
+            ([r.card_name for r in results],))}
     except Exception:
-        searcher.conn.rollback()
+        pass  # P/T は無くても回答は成立（rollback は db 層が実施済み）
 
     cards = []
     for r in results:
         # アーキタイプ情報を取得
-        archetypes = get_archetypes(r.card_name, searcher.conn)
+        archetypes = get_archetypes(r.card_name, searcher.db)
         power, toughness = pt.get(r.card_name, (None, None))
         cards.append({
             "card_name":            r.card_name,
