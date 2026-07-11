@@ -61,7 +61,8 @@ def health():
         with _state["searcher"].conn.cursor() as cur:
             cur.execute("SELECT 1")
             cur.fetchone()
-    return {"status": "ok"}
+    return {"status": "ok",
+            "router_backend": os.environ.get("ROUTER_BACKEND", "gemini").lower()}
 
 
 @app.post("/search")

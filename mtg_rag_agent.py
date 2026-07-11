@@ -216,6 +216,66 @@ mana_producer の判定ルール（マナを生み出すカードに絞るフラ
 JSONのみ出力。余分なテキスト・マークダウン不要。"""
 
 
+def _parse_router_json(raw_text: str, query: str):
+    """ルーター LLM の生出力（JSON 文字列）を検証して9タプルにする。
+    Gemini / ローカル7B(Ollama) / 将来の Nova で共通＝**検証層はプロバイダ非依存**
+    （数値幻覚ガード・format 検証・mana_producer の裁可はモデルを替えても同じ保護）。
+    戻り値: (search_query, hyde_text, ja_hyde_text, tournament_boost, removal_mode,
+             counter_mode, type_filter, router_format, filters)
+    """
+    import json as _json
+    raw_text = raw_text.replace("```json", "").replace("```", "").strip()
+    parsed   = _json.loads(raw_text)
+    search_query     = parsed.get("search_query", query) or query
+    hyde_text        = parsed.get("hyde_text", "")
+    ja_hyde_text     = parsed.get("ja_hyde_text", "")
+    tournament_boost = bool(parsed.get("tournament_boost", False))
+    removal_mode     = bool(parsed.get("removal_mode", False))
+    counter_mode     = bool(parsed.get("counter_mode", False))
+    type_filter      = parsed.get("type_filter", None)
+
+    # format（フォーマット指定）。既知フォーマット名以外は捨てる
+    # （cmc 等と同じく LLM 出力を信用せず検証する）
+    fmt_raw = parsed.get("format")
+    router_format = (
+        fmt_raw.lower()
+        if isinstance(fmt_raw, str)
+           and fmt_raw.lower() in set(FORMAT_KEYWORDS.values())
+        else None
+    )
+    # LLM が null でも原文にフォーマット語があれば決定的に拾う
+    if router_format is None:
+        router_format = detect_format(query)
+
+    # 数値制約（cmc/power/toughness）を検証して filters dict に詰める。
+    # LLM 出力は信用せず int 化＋範囲チェック（門番側でも再検証される＝二重防御）。
+    def _vint(key):
+        try:
+            n = int(parsed.get(key))
+        except (ValueError, TypeError):
+            return None
+        return n if 0 <= n <= 99 else None
+    filters = {}
+    # 数値幻覚ガード（2026-07-07・構造的裁可）: クエリ本文に数字が無いのに LLM が
+    # 数値制約を出したら全部捨てる。プロンプト規則（「強い」「コンボ」等から数値を
+    # 発明しない）は貪欲経路の揺れで破られうると実測済み（hammer_router: コンボで
+    # cmc0-2・フィルタリングで power4・環境で強いで 4/4 と、規則を足すたび別クエリへ
+    # 引っ越すもぐら叩き）→ LLM に頼まず数字の有無で機械判定。ハードフィルタ行きの
+    # フィールドは「LLM が提案・決定的コードが裁可」で守る。
+    if re.search(r'[0-9０-９一二三四五六七八九十]', query):
+        for k in ("cmc_min", "cmc_max", "power_min", "power_max",
+                  "toughness_min", "toughness_max"):
+            v = _vint(k)
+            if v is not None:
+                filters[k] = v
+    # mana_producer は bool フラグ。True のときだけ filters に載せて
+    # **filters 経由で門番（searcher）の mana_producer 引数へ渡す。
+    if bool(parsed.get("mana_producer", False)):
+        filters["mana_producer"] = True
+    return (search_query, hyde_text, ja_hyde_text, tournament_boost,
+            removal_mode, counter_mode, type_filter, router_format, filters)
+
+
 def rewrite_query(query: str, api_key: str, raise_on_error: bool = False):
     """
     Gemini を使ってクエリを解析し検索用クエリ・HyDEテキスト・フラグを返す。
@@ -225,7 +285,6 @@ def rewrite_query(query: str, api_key: str, raise_on_error: bool = False):
     detect_format による決定的検出が生きる）。raise_on_error=True なら失敗を
     握りつぶさず例外を投げる（build_router_cache 等、原因を見たい呼び出し用）。
     """
-    import json as _json
     headers = {
         "Content-Type":   "application/json",
         "x-goog-api-key": api_key,
@@ -249,56 +308,32 @@ def rewrite_query(query: str, api_key: str, raise_on_error: bool = False):
         resp.raise_for_status()
         data     = resp.json()
         raw_text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
-        raw_text = raw_text.replace("```json", "").replace("```", "").strip()
-        parsed   = _json.loads(raw_text)
-        search_query     = parsed.get("search_query", query)
-        hyde_text        = parsed.get("hyde_text", "")
-        ja_hyde_text     = parsed.get("ja_hyde_text", "")
-        tournament_boost = bool(parsed.get("tournament_boost", False))
-        removal_mode     = bool(parsed.get("removal_mode", False))
-        counter_mode     = bool(parsed.get("counter_mode", False))
-        type_filter      = parsed.get("type_filter", None)
+        return _parse_router_json(raw_text, query)
+    except Exception:
+        if raise_on_error:
+            raise
+        return query, "", "", False, False, False, None, detect_format(query), {}
 
-        # format（フォーマット指定）。既知フォーマット名以外は捨てる
-        # （cmc 等と同じく LLM 出力を信用せず検証する）
-        fmt_raw = parsed.get("format")
-        router_format = (
-            fmt_raw.lower()
-            if isinstance(fmt_raw, str)
-               and fmt_raw.lower() in set(FORMAT_KEYWORDS.values())
-            else None
-        )
-        # LLM が null でも原文にフォーマット語があれば決定的に拾う
-        if router_format is None:
-            router_format = detect_format(query)
 
-        # 数値制約（cmc/power/toughness）を検証して filters dict に詰める。
-        # LLM 出力は信用せず int 化＋範囲チェック（門番側でも再検証される＝二重防御）。
-        def _vint(key):
-            try:
-                n = int(parsed.get(key))
-            except (ValueError, TypeError):
-                return None
-            return n if 0 <= n <= 99 else None
-        filters = {}
-        # 数値幻覚ガード（2026-07-07・構造的裁可）: クエリ本文に数字が無いのに LLM が
-        # 数値制約を出したら全部捨てる。プロンプト規則（「強い」「コンボ」等から数値を
-        # 発明しない）は貪欲経路の揺れで破られうると実測済み（hammer_router: コンボで
-        # cmc0-2・フィルタリングで power4・環境で強いで 4/4 と、規則を足すたび別クエリへ
-        # 引っ越すもぐら叩き）→ LLM に頼まず数字の有無で機械判定。ハードフィルタ行きの
-        # フィールドは「LLM が提案・決定的コードが裁可」で守る。
-        if re.search(r'[0-9０-９一二三四五六七八九十]', query):
-            for k in ("cmc_min", "cmc_max", "power_min", "power_max",
-                      "toughness_min", "toughness_max"):
-                v = _vint(k)
-                if v is not None:
-                    filters[k] = v
-        # mana_producer は bool フラグ。True のときだけ filters に載せて
-        # **filters 経由で門番（searcher）の mana_producer 引数へ渡す。
-        if bool(parsed.get("mana_producer", False)):
-            filters["mana_producer"] = True
-        return (search_query, hyde_text, ja_hyde_text, tournament_boost,
-                removal_mode, counter_mode, type_filter, router_format, filters)
+def rewrite_query_ollama(query: str, raise_on_error: bool = False, timeout: int = 180):
+    """ローカル 7B（Ollama/qwen2.5）ルーター。#19 の役割分担「開発=7B・$0」の実戦配備。
+    プロンプト（FABLE_PROMPT=調教版）・接続先・生成条件（temp0/seed42/format:json）は
+    試験ハーネス ollama_router_test.py と単一ソース共有＝調教資産のドリフト防止。
+    検証層は _parse_router_json で Gemini と共通。"""
+    try:
+        # 遅延 import（ollama_router_test は本モジュールを import しているため循環回避）
+        from ollama_router_test import FABLE_PROMPT, OLLAMA_URL, MODEL
+        body = {
+            "model": MODEL,
+            "messages": [{"role": "user",
+                          "content": FABLE_PROMPT.replace("<<QUERY>>", query)}],
+            "stream": False,
+            "format": "json",   # 制約デコード＝調教の一部（条件B）
+            "options": {"temperature": 0.0, "seed": 42, "num_predict": 512},
+        }
+        r = requests.post(OLLAMA_URL, json=body, timeout=timeout)
+        r.raise_for_status()
+        return _parse_router_json(r.json()["message"]["content"], query)
     except Exception:
         if raise_on_error:
             raise
@@ -428,13 +463,23 @@ def run_search(searcher, question, fmt=None, top_k=5, api_key=None,
     elif not use_rewrite:
         route = "no_rewrite"
 
+    # ルーターのバックエンド切替（環境変数・既定=gemini）:
+    #   gemini = 本番プロンプト REWRITE_PROMPT（要 api_key・無料枠クォータ消費）
+    #   ollama = ローカル 7B 調教版 FABLE_PROMPT（$0・要 Windows ホストの Ollama 起動）
+    backend = os.environ.get("ROUTER_BACKEND", "gemini").lower()
     if use_rewrite:
-        if not api_key:
-            raise ValueError("use_rewrite=True にはルーター用 api_key が必要"
-                             "（無料経路は use_rewrite=False）")
-        (search_query, hyde_text, ja_hyde_text, tournament_boost, removal_mode,
-         counter_mode, type_filter, router_format, filters) = rewrite_query(
-            question, api_key)
+        if backend == "ollama":
+            (search_query, hyde_text, ja_hyde_text, tournament_boost, removal_mode,
+             counter_mode, type_filter, router_format, filters) = rewrite_query_ollama(
+                question)
+        else:
+            if not api_key:
+                raise ValueError("use_rewrite=True にはルーター用 api_key が必要"
+                                 "（無料経路は use_rewrite=False、または"
+                                 " ROUTER_BACKEND=ollama でローカル7B）")
+            (search_query, hyde_text, ja_hyde_text, tournament_boost, removal_mode,
+             counter_mode, type_filter, router_format, filters) = rewrite_query(
+                question, api_key)
 
     cards, detected_fmt = search_cards(
         searcher, search_query, top_k, fmt,
@@ -451,6 +496,7 @@ def run_search(searcher, question, fmt=None, top_k=5, api_key=None,
         "cards": cards,
         "detected_format": detected_fmt,
         "route": route,
+        "router_backend": backend if route == "router" else None,
         "search_query": search_query,
         "flags": {
             "tournament_boost": tournament_boost,
