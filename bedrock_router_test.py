@@ -212,6 +212,9 @@ def main():
                          "プロンプト変更の差分再測定用＝コスト抑えめの規律")
     ap.add_argument("--temp", type=float, default=0.1,
                     help="温度。本番想定は 0（貪欲＝決定的・7B の調教の型と同じ）")
+    ap.add_argument("--go", action="store_true",
+                    help="課金走行の明示承認。無い限り Bedrock 呼び出しは実行しない"
+                         "（--list と引数確認のみ可・2026-07-11 再発防止）")
     args = ap.parse_args()
 
     loaded = load_env()
@@ -225,6 +228,15 @@ def main():
 
     import boto3
     client = boto3.client("bedrock-runtime", region_name=region)
+
+    # ── 金庫の鍵（2026-07-11）: Bedrock を呼ぶ全経路（check/hammer/本走）は --go 必須 ──
+    if not args.go:
+        n = 1 if args.check else (4 * args.hammer if args.hammer else 30)
+        pin, pout = PRICING.get(args.model, (0.1, 0.4))
+        est = n * (2900 / 1e6 * pin + 200 / 1e6 * pout)
+        print(f"\n【課金停止】Bedrock 呼び出しには --go が必要（想定 {n} 回・概算 ${est:.4f}）。")
+        print("  承認するなら同じコマンドに --go を付けて再実行。")
+        sys.exit(2)
 
     if args.hammer:
         run_hammer(client, args.model, args.tuned, args.hammer)
