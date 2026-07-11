@@ -22,8 +22,10 @@ CLI（mtg_rag_agent.py）の検索フローに HTTP の皮を被せる。AWS デ
   curl -s localhost:8000/search -H 'Content-Type: application/json' \
       -d '{"query": "速攻を持つクリーチャー", "use_rewrite": false}'
 """
+import json
 import os
 import threading
+import time
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
@@ -35,12 +37,60 @@ from mtg_rag_agent import run_search, build_context, ask_gemini
 _state: dict = {"searcher": None}
 _lock = threading.Lock()
 
+# クエリログ（2026-07-12・語彙学習 v1 の観測基盤）:
+# 「どんなクエリが・どの経路で・ルーターが何を立てたか」を記録する。
+# 用途=route:router のクエリから辞書化候補を掘る（自動追加はしない・
+# 候補を本人がレビューして辞書へ昇格させる human-in-the-loop が確定構想）。
+_LOG_DDL = """
+CREATE TABLE IF NOT EXISTS query_log (
+    id             bigserial PRIMARY KEY,
+    ts             timestamptz NOT NULL DEFAULT now(),
+    endpoint       text NOT NULL,
+    query          text NOT NULL,
+    format         text,
+    route          text,
+    router_backend text,
+    search_query   text,
+    flags          jsonb,
+    top_cards      jsonb,
+    latency_ms     integer
+);
+"""
+
+
+def _log_query(endpoint: str, req, result: dict, latency_ms: int) -> None:
+    """検索1件をログに書く。ログは主業務でない＝失敗してもリクエストは落とさない。"""
+    try:
+        searcher = _state["searcher"]
+        with searcher.conn.cursor() as cur:
+            cur.execute(
+                "INSERT INTO query_log (endpoint, query, format, route,"
+                " router_backend, search_query, flags, top_cards, latency_ms)"
+                " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                (endpoint, req.query, req.format,
+                 result.get("route"), result.get("router_backend"),
+                 result.get("search_query"),
+                 json.dumps(result.get("flags"), ensure_ascii=False),
+                 json.dumps([c["card_name"] for c in result.get("cards", [])],
+                            ensure_ascii=False),
+                 latency_ms))
+        searcher.conn.commit()
+    except Exception as e:
+        try:
+            _state["searcher"].conn.rollback()
+        except Exception:
+            pass
+        print(f"  [query_log] 書き込み失敗（握って続行）: {e}")
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # e5 モデルのロードと DB 接続。起動に数十秒かかる（コールドスタートの実測点）
     _state["searcher"] = MTGHybridSearcherV2(
         model_key=os.environ.get("RAG_MODEL", "SMALL_V2"))
+    with _state["searcher"].conn.cursor() as cur:
+        cur.execute(_LOG_DDL)
+    _state["searcher"].conn.commit()
     yield
     _state["searcher"].close()
 
@@ -73,10 +123,14 @@ def search(req: SearchRequest):
     発動するため、ここで事前に弾くと「キー無しでも通るはずの直行路」まで死ぬ）。"""
     api_key = os.environ.get("GOOGLE_API_KEY")
     try:
+        t0 = time.perf_counter()
         with _lock:
-            return run_search(_state["searcher"], req.query, fmt=req.format,
-                              top_k=req.top_k, api_key=api_key,
-                              use_rewrite=req.use_rewrite)
+            result = run_search(_state["searcher"], req.query, fmt=req.format,
+                                top_k=req.top_k, api_key=api_key,
+                                use_rewrite=req.use_rewrite)
+            _log_query("/search", req, result,
+                       int((time.perf_counter() - t0) * 1000))
+        return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -88,12 +142,17 @@ def ask(req: SearchRequest):
     api_key = os.environ.get("GOOGLE_API_KEY")
     if not api_key:
         raise HTTPException(status_code=400, detail="GOOGLE_API_KEY が未設定")
+    t0 = time.perf_counter()
     with _lock:
         result = run_search(_state["searcher"], req.query, fmt=req.format,
                             top_k=req.top_k, api_key=api_key,
                             use_rewrite=req.use_rewrite)
         if not result["cards"]:
+            _log_query("/ask", req, result,
+                       int((time.perf_counter() - t0) * 1000))
             return {**result, "answer": None}
         context = build_context(result["cards"])
         answer = ask_gemini(req.query, context, api_key)
+        _log_query("/ask", req, result,
+                   int((time.perf_counter() - t0) * 1000))
     return {**result, "answer": answer}
