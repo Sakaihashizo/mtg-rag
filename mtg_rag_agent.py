@@ -401,6 +401,69 @@ def search_cards(searcher, query, top_k, fmt,
 
 # ─── コンテキスト構築 ─────────────────────────────────────────
 
+def run_search(searcher, question, fmt=None, top_k=5, api_key=None,
+               use_rewrite=True):
+    """意図解析（任意）→検索まで。CLI / HTTP サーバ共用の芯（print しない・dict を返す）。
+
+    回答生成（LLM）は含まない。structured_direct / use_rewrite=False の経路は
+    外部 API を一切消費しない＝配管検証やバッチ再実行が無料でできる。
+    検索フローをここ以外に重複実装しないこと（2026-07-09 の教訓:
+    経路ごとの search_query の扱い差が機構ゲート不発の故障源になった）。
+    """
+    search_query     = question
+    hyde_text        = ""
+    ja_hyde_text     = ""
+    tournament_boost = False
+    removal_mode     = False
+    counter_mode     = False
+    type_filter      = None
+    router_format    = None
+    filters          = {}
+    route            = "router"
+
+    # 辞書で完結するキーワード系クエリは LLM ルーターを呼ばない（直行路の入口版）
+    if use_rewrite and structured_direct_gate(question):
+        route = "structured_direct"
+        use_rewrite = False
+    elif not use_rewrite:
+        route = "no_rewrite"
+
+    if use_rewrite:
+        if not api_key:
+            raise ValueError("use_rewrite=True にはルーター用 api_key が必要"
+                             "（無料経路は use_rewrite=False）")
+        (search_query, hyde_text, ja_hyde_text, tournament_boost, removal_mode,
+         counter_mode, type_filter, router_format, filters) = rewrite_query(
+            question, api_key)
+
+    cards, detected_fmt = search_cards(
+        searcher, search_query, top_k, fmt,
+        tournament_boost=tournament_boost,
+        removal_mode=removal_mode,
+        counter_mode=counter_mode,
+        type_filter_override=type_filter,
+        hyde_text=hyde_text,
+        ja_hyde_text=ja_hyde_text,
+        filters=filters,
+        router_format=router_format,
+    )
+    return {
+        "cards": cards,
+        "detected_format": detected_fmt,
+        "route": route,
+        "search_query": search_query,
+        "flags": {
+            "tournament_boost": tournament_boost,
+            "removal_mode":     removal_mode,
+            "counter_mode":     counter_mode,
+            "type_filter":      type_filter,
+            "router_format":    router_format,
+            "filters":          filters,
+            "hyde":             bool(hyde_text),
+        },
+    }
+
+
 def build_context(cards):
     lines = ["【検索で見つかったカード一覧】\n"]
     for i, c in enumerate(cards, 1):
@@ -507,58 +570,36 @@ def process_question(searcher, question, fmt, top_k, api_key,
     fmt_label = f"[{fmt}]" if fmt else ""
     print(f"\n質問: {fmt_label} {question}")
 
-    # 意図解析 → 検索クエリ抽出 + HyDE + フラグ判定
-    search_query     = question
-    hyde_text        = ""
-    ja_hyde_text     = ""
-    tournament_boost = False
-    removal_mode     = False
-    counter_mode     = False
-    type_filter      = None
-    router_format    = None
-    filters          = {}
+    # 意図解析→検索の実体は run_search（HTTP サーバと共用の芯）。ここは表示だけ担当
+    print("  意図解析・検索中...", end="", flush=True)
+    result = run_search(searcher, question, fmt=fmt, top_k=top_k,
+                        api_key=api_key, use_rewrite=use_rewrite)
+    cards = result["cards"]
+    f     = result["flags"]
 
-    # 辞書で完結するキーワード系クエリは LLM ルーターを呼ばない（直行路の入口版）
-    if use_rewrite and structured_direct_gate(question):
-        print("  構造化オンリー: LLM ルーターをスキップ（辞書で完結・SQL 直行路へ）")
-        use_rewrite = False
-
-    if use_rewrite:
-        print("  意図解析中...", end="", flush=True)
-        search_query, hyde_text, ja_hyde_text, tournament_boost, removal_mode, counter_mode, type_filter, router_format, filters = rewrite_query(
-            question, api_key
-        )
+    if result["route"] == "structured_direct":
+        print(" [構造化オンリー: LLM ルーターをスキップ（辞書で完結・SQL 直行路へ）]",
+              end="")
+    elif result["route"] == "router":
         flags = []
-        if tournament_boost: flags.append("tournament_boost")
-        if removal_mode:     flags.append("removal_mode")
-        if counter_mode:     flags.append("counter_mode")
-        if type_filter:      flags.append(f"type:{type_filter}")
-        if router_format:    flags.append(f"format:{router_format}")
-        if filters:          flags.append(str(filters))
-        if hyde_text:        flags.append("HyDE")
+        if f["tournament_boost"]: flags.append("tournament_boost")
+        if f["removal_mode"]:     flags.append("removal_mode")
+        if f["counter_mode"]:     flags.append("counter_mode")
+        if f["type_filter"]:      flags.append(f"type:{f['type_filter']}")
+        if f["router_format"]:    flags.append(f"format:{f['router_format']}")
+        if f["filters"]:          flags.append(str(f["filters"]))
+        if f["hyde"]:             flags.append("HyDE")
         flag_str = f" [{', '.join(flags)}]" if flags else " [フラグなし]"
-        if search_query != question:
-            print(f" 検索クエリ: 「{search_query}」{flag_str}")
+        if result["search_query"] != question:
+            print(f" 検索クエリ: 「{result['search_query']}」{flag_str}", end="")
         else:
-            print(flag_str)
+            print(flag_str, end="")
 
-    print("  検索中...", end="", flush=True)
-    cards, detected_fmt = search_cards(
-        searcher, search_query, top_k, fmt,
-        tournament_boost=tournament_boost,
-        removal_mode=removal_mode,
-        counter_mode=counter_mode,
-        type_filter_override=type_filter,
-        hyde_text=hyde_text,
-        ja_hyde_text=ja_hyde_text,
-        filters=filters,
-        router_format=router_format,
-    )
     if not cards:
         print(" 関連するカードが見つかりませんでした。")
         return
 
-    fmt_info = f"({detected_fmt})" if detected_fmt else ""
+    fmt_info = f"({result['detected_format']})" if result["detected_format"] else ""
     print(f" {len(cards)}件取得{fmt_info}。Gemini に問い合わせ中...", end="", flush=True)
 
     context = build_context(cards)
