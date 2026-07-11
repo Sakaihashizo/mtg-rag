@@ -184,6 +184,36 @@ QUERY_EXPAND = {
     "警戒":            {"en": "vigilance",     "ja": ["警戒"], "keyword": "Vigilance"},
     # 飛行（単体キーワード → type_filter なし）
     "飛行":            {"en": "flying",        "ja": ["飛行"], "keyword": "Flying"},
+    # ─ 生得キーワード第2弾（2026-07-11 本人裁定「キーワードは全部入れていい」・
+    #   常盤木＋廃止済み戦闘/回避系23語。訳語は japanese_oracle_text との照合で
+    #   全 94〜100% 一致を機械検証済み。廃止語も勝手に現行語へ正規化しない＝
+    #   質問者の語彙を上書きしない原則〔威嚇=Intimidate 21枚は威迫=Menace と別物〕）─
+    "瞬速":            {"en": "flash",         "ja": ["瞬速"], "keyword": "Flash"},
+    "防衛":            {"en": "defender",      "ja": ["防衛"], "keyword": "Defender"},
+    "プロテクション":  {"en": "protection",    "ja": ["プロテクション"], "keyword": "Protection"},
+    "護法":            {"en": "ward",          "ja": ["護法"], "keyword": "Ward"},
+    "二段攻撃":        {"en": "double strike", "ja": ["二段攻撃"], "keyword": "Double strike"},
+    "呪禁":            {"en": "hexproof",      "ja": ["呪禁"], "keyword": "Hexproof"},
+    "果敢":            {"en": "prowess",       "ja": ["果敢"], "keyword": "Prowess"},
+    "感染":            {"en": "infect",        "ja": ["感染"], "keyword": "Infect"},
+    "畏怖":            {"en": "fear",          "ja": ["畏怖"], "keyword": "Fear"},
+    "毒性":            {"en": "toxic",         "ja": ["毒性"], "keyword": "Toxic"},
+    "シャドー":        {"en": "shadow",        "ja": ["シャドー"], "keyword": "Shadow"},
+    "被覆":            {"en": "shroud",        "ja": ["被覆"], "keyword": "Shroud"},
+    "賛美":            {"en": "exalted",       "ja": ["賛美"], "keyword": "Exalted"},
+    "側面攻撃":        {"en": "flanking",      "ja": ["側面攻撃"], "keyword": "Flanking"},
+    "馬術":            {"en": "horsemanship",  "ja": ["馬術"], "keyword": "Horsemanship"},
+    "萎縮":            {"en": "wither",        "ja": ["萎縮"], "keyword": "Wither"},
+    "バンド":          {"en": "banding",       "ja": ["バンド"], "keyword": "Banding"},
+    "頑強":            {"en": "persist",       "ja": ["頑強"], "keyword": "Persist"},
+    "不死":            {"en": "undying",       "ja": ["不死"], "keyword": "Undying"},
+    "威嚇":            {"en": "intimidate",    "ja": ["威嚇"], "keyword": "Intimidate"},
+    "消失":            {"en": "vanishing",     "ja": ["消失"], "keyword": "Vanishing"},
+    "潜伏":            {"en": "skulk",         "ja": ["潜伏"], "keyword": "Skulk"},
+    "滅殺":            {"en": "annihilator",   "ja": ["滅殺"], "keyword": "Annihilator"},
+    # ストップ語（空エントリ＝部分文字列サプレッションで内側のキーを無効化するだけ）:
+    # 「不死鳥」で「不死」(Undying) が誤発火するとフェニックスが検索から消える
+    "不死鳥":          {},
     # トークン系
     "トークン":        {"en": "create",        "ja": ["トークン"]},
     # コンボ系
