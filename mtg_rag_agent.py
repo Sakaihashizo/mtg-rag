@@ -28,6 +28,8 @@ import time
 import random
 import datetime
 import textwrap
+import unicodedata
+
 import requests
 
 sys.path.insert(0, '/mnt/mtg_rag')
@@ -216,6 +218,37 @@ mana_producer の判定ルール（マナを生み出すカードに絞るフラ
 JSONのみ出力。余分なテキスト・マークダウン不要。"""
 
 
+def _adjust_exclusive_bounds(query: str, filters: dict) -> dict:
+    """日本語の排他的境界（「Nより大きい」「N超え」「Nより小さい」「N未満」）を
+    決定的に補正する検証層（2026-07-12・本人が「パワーが9より小さく7より大きい」で
+    パワー7混入を発見した穴）。
+
+    ルーターの filters スキーマは包含 min/max しか持たないため、排他→包含の
+    ±1 算術は LLM の仕事になるが、実測（7B・query_log id=10）で「9より小さい→
+    max=8」は成功し「7より大きい→min=7 のまま」と**片方だけ失敗する揺れ**を確認。
+    境界の算術は LLM に任せず、クエリの排他表現と値が一致するスロットだけを
+    コードが ±1 する（「LLM が提案・決定的コードが裁可」＝数値幻覚ガードと同じ思想）。
+
+    冪等: ルーターが既に正しく変換済み（min=8）なら、クエリ中の 7 と一致しない
+    ため補正は掛からない＝二重補正は構造的に起きない。
+    限界: 同じ数値が別属性に載る複合クエリ（「パワー7以上でマナ総量7超え」等）は
+    過補正しうる（稀・受容）。「以上/以下」は包含なので対象外＝不変。"""
+    if not filters:
+        return filters
+    out = dict(filters)
+    for m in re.finditer(r'([0-9０-９]+)\s*(?:より\s*大き|を?超え)', query):
+        n = int(unicodedata.normalize("NFKC", m.group(1)))
+        for k in ("cmc_min", "power_min", "toughness_min"):
+            if out.get(k) == n:
+                out[k] = n + 1
+    for m in re.finditer(r'([0-9０-９]+)\s*(?:より\s*小さ|未満)', query):
+        n = int(unicodedata.normalize("NFKC", m.group(1)))
+        for k in ("cmc_max", "power_max", "toughness_max"):
+            if out.get(k) == n:
+                out[k] = n - 1
+    return out
+
+
 def _parse_router_json(raw_text: str, query: str):
     """ルーター LLM の生出力（JSON 文字列）を検証して9タプルにする。
     Gemini / ローカル7B(Ollama) / 将来の Nova で共通＝**検証層はプロバイダ非依存**
@@ -272,6 +305,8 @@ def _parse_router_json(raw_text: str, query: str):
     # **filters 経由で門番（searcher）の mana_producer 引数へ渡す。
     if bool(parsed.get("mana_producer", False)):
         filters["mana_producer"] = True
+    # 排他的境界（「Nより大きい」等）の決定的補正（*_min/*_max のみ触る）
+    filters = _adjust_exclusive_bounds(query, filters)
     return (search_query, hyde_text, ja_hyde_text, tournament_boost,
             removal_mode, counter_mode, type_filter, router_format, filters)
 
