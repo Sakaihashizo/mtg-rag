@@ -31,10 +31,14 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
+from db import make_db
 from mtg_hybrid_search_v2 import MTGHybridSearcherV2
 from mtg_rag_agent import run_search, build_context, ask_gemini
 
-_state: dict = {"searcher": None}
+# searcher は自前の psycopg2 接続を持つ（検索14箇所の db.py 移行は別作業）。
+# query_log/health は db.py 経由＝当面 DB 接続は2本（searcher + db）。
+# どちらも _lock 内でのみ触る＝直列化は共通。
+_state: dict = {"searcher": None, "db": None}
 _lock = threading.Lock()
 
 # クエリログ（2026-07-12・語彙学習 v1 の観測基盤）:
@@ -59,27 +63,21 @@ CREATE TABLE IF NOT EXISTS query_log (
 
 
 def _log_query(endpoint: str, req, result: dict, latency_ms: int) -> None:
-    """検索1件をログに書く。ログは主業務でない＝失敗してもリクエストは落とさない。"""
+    """検索1件をログに書く。ログは主業務でない＝失敗してもリクエストは落とさない
+    （db.py はエラーを握らず raise する設計＝握るのはこの呼び出し側の責務）。"""
     try:
-        searcher = _state["searcher"]
-        with searcher.conn.cursor() as cur:
-            cur.execute(
-                "INSERT INTO query_log (endpoint, query, format, route,"
-                " router_backend, search_query, flags, top_cards, latency_ms)"
-                " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                (endpoint, req.query, req.format,
-                 result.get("route"), result.get("router_backend"),
-                 result.get("search_query"),
-                 json.dumps(result.get("flags"), ensure_ascii=False),
-                 json.dumps([c["card_name"] for c in result.get("cards", [])],
-                            ensure_ascii=False),
-                 latency_ms))
-        searcher.conn.commit()
+        _state["db"].execute(
+            "INSERT INTO query_log (endpoint, query, format, route,"
+            " router_backend, search_query, flags, top_cards, latency_ms)"
+            " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
+            (endpoint, req.query, req.format,
+             result.get("route"), result.get("router_backend"),
+             result.get("search_query"),
+             json.dumps(result.get("flags"), ensure_ascii=False),
+             json.dumps([c["card_name"] for c in result.get("cards", [])],
+                        ensure_ascii=False),
+             latency_ms))
     except Exception as e:
-        try:
-            _state["searcher"].conn.rollback()
-        except Exception:
-            pass
         print(f"  [query_log] 書き込み失敗（握って続行）: {e}")
 
 
@@ -88,10 +86,10 @@ async def lifespan(app: FastAPI):
     # e5 モデルのロードと DB 接続。起動に数十秒かかる（コールドスタートの実測点）
     _state["searcher"] = MTGHybridSearcherV2(
         model_key=os.environ.get("RAG_MODEL", "SMALL_V2"))
-    with _state["searcher"].conn.cursor() as cur:
-        cur.execute(_LOG_DDL)
-    _state["searcher"].conn.commit()
+    _state["db"] = make_db()
+    _state["db"].execute(_LOG_DDL)
     yield
+    _state["db"].close()
     _state["searcher"].close()
 
 
@@ -108,11 +106,10 @@ class SearchRequest(BaseModel):
 @app.get("/health")
 def health():
     with _lock:
-        with _state["searcher"].conn.cursor() as cur:
-            cur.execute("SELECT 1")
-            cur.fetchone()
+        _state["db"].query("SELECT 1")
     return {"status": "ok",
-            "router_backend": os.environ.get("ROUTER_BACKEND", "gemini").lower()}
+            "router_backend": os.environ.get("ROUTER_BACKEND", "gemini").lower(),
+            "db_backend": os.environ.get("DB_BACKEND", "psycopg2").lower()}
 
 
 @app.post("/search")
