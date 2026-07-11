@@ -365,15 +365,31 @@ def search_cards(searcher, query, top_k, fmt,
             type_filter_override=type_filter_override,
             **filters,
         )
+    # P/T をまとめて取得（解説の捏造対策・2026-07-10 試飲会の「孤独 4/3」事件:
+    # 文脈にスタッツが無いと LLM が記憶から補完して間違える → DB の実測値を渡す）
+    pt = {}
+    try:
+        with searcher.conn.cursor() as cur:
+            cur.execute(
+                "SELECT card_name, power, toughness FROM mtg_cards_v2"
+                " WHERE card_name = ANY(%s)",
+                ([r.card_name for r in results],))
+            pt = {n: (p, t) for n, p, t in cur.fetchall()}
+    except Exception:
+        searcher.conn.rollback()
+
     cards = []
     for r in results:
         # アーキタイプ情報を取得
         archetypes = get_archetypes(r.card_name, searcher.conn)
+        power, toughness = pt.get(r.card_name, (None, None))
         cards.append({
             "card_name":            r.card_name,
             "japanese_name":        r.japanese_name,
             "type_line":            r.type_line,
             "mana_cost":            r.mana_cost,
+            "power":                power,
+            "toughness":            toughness,
             "oracle_text":          r.oracle_text,
             "japanese_oracle_text": r.japanese_oracle_text,
             "rarity":               r.rarity,
@@ -390,7 +406,9 @@ def build_context(cards):
     for i, c in enumerate(cards, 1):
         ja = f"（{c['japanese_name']}）" if c.get("japanese_name") else ""
         lines.append(f"{i}. {c['card_name']}{ja}")
-        lines.append(f"   タイプ: {c['type_line']}  コスト: {c['mana_cost'] or 'なし'}")
+        stats = (f"  P/T: {c['power']}/{c['toughness']}"
+                 if c.get("power") is not None and c.get("toughness") is not None else "")
+        lines.append(f"   タイプ: {c['type_line']}  コスト: {c['mana_cost'] or 'なし'}{stats}")
         if c.get("japanese_oracle_text"):
             lines.append(f"   効果: {c['japanese_oracle_text']}")
         elif c.get("oracle_text"):
