@@ -270,6 +270,41 @@ TYPE_WORDS_JA = {
 # ＝ crisp な否定は SQL の NOT で解く（2026-07-11・設計思想どおりの置き場所）
 _NEG_AFTER_KW = r'(?:を|は)?(?:持たない|持ってない|持っていない|が\s*無い|がない|無し|なし|以外)'
 
+# P/T の列間関係（「パワーとタフネスが同じ」等・2026-07-12 本人要望「答えが明確
+# だからできてほしかった」）。filters スキーマは絶対値の範囲しか持たず「列同士の
+# 関係」を表現できない＝ルーターにも embedding にも解けない層。決定的検出で
+# SQL に直結する（EDH 色検出と同じパターン・ルーター無改修・キャッシュ不要）
+_PT_EQ_RE  = re.compile(r'(?:パワーとタフネス|タフネスとパワー|Ｐ?/?Ｔ|P/?T)\s*が?\s*(?:同じ|等し|一緒)')
+_PT_PGT_RE = re.compile(r'パワー\s*(?:の方)?が?\s*タフネスより\s*(?:大き|高|上)'
+                        r'|タフネスより\s*パワー\s*(?:の方)?が?\s*(?:大き|高|上)'
+                        r'|パワーの方が(?:大き|高)いクリーチャー')
+_PT_TGT_RE = re.compile(r'タフネス\s*(?:の方)?が?\s*パワーより\s*(?:大き|高|上)'
+                        r'|パワーより\s*タフネス\s*(?:の方)?が?\s*(?:大き|高|上)'
+                        r'|タフネスの方が(?:大き|高)いクリーチャー')
+
+
+def detect_pt_relation(query: str):
+    """P/T の列間関係の決定的検出。'eq' / 'power_gt' / 'toughness_gt' / None。"""
+    if _PT_EQ_RE.search(query):
+        return 'eq'
+    if _PT_PGT_RE.search(query):
+        return 'power_gt'
+    if _PT_TGT_RE.search(query):
+        return 'toughness_gt'
+    return None
+
+
+def pt_relation_sql(rel) -> str:
+    """P/T 関係フィルタの SQL 断片。power/toughness は text 列で '*' や 'X' 等の
+    特殊値を含むため、両方が素の数値のカードに限って ::int 比較する（'*/*' 等の
+    不定値は「同じ」と断定できない＝保守的に除外）。text のまま比較しないのは
+    '10' < '9' の辞書順事故を避けるため。"""
+    op = {'eq': '=', 'power_gt': '>', 'toughness_gt': '<'}.get(rel)
+    if not op:
+        return ""
+    return (" AND c.power ~ '^[0-9]+$' AND c.toughness ~ '^[0-9]+$'"
+            f" AND c.power::int {op} c.toughness::int")
+
 
 def extract_keywords(query: str) -> tuple[list[str], list[str], Optional[str], bool, bool, bool, list[str], list[str], bool]:
     """
@@ -1239,6 +1274,8 @@ class MTGHybridSearcherV2:
         attr_sql += keyword_filter_sql(_kw_abilities, _neg_kw)
         # 機構指定つき除去クエリの門は HyDE 腕にも（search() 本体と対・単独ヒット再流入防止）
         attr_sql += removal_mech_filter_sql(query, _rm or removal_mode_override)
+        # P/T 関係ゲートも HyDE 腕に（search() 本体と対）
+        attr_sql += pt_relation_sql(detect_pt_relation(query))
         hyde_vec  = self._embed(hyde_text)
         hyde_rows = self._vector_search(hyde_vec, top_k * 2, fmt_sql, type_sql, attr_sql)
 
@@ -1380,6 +1417,11 @@ class MTGHybridSearcherV2:
             print(f"  否定キーワード: {neg_kw_abilities}（持たない側＝SQL NOT 門）")
         attr_sql += keyword_filter_sql(kw_abilities, neg_kw_abilities)
         attr_sql += removal_mech_filter_sql(query, removal_mode)
+        # P/T 列間関係（「パワーとタフネスが同じ」等・決定的検出・全腕+直行路に掛かる）
+        pt_rel = detect_pt_relation(query)
+        attr_sql += pt_relation_sql(pt_rel)
+        if pt_rel:
+            print(f"  P/T関係ゲート: {pt_rel}（数値P/Tのみ・::int 比較）")
         # EDH 固有色・ブラケットゲート（R13・決定的検出＝ルーター無改修で効く）。
         # attr_sql に足すことで全腕（vec/FTS/強度腕）と直行路に同時に掛かる
         ci = detect_color_identity(query)
@@ -1422,7 +1464,9 @@ class MTGHybridSearcherV2:
         edh_direct = (edh_intent
                       and (mana_producer or kw_only)
                       and not has_fuzzy_semantic(query))
-        if not (tournament_boost or removal_mode or counter_mode) and (kw_only or edh_direct):
+        # P/T 関係クエリも意味の残余が無ければ直行（正解集合は WHERE で完全定義済み）
+        pt_direct = pt_rel is not None and not has_fuzzy_semantic(query)
+        if not (tournament_boost or removal_mode or counter_mode) and (kw_only or edh_direct or pt_direct):
             print("  構造化オンリー直行路（意味検索スキップ・"
                   + ("EDH＝edhrec順" if edh_intent else "play-rate順") + "）")
             return self._structured_search(top_k, fmt_sql, type_sql, attr_sql,

@@ -21,7 +21,23 @@ import json
 import sys
 
 sys.path.insert(0, '/mnt/mtg_rag')
-from mtg_hybrid_search_v2 import extract_keywords
+from mtg_hybrid_search_v2 import extract_keywords, detect_pt_relation
+
+# P/T 列間関係の検出（2026-07-12・「パワーとタフネスが同じクリーチャー」）
+# (クエリ, 期待 rel)
+PT_CASES = [
+    ("パワーとタフネスが同じクリーチャー",       "eq"),
+    ("タフネスとパワーが等しいクリーチャー",     "eq"),
+    ("P/Tが同じクリーチャー",                    "eq"),
+    ("パワーがタフネスより大きいクリーチャー",   "power_gt"),
+    ("タフネスよりパワーが高いクリーチャー",     "power_gt"),
+    ("タフネスがパワーより高いクリーチャー",     "toughness_gt"),
+    ("パワーよりタフネスが大きいクリーチャー",   "toughness_gt"),
+    # 不発であるべき（関係表現なし・絶対値の話）
+    ("パワー7以上のクリーチャー",                None),
+    ("タフネスが高いクリーチャー",               None),
+    ("パワフルなクリーチャー",                   None),
+]
 
 # (クエリ, 期待 neg_kw_abilities, 期待 type_filter, 期待 kw_abilities)
 CASES = [
@@ -87,6 +103,12 @@ def main() -> int:
         if kw != want_kw:
             failures.append(f"[kw] {query!r}: got {kw}, want {want_kw}")
 
+    # 1b) P/T 列間関係の検出
+    for query, want_rel in PT_CASES:
+        got = detect_pt_relation(query)
+        if got != want_rel:
+            failures.append(f"[pt_rel] {query!r}: got {got!r}, want {want_rel!r}")
+
     # 2) 本線 30 クエリの回帰
     with open("/mnt/mtg_rag/eval_queries.json", encoding="utf-8") as f:
         mainline = [e["query"] for e in json.load(f)]
@@ -97,6 +119,8 @@ def main() -> int:
         want = EXPECTED_MAINLINE_TYPES.get(q)
         if type_f != want:
             failures.append(f"[本線回帰: type] {q!r}: got {type_f!r}, want {want!r}")
+        if detect_pt_relation(q) is not None:
+            failures.append(f"[本線回帰: pt_rel 誤発動] {q!r}")
 
     print(f"CASES {len(CASES)} 本 + 本線 {len(mainline)} 本")
     if failures:
