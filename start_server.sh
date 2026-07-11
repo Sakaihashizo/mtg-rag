@@ -1,6 +1,10 @@
 #!/bin/bash
 # start_server.sh — MTG RAG API サーバ起動（VM 内・冪等・2026-07-12）
 # =====================================================================
+# ★2026-07-12 以降の正道は systemd（deploy/mtg-rag-api.service・自動起動+死活監視）:
+#     systemctl --user restart mtg-rag-api   ← 再起動はこっち
+#   このスクリプトは systemd の無い環境・臨時用の予備。systemd 管理中に叩くと
+#   ポート衝突で二重起動は失敗する（実害はないが紛らわしい）。
 # 使い方（VM 内）:      ./start_server.sh
 # 使い方（Windows から）: ssh -i ~/.ssh/mtg_vm_ed25519 -p 9999 claude@127.0.0.1 \
 #                          '/mnt/mtg_rag/start_server.sh'

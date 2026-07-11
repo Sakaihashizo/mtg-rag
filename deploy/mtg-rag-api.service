@@ -1,0 +1,34 @@
+# mtg-rag-api.service — MTG RAG API サーバの systemd user unit（2026-07-12）
+# =========================================================================
+# 置き場所: ~/.config/systemd/user/mtg-rag-api.service（claude ユーザー）
+# 前提:     sudo loginctl enable-linger claude 済み（ログイン無しでも起動する）
+#
+# インストール（claude 権限のみで可・sudo 不要）:
+#   mkdir -p ~/.config/systemd/user
+#   cp /mnt/mtg_rag/deploy/mtg-rag-api.service ~/.config/systemd/user/
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now mtg-rag-api
+# 操作:
+#   systemctl --user status|restart|stop mtg-rag-api
+#   journalctl --user -u mtg-rag-api -f      ← ログ追尾
+#
+# 注意: user unit からは system 側の docker.service へ After= を張れない
+# （黙って無視される）ため、依存待ちは ExecStartPre のループで行う:
+#   ①共有フォルダ（vboxsf）のマウント ②PostgreSQL(5435) の受付開始。
+# Ollama（Windows 側）は待たない＝居なければルーター経路が素の検索に
+# フォールバックするだけで、サーバ自体は成立する。
+
+[Unit]
+Description=MTG RAG API server (uvicorn + FastAPI)
+
+[Service]
+Type=simple
+WorkingDirectory=/mnt/mtg_rag
+Environment=ROUTER_BACKEND=ollama
+ExecStartPre=/bin/bash -c 'for i in $(seq 1 60); do [ -f /mnt/mtg_rag/api_server.py ] && (echo > /dev/tcp/127.0.0.1/5435) 2>/dev/null && exit 0; sleep 2; done; echo "[mtg-rag-api] deps not ready (mount/db)"; exit 1'
+ExecStart=/mnt/new_hdd/my_rag_env/bin/python -m uvicorn api_server:app --host 127.0.0.1 --port 8000
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
