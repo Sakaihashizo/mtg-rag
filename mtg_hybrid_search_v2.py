@@ -283,6 +283,81 @@ _PT_TGT_RE = re.compile(r'タフネス\s*(?:の方)?が?\s*パワーより\s*(?:
                         r'|タフネスの方が(?:大き|高)いクリーチャー')
 
 
+# 部族（クリーチャー・サブタイプ）検索の日英辞書（2026-07-12・本人発見「『蟹』の
+# 正解率が芳しくない」＝蟹デッキを組みたい人の部族検索需要）。ルーターの type_filter
+# はメジャータイプ8種のみでサブタイプの語彙が無く、embedding は「蟹」から水辺の動物
+# 一般を返す（実測 2/10）＝正解集合 type_line LIKE '%Crab%' (44枚) は crisp に在るのに
+# 届かない層 → 決定的辞書で SQL 直結（キーワード23語・type 語と同じ型）。
+# 【第1弾=訳語の曖昧性と一般語衝突が無い安全系のみ】。多義系（人間/壁/英雄/悪魔/猿等）
+# は本人レビュー待ちの第2弾（human-in-the-loop・語彙学習 v1 の運用）。
+SUBTYPE_WORDS_JA = {
+    # カタカナ系（公式訳が一意・衝突なし）
+    "ゴブリン": "Goblin",   "エルフ": "Elf",         "ゾンビ": "Zombie",
+    "ドラゴン": "Dragon",   "マーフォーク": "Merfolk", "スピリット": "Spirit",
+    "ウィザード": "Wizard", "シャーマン": "Shaman",   "クレリック": "Cleric",
+    "ドルイド": "Druid",    "ビースト": "Beast",      "エレメンタル": "Elemental",
+    "デーモン": "Demon",    "フェアリー": "Faerie",   "ゴーレム": "Golem",
+    "スフィンクス": "Sphinx", "ハイドラ": "Hydra",    "クラーケン": "Kraken",
+    "リバイアサン": "Leviathan", "ミノタウルス": "Minotaur", "トロール": "Troll",
+    "オーク": "Orc",        "インプ": "Imp",          "デビル": "Devil",
+    "ドワーフ": "Dwarf",    "スリヴァー": "Sliver",   "マイア": "Myr",
+    "エルドラージ": "Eldrazi", "ファイレクシアン": "Phyrexian", "アバター": "Avatar",
+    "ツリーフォーク": "Treefolk", "ユニコーン": "Unicorn", "ペガサス": "Pegasus",
+    "グリフィン": "Griffin", "フェニックス": "Phoenix", "ウーズ": "Ooze",
+    "スケルトン": "Skeleton", "リス": "Squirrel",     "カエル": "Frog",
+    "コウモリ": "Bat",      "トカゲ": "Lizard",       "ホラー": "Horror",
+    "ネズミ": "Rat",        "ウサギ": "Rabbit",
+    # 漢字複合系（部族以外の読みがまず来ない）
+    "吸血鬼": "Vampire",    "恐竜": "Dinosaur",       "海賊": "Pirate",
+    "騎士": "Knight",       "忍者": "Ninja",          "侍": "Samurai",
+    "巨人": "Giant",        "昆虫": "Insect",         "天使": "Angel",
+    "狼男": "Werewolf",     "植物": "Plant",          "構築物": "Construct",
+    "多相の戦士": "Shapeshifter", "狂戦士": "Berserker", "暗殺者": "Assassin",
+    "戦士": "Warrior",      "兵士": "Soldier",        "工匠": "Artificer",
+    "同盟者": "Ally",       "山羊": "Goat",           "羊": "Sheep",
+    "海蛇": "Serpent",      "蜘蛛": "Spider",
+    # 漢字単字系（末尾ルール前提なら誤爆余地が小さい・長いキー優先で内部衝突解決:
+    # 不死鳥→Phoenix が 鳥→Bird に勝つ / 海蛇→Serpent が 蛇→Snake に勝つ）
+    "不死鳥": "Phoenix",
+    "蟹": "Crab",   "鮫": "Shark",  "鯨": "Whale",  "狐": "Fox",
+    "猪": "Boar",   "狼": "Wolf",   "熊": "Bear",   "猫": "Cat",
+    "犬": "Dog",    "鳥": "Bird",   "蛇": "Snake",  "亀": "Turtle",
+    "魚": "Fish",   "馬": "Horse",  "象": "Elephant",
+}
+# 部族意図の定型（末尾以外でも部族と確信できる形）
+_TRIBAL_CONTEXT_RE = r'(?:デッキ|の統率者|部族|タイプ)'
+
+
+def detect_tribal(query: str):
+    """日本語の部族（サブタイプ）検索意図の決定的検出。英語 subtype か None を返す。
+    発動条件（保守的）: ①クエリ全体が部族名 ②クエリ末尾が部族名（「青い蟹」）
+    ③「〈部族〉デッキ/の統率者/部族」の定型。文中に埋まっただけでは立てない
+    （「エルフを対象に…」等の対象語で誤爆させない＝type 語検出と同じ思想）。
+    複数マッチは最長キー優先（「不死鳥」>「鳥」・「多相の戦士」>「戦士」）。"""
+    stripped = query.strip().rstrip('?？。！!、．.　 ')
+    hits = []
+    for jp, en in SUBTYPE_WORDS_JA.items():
+        if (stripped == jp or stripped.endswith(jp)
+                or re.search(re.escape(jp) + _TRIBAL_CONTEXT_RE, query)):
+            hits.append((len(jp), jp, en))
+    if not hits:
+        return None
+    hits.sort(reverse=True)          # 最長キー優先
+    longest = hits[0]
+    # 最長キーの部分文字列でしかないヒットは捨てる（不死鳥 vs 鳥）
+    return longest[2]
+
+
+def tribal_filter_sql(subtype) -> str:
+    """部族フィルタの SQL 断片。単語境界つき正規表現（\\m..\\M）で type_line に
+    照合＝LIKE の部分一致事故（別語の巻き込み）を避ける。Creature に限定しない:
+    部族シナジー呪文（Tribal Instant — Goblin 等）も type_line に部族名を持ち、
+    部族デッキの検索意図に含まれるため。"""
+    if not subtype:
+        return ""
+    return f" AND c.type_line ~ '\\m{subtype}\\M'"
+
+
 def detect_pt_relation(query: str):
     """P/T の列間関係の決定的検出。'eq' / 'power_gt' / 'toughness_gt' / None。"""
     if _PT_EQ_RE.search(query):
@@ -1274,8 +1349,9 @@ class MTGHybridSearcherV2:
         attr_sql += keyword_filter_sql(_kw_abilities, _neg_kw)
         # 機構指定つき除去クエリの門は HyDE 腕にも（search() 本体と対・単独ヒット再流入防止）
         attr_sql += removal_mech_filter_sql(query, _rm or removal_mode_override)
-        # P/T 関係ゲートも HyDE 腕に（search() 本体と対）
+        # P/T 関係・部族ゲートも HyDE 腕に（search() 本体と対）
         attr_sql += pt_relation_sql(detect_pt_relation(query))
+        attr_sql += tribal_filter_sql(detect_tribal(query))
         hyde_vec  = self._embed(hyde_text)
         hyde_rows = self._vector_search(hyde_vec, top_k * 2, fmt_sql, type_sql, attr_sql)
 
@@ -1422,6 +1498,11 @@ class MTGHybridSearcherV2:
         attr_sql += pt_relation_sql(pt_rel)
         if pt_rel:
             print(f"  P/T関係ゲート: {pt_rel}（数値P/Tのみ・::int 比較）")
+        # 部族（サブタイプ）ゲート（決定的辞書・全腕+直行路に掛かる）
+        tribal = detect_tribal(query)
+        attr_sql += tribal_filter_sql(tribal)
+        if tribal:
+            print(f"  部族ゲート: {tribal}（type_line 単語境界照合）")
         # EDH 固有色・ブラケットゲート（R13・決定的検出＝ルーター無改修で効く）。
         # attr_sql に足すことで全腕（vec/FTS/強度腕）と直行路に同時に掛かる
         ci = detect_color_identity(query)
@@ -1466,7 +1547,9 @@ class MTGHybridSearcherV2:
                       and not has_fuzzy_semantic(query))
         # P/T 関係クエリも意味の残余が無ければ直行（正解集合は WHERE で完全定義済み）
         pt_direct = pt_rel is not None and not has_fuzzy_semantic(query)
-        if not (tournament_boost or removal_mode or counter_mode) and (kw_only or edh_direct or pt_direct):
+        # 部族クエリも同様（「蟹」= type_line 照合で完全定義・並びは play-rate/edhrec）
+        tribal_direct = tribal is not None and not has_fuzzy_semantic(query)
+        if not (tournament_boost or removal_mode or counter_mode) and (kw_only or edh_direct or pt_direct or tribal_direct):
             print("  構造化オンリー直行路（意味検索スキップ・"
                   + ("EDH＝edhrec順" if edh_intent else "play-rate順") + "）")
             return self._structured_search(top_k, fmt_sql, type_sql, attr_sql,

@@ -34,7 +34,8 @@ import requests
 
 sys.path.insert(0, '/mnt/mtg_rag')
 from mtg_hybrid_search_v2 import (MTGHybridSearcherV2, extract_keywords,
-                                  detect_pt_relation, has_fuzzy_semantic)
+                                  detect_pt_relation, detect_tribal,
+                                  has_fuzzy_semantic)
 
 # ─── 設定 ─────────────────────────────────────────────────────
 GEMINI_MODEL   = "gemini-2.5-flash-lite"
@@ -79,11 +80,13 @@ def structured_direct_gate(query: str) -> bool:
           数字があるときはルーターに任せる（迷ったら高い方＝正確な方に倒す）
     format 語（「モダンの〜」）は search_cards 側の決定的フォールバックが拾うため妨げない。"""
     _, _, _, tb, rm, cm, _, _, kw_only = extract_keywords(query)
-    # P/T 列間関係クエリ（「パワーとタフネスが同じ」等）も、意味の残余が無ければ
-    # ルーター不要＝SQL で完全定義できる（2026-07-12）
+    # P/T 列間関係（「パワーとタフネスが同じ」）・部族（「蟹」）も、意味の残余が
+    # 無ければルーター不要＝SQL で完全定義できる（2026-07-12）
     pt_ok = (detect_pt_relation(query) is not None
              and not has_fuzzy_semantic(query))
-    return ((kw_only or pt_ok) and not (tb or rm or cm)
+    tribal_ok = (detect_tribal(query) is not None
+                 and not has_fuzzy_semantic(query))
+    return ((kw_only or pt_ok or tribal_ok) and not (tb or rm or cm)
             and not re.search(r'[0-9０-９一二三四五六七八九十]', query))
 
 

@@ -21,7 +21,26 @@ import json
 import sys
 
 sys.path.insert(0, '/mnt/mtg_rag')
-from mtg_hybrid_search_v2 import extract_keywords, detect_pt_relation
+from mtg_hybrid_search_v2 import (extract_keywords, detect_pt_relation,
+                                  detect_tribal)
+
+# 部族（サブタイプ）検索の検出（2026-07-12・「蟹」の正解率 2/10 から）
+# (クエリ, 期待 subtype)
+TRIBAL_CASES = [
+    ("蟹",                       "Crab"),
+    ("青い蟹",                   "Crab"),        # 末尾ルール
+    ("ゴブリンデッキ",           "Goblin"),      # 定型「デッキ」
+    ("エルフの統率者",           "Elf"),         # 定型「の統率者」
+    ("不死鳥",                   "Phoenix"),     # 最長キー優先（「鳥」Bird に勝つ）
+    ("海蛇",                     "Serpent"),     # 「蛇」Snake に勝つ
+    ("多相の戦士",               "Shapeshifter"),# 「戦士」Warrior に勝つ
+    ("吸血鬼",                   "Vampire"),
+    # 不発であるべき（文中に埋まっただけ・対象語・部族でない末尾）
+    ("エルフを対象とする火力",   None),
+    ("速攻を持つクリーチャー",   None),
+    ("ゴブリンを追放する除去",   None),
+    ("威嚇を持たないクリーチャー", None),
+]
 
 # P/T 列間関係の検出（2026-07-12・「パワーとタフネスが同じクリーチャー」）
 # (クエリ, 期待 rel)
@@ -109,6 +128,12 @@ def main() -> int:
         if got != want_rel:
             failures.append(f"[pt_rel] {query!r}: got {got!r}, want {want_rel!r}")
 
+    # 1c) 部族（サブタイプ）の検出
+    for query, want_sub in TRIBAL_CASES:
+        got = detect_tribal(query)
+        if got != want_sub:
+            failures.append(f"[tribal] {query!r}: got {got!r}, want {want_sub!r}")
+
     # 2) 本線 30 クエリの回帰
     with open("/mnt/mtg_rag/eval_queries.json", encoding="utf-8") as f:
         mainline = [e["query"] for e in json.load(f)]
@@ -121,6 +146,8 @@ def main() -> int:
             failures.append(f"[本線回帰: type] {q!r}: got {type_f!r}, want {want!r}")
         if detect_pt_relation(q) is not None:
             failures.append(f"[本線回帰: pt_rel 誤発動] {q!r}")
+        if detect_tribal(q) is not None:
+            failures.append(f"[本線回帰: tribal 誤発動] {q!r}")
 
     print(f"CASES {len(CASES)} 本 + 本線 {len(mainline)} 本")
     if failures:
