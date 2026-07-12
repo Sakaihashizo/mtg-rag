@@ -35,7 +35,8 @@ import requests
 sys.path.insert(0, '/mnt/mtg_rag')
 from mtg_hybrid_search_v2 import (MTGHybridSearcherV2, extract_keywords,
                                   detect_pt_relation, detect_tribal,
-                                  has_fuzzy_semantic)
+                                  detect_name_search, has_fuzzy_semantic,
+                                  TYPE_WORDS_JA)
 
 # ─── 設定 ─────────────────────────────────────────────────────
 GEMINI_MODEL   = "gemini-2.5-flash-lite"
@@ -86,7 +87,9 @@ def structured_direct_gate(query: str) -> bool:
              and not has_fuzzy_semantic(query))
     tribal_ok = (detect_tribal(query) is not None
                  and not has_fuzzy_semantic(query))
-    return ((kw_only or pt_ok or tribal_ok) and not (tb or rm or cm)
+    name_ok = (detect_name_search(query) is not None
+               and not has_fuzzy_semantic(query))
+    return ((kw_only or pt_ok or tribal_ok or name_ok) and not (tb or rm or cm)
             and not re.search(r'[0-9０-９一二三四五六七八九十]', query))
 
 
@@ -274,6 +277,18 @@ def _parse_router_json(raw_text: str, query: str):
     removal_mode     = bool(parsed.get("removal_mode", False))
     counter_mode     = bool(parsed.get("counter_mode", False))
     type_filter      = parsed.get("type_filter", None)
+
+    # type_filter 幻出ガード（2026-07-12・「カード名にナヒリとつくカード」に 7B が
+    # Creature を幻出し PW のナヒリが全滅した事故から。数値幻覚ガードと同型＝
+    # クエリに型を意味する語〔日本語 or 英語型名〕が無いのに LLM が型を出したら捨てる。
+    # 語がある上での誤付与〔「クリーチャーを追放する除去」等〕は対象外＝保守的。
+    # eval キャッシュ経路はこの関数を通らないため既存評価への影響なし〔構造確認済み〕）
+    if type_filter:
+        tf = str(type_filter)
+        ja_words = [jp for jp, en in TYPE_WORDS_JA.items() if en == tf]
+        if not (any(w in query for w in ja_words)
+                or tf.lower() in query.lower()):
+            type_filter = None
 
     # format（フォーマット指定）。既知フォーマット名以外は捨てる
     # （cmc 等と同じく LLM 出力を信用せず検証する）

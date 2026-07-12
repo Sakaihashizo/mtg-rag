@@ -22,7 +22,21 @@ import sys
 
 sys.path.insert(0, '/mnt/mtg_rag')
 from mtg_hybrid_search_v2 import (extract_keywords, detect_pt_relation,
-                                  detect_tribal)
+                                  detect_tribal, detect_name_search)
+
+# カード名部分一致検索の検出（2026-07-12・ナヒリ事故から）
+# (クエリ, 期待する検索語)
+NAME_CASES = [
+    ("カード名にナヒリとつくカード",       "ナヒリ"),
+    ("名前にオムナスが入るカード",         "オムナス"),
+    ("カード名に「ジェイス」を含むカード", "ジェイス"),
+    ("ウルザという名前のカード",           "ウルザ"),
+    ("ナヒリとつくカード",                 "ナヒリ"),   # 「カード名に」省略形
+    # 不発であるべき
+    ("速攻を持つクリーチャー",             None),
+    ("環境で強いクリーチャー",             None),
+    ("手札補充できる青いカード",           None),
+]
 
 # 部族（サブタイプ）検索の検出（2026-07-12・「蟹」の正解率 2/10 から）
 # (クエリ, 期待 subtype)
@@ -135,6 +149,12 @@ def main() -> int:
         if got != want_sub:
             failures.append(f"[tribal] {query!r}: got {got!r}, want {want_sub!r}")
 
+    # 1d) カード名部分一致の検出
+    for query, want_term in NAME_CASES:
+        got = detect_name_search(query)
+        if got != want_term:
+            failures.append(f"[name] {query!r}: got {got!r}, want {want_term!r}")
+
     # 2) 本線 30 クエリの回帰
     with open("/mnt/mtg_rag/eval_queries.json", encoding="utf-8") as f:
         mainline = [e["query"] for e in json.load(f)]
@@ -149,6 +169,8 @@ def main() -> int:
             failures.append(f"[本線回帰: pt_rel 誤発動] {q!r}")
         if detect_tribal(q) is not None:
             failures.append(f"[本線回帰: tribal 誤発動] {q!r}")
+        if detect_name_search(q) is not None:
+            failures.append(f"[本線回帰: name 誤発動] {q!r}")
 
     print(f"CASES {len(CASES)} 本 + 本線 {len(mainline)} 本")
     if failures:

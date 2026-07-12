@@ -7,10 +7,30 @@
   混入した穴（7B が排他→包含の算術を片方だけ失敗・query_log id=10）への対応。
 純 Python・LLM 不要・決定的。
 """
+import json
 import sys
 
 sys.path.insert(0, '/mnt/mtg_rag')
-from mtg_rag_agent import _adjust_exclusive_bounds
+from mtg_rag_agent import _adjust_exclusive_bounds, _parse_router_json
+
+# type_filter 幻出ガード（2026-07-12・ナヒリ事故: クエリに型の語が無いのに
+# 7B が Creature を出し PW が全滅）。_parse_router_json に raw JSON を直接
+# 食わせて検証する（LLM 不要・決定的）。
+# (クエリ, ルーターの raw type_filter, 期待する type_filter)
+TYPE_GUARD_CASES = [
+    # 幻出＝捨てる（クエリに型の語なし）
+    ("カード名にナヒリとつくカード", "Creature",     None),
+    ("蟹",                           "Creature",     None),
+    ("純粋に強いカード",             "Planeswalker", None),
+    # 正当＝通す（クエリに型の語あり・日本語）
+    ("環境で強いクリーチャー",       "Creature",     "Creature"),
+    ("速攻を持つアーティファクト",   "Artifact",     "Artifact"),
+    ("1マナのマナクリーチャー",      "Creature",     "Creature"),
+    # 正当＝通す（英語クエリに英語型名）
+    ("flying creature",              "Creature",     "Creature"),
+    # 語がある上での誤付与は対象外＝通す（既知の限界・保守的設計）
+    ("クリーチャーを追放する除去",   "Creature",     "Creature"),
+]
 
 # (クエリ, ルーターが出した filters, 期待する補正後)
 CASES = [
@@ -44,13 +64,22 @@ def main() -> int:
         got = _adjust_exclusive_bounds(query, dict(given))
         if got != want:
             failures.append(f"{query!r}: got {got}, want {want}")
-    print(f"CASES {len(CASES)} 本")
+
+    for query, raw_type, want_type in TYPE_GUARD_CASES:
+        raw = json.dumps({"search_query": query, "type_filter": raw_type},
+                         ensure_ascii=False)
+        got = _parse_router_json(raw, query)[6]   # 9タプルの type_filter
+        if got != want_type:
+            failures.append(
+                f"[type_guard] {query!r} raw={raw_type!r}: got {got!r}, want {want_type!r}")
+
+    print(f"CASES {len(CASES)} + TYPE_GUARD {len(TYPE_GUARD_CASES)} 本")
     if failures:
         print(f"\nFAIL {len(failures)} 件:")
         for x in failures:
             print("  " + x)
         return 1
-    print("ALL PASS（排他境界の補正・冪等性・包含の不変）")
+    print("ALL PASS（排他境界の補正・冪等性・包含の不変・type幻出ガード）")
     return 0
 
 

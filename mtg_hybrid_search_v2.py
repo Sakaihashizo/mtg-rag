@@ -270,6 +270,41 @@ TYPE_WORDS_JA = {
 # ＝ crisp な否定は SQL の NOT で解く（2026-07-11・設計思想どおりの置き場所）
 _NEG_AFTER_KW = r'(?:を|は)?(?:持たない|持ってない|持っていない|が\s*無い|がない|無し|なし|以外)'
 
+# カード名部分一致検索（「カード名にナヒリとつくカード」等・2026-07-12）。
+# ルーターの filters に name 系スロットは無く、LLM は search_query 圧縮＋type 幻出で
+# 壊しがち（ナヒリ事故: 7B が Creature を幻出し PW が全滅）。正解集合は
+# name LIKE '%X%' で完全定義できる crisp なジャンル＝決定的検出→SQL 直行。
+_NAME_SEARCH_RES = [
+    # 「カード名/名前に X (と/が/を)つく・含む・入る」
+    re.compile(r'(?:カード名|名前)に\s*「?([^「」、。\s]+?)」?\s*(?:と|が|を)?\s*(?:付く|つく|入る|入って|含む|含ま)'),
+    # 「X という名前」
+    re.compile(r'「?([^「」、。\s]+?)」?とい?う名前'),
+    # 「X とつくカード/名前」（「カード名に」の省略形・「とつく」は名前参照でしか使われない）
+    re.compile(r'([^「」、。\s]+?)」?と(?:付|つ)く(?:カード|名前)'),
+]
+
+
+def detect_name_search(query: str):
+    """カード名部分一致の検索意図の決定的検出。検索語（部分文字列）か None を返す。"""
+    for pat in _NAME_SEARCH_RES:
+        m = pat.search(query)
+        if m and m.group(1):
+            return m.group(1)
+    return None
+
+
+def name_contains_sql(term) -> str:
+    """カード名（日英）の部分一致フィルタ。' と LIKE ワイルドカードをエスケープ
+    （term はユーザー入力由来の任意文字列）。日本語名は LIKE・英名は大文字小文字を
+    無視する ILIKE。"""
+    if not term:
+        return ""
+    t = (term.replace("\\", "\\\\").replace("'", "''")
+             .replace("%", "\\%").replace("_", "\\_"))
+    return (f" AND (c.japanese_name LIKE '%{t}%'"
+            f" OR c.card_name ILIKE '%{t}%')")
+
+
 # P/T の列間関係（「パワーとタフネスが同じ」等・2026-07-12 本人要望「答えが明確
 # だからできてほしかった」）。filters スキーマは絶対値の範囲しか持たず「列同士の
 # 関係」を表現できない＝ルーターにも embedding にも解けない層。決定的検出で
@@ -1349,9 +1384,10 @@ class MTGHybridSearcherV2:
         attr_sql += keyword_filter_sql(_kw_abilities, _neg_kw)
         # 機構指定つき除去クエリの門は HyDE 腕にも（search() 本体と対・単独ヒット再流入防止）
         attr_sql += removal_mech_filter_sql(query, _rm or removal_mode_override)
-        # P/T 関係・部族ゲートも HyDE 腕に（search() 本体と対）
+        # P/T 関係・部族・カード名ゲートも HyDE 腕に（search() 本体と対）
         attr_sql += pt_relation_sql(detect_pt_relation(query))
         attr_sql += tribal_filter_sql(detect_tribal(query))
+        attr_sql += name_contains_sql(detect_name_search(query))
         hyde_vec  = self._embed(hyde_text)
         hyde_rows = self._vector_search(hyde_vec, top_k * 2, fmt_sql, type_sql, attr_sql)
 
@@ -1503,6 +1539,11 @@ class MTGHybridSearcherV2:
         attr_sql += tribal_filter_sql(tribal)
         if tribal:
             print(f"  部族ゲート: {tribal}（type_line 単語境界照合）")
+        # カード名部分一致（「カード名に X とつく」・決定的検出・全腕+直行路に掛かる）
+        name_term = detect_name_search(query)
+        attr_sql += name_contains_sql(name_term)
+        if name_term:
+            print(f"  カード名ゲート: 「{name_term}」を含む（日英 LIKE）")
         # EDH 固有色・ブラケットゲート（R13・決定的検出＝ルーター無改修で効く）。
         # attr_sql に足すことで全腕（vec/FTS/強度腕）と直行路に同時に掛かる
         ci = detect_color_identity(query)
@@ -1549,7 +1590,9 @@ class MTGHybridSearcherV2:
         pt_direct = pt_rel is not None and not has_fuzzy_semantic(query)
         # 部族クエリも同様（「蟹」= type_line 照合で完全定義・並びは play-rate/edhrec）
         tribal_direct = tribal is not None and not has_fuzzy_semantic(query)
-        if not (tournament_boost or removal_mode or counter_mode) and (kw_only or edh_direct or pt_direct or tribal_direct):
+        # カード名検索も同様（name LIKE で完全定義・並びは play-rate/edhrec）
+        name_direct = name_term is not None and not has_fuzzy_semantic(query)
+        if not (tournament_boost or removal_mode or counter_mode) and (kw_only or edh_direct or pt_direct or tribal_direct or name_direct):
             print("  構造化オンリー直行路（意味検索スキップ・"
                   + ("EDH＝edhrec順" if edh_intent else "play-rate順") + "）")
             return self._structured_search(top_k, fmt_sql, type_sql, attr_sql,
