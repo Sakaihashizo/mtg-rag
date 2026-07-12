@@ -383,7 +383,8 @@ def rerank_results(query, results):
 
 def run_eval(conn, gt_path: str, model_key: str, note: str = "",
              router_cache: dict = None, allow_partial: bool = False,
-             top_k: int = TOP_K, rerank: bool = False):
+             top_k: int = TOP_K, rerank: bool = False,
+             arm_weights: dict = None):
     """
     編集済みGT CSVを読んで指標を計算し、eval_runs に保存する。
     router_cache 指定時はルーター/エージェント経路で検索する（キャッシュ利用・決定的）。
@@ -441,6 +442,14 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
     route_label = "ルーター経路（キャッシュ）" if router_cache is not None else "searcher 直呼び"
     print(f"評価実行: {len(gt_by_query)} クエリ / モデル: {model_key} / 経路: {route_label}")
     searcher = MTGHybridSearcherV2(model_key=model_key)
+    # RRF 腕の重み実験（2026-07-12・#23/RRF 骨格の問い直し用）。0 で腕の寄与が消える
+    # （加算 w/(k+r) の係数なので）。既定 None＝全腕 1.0 の現行挙動。
+    if arm_weights:
+        searcher.weight_vector = float(arm_weights.get("vec", 1.0))
+        searcher.weight_en_fts = float(arm_weights.get("en", 1.0))
+        searcher.weight_ja_fts = float(arm_weights.get("ja", 1.0))
+        print(f"腕の重み: vec={searcher.weight_vector}"
+              f" en={searcher.weight_en_fts} ja={searcher.weight_ja_fts}")
 
     all_metrics = []
     for query, gt in gt_by_query.items():
@@ -492,6 +501,8 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
         # 検索経路。searcher 直呼びとルーター経由の数値は条件が違うので比較しない
         "route": "router" if router_cache is not None else "searcher",
         "rerank": rerank,
+        # 腕の重み（RRF 実験の条件を焼き込む。無指定=全腕 1.0 の現行）
+        "arm_weights": arm_weights or {"vec": 1.0, "en": 1.0, "ja": 1.0},
         "avg_unlabeled_10": avg_unlabeled,
         "per_query": all_metrics,
     }
@@ -594,6 +605,9 @@ def main():
     parser.add_argument("--rerank", action="store_true",
                         help="検索結果の top_k を cross-encoder(bge-reranker-v2-m3)で"
                              "並べ替える（候補集合は不変＝coverage bias なし）")
+    parser.add_argument("--weights", default=None,
+                        help="RRF 腕の重み（RRF 骨格の問い直し実験・2026-07-12）。"
+                             "形式 'vec=1,en=0,ja=0'。0 で腕の寄与を消す。省略=全腕 1.0")
     args = parser.parse_args()
 
     conn = psycopg2.connect(**DB_CONFIG)
@@ -605,9 +619,15 @@ def main():
                      queries_json=args.queries_json, router_cache=router_cache,
                      gt_path=args.gt)
     elif args.run:
+        arm_weights = None
+        if args.weights:
+            arm_weights = {}
+            for pair in args.weights.split(","):
+                k, _, v = pair.partition("=")
+                arm_weights[k.strip()] = float(v)
         run_eval(conn, gt_path=args.gt, model_key=args.model, note=args.note,
                  router_cache=router_cache, allow_partial=args.partial,
-                 top_k=args.top_k, rerank=args.rerank)
+                 top_k=args.top_k, rerank=args.rerank, arm_weights=arm_weights)
     elif args.show:
         show_runs(conn)
     else:
