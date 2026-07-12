@@ -306,7 +306,7 @@ SUBTYPE_WORDS_JA = {
     "グリフィン": "Griffin", "フェニックス": "Phoenix", "ウーズ": "Ooze",
     "スケルトン": "Skeleton", "リス": "Squirrel",     "カエル": "Frog",
     "コウモリ": "Bat",      "トカゲ": "Lizard",       "ホラー": "Horror",
-    "ネズミ": "Rat",        "ウサギ": "Rabbit",
+    "ネズミ": "Rat",        "ウサギ": "Rabbit",       "ブラッシュワグ": "Brushwagg",
     # 漢字複合系（部族以外の読みがまず来ない）
     "吸血鬼": "Vampire",    "恐竜": "Dinosaur",       "海賊": "Pirate",
     "騎士": "Knight",       "忍者": "Ninja",          "侍": "Samurai",
