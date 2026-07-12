@@ -11,14 +11,16 @@
 ## ハイブリッド経路の詳細フロー
 
 ```mermaid
+%%{init: {"flowchart": {"wrappingWidth": 160}}}%%
 flowchart TB
-    User["ユーザー (日本語/英語クエリ)"] --> Router["LLM-as-Query-Router"]
+    User["ユーザー (日本語/英語クエリ)"] --> Gate{"構造化オンリー?（決定的判定・LLM 不使用）"}
+    Gate -->|"はい（5 系統・下表）"| Direct["構造化オンリー直行路: SQL WHERE + 大会 play-rate 順（LLM を呼ばず数十 ms）"]
+    Direct --> DirectOut["TOP-K 結果"]
+    DirectOut --> DirectResp["即時応答"]
+    Gate -->|"いいえ（意味の残余あり）"| Router["LLM-as-Query-Router"]
     Router -->|JSON 出力| Validate["検証層: 数値幻覚ガード / 排他境界±1補正 / type_filter幻出ガード（LLMが提案・決定的コードが裁可）"]
     Validate --> Parsed["search_query + intent flags + type_filter(validated) + 数値/属性フィルタ + HyDE texts(en/ja)"]
-    Parsed --> Gate{"構造化オンリー?"}
-    Gate -->|"はい（キーワード肯定/否定・型語・P/T関係・部族・カード名）"| Direct["構造化オンリー直行路: SQL WHERE + 大会 play-rate 順"]
-    Direct --> TopK
-    Gate -->|"いいえ"| Hard["SQL hard filters before search: cmc / face_cmcs / power / toughness / mana_producer / is_mana_boost / front_keywords(+NOT) / type_line / 部族 / カード名"]
+    Parsed --> Hard["SQL hard filters before search: cmc / face_cmcs / power / toughness / mana_producer / is_mana_boost / front_keywords(+NOT) / type_line / 部族 / カード名"]
     Hard --> Search3["通常検索（3 系統）"]
     Hard --> HyDESearch["HyDE 検索（4 系統目）"]
     Search3 --> Vector["ベクトル検索 (pgvector HNSW)"]
@@ -34,11 +36,11 @@ flowchart TB
     Strength --> RRF
     EDHArm --> RRF
     RRF --> Soft["Post-search ranking adjustments: type_filter / tournament_boost / counter_mode / removal_mode"]
-    Soft --> CandidateTopK[候補 TOP-K]
+    Soft --> CandidateTopK["候補 TOP-K"]
     CandidateTopK --> Reranker["Cross-encoder reranker (bge-reranker-v2-m3)"]
     Reranker --> TopK[reranked TOP-K 結果]
     TopK --> LLM["LLM 回答生成 (Exponential Backoff)"]
-    LLM --> Response[自然言語応答]
+    LLM --> Response["自然言語応答"]
 
     subgraph "データ層 (Primary/Standby 検証構成)"
         Primary[("PostgreSQL Primary")]
@@ -46,10 +48,13 @@ flowchart TB
         Primary -. WAL Streaming .-> Standby
     end
     Vector -. 参照 .-> Primary
-    Reembed[reembed プロセス] -. フラグファイルで切替 .-> Standby
+    Reembed["reembed プロセス"] -. フラグファイルで切替 .-> Standby
+
+    classDef resp fill:#d5f0d5,stroke:#2e8b57,color:#14421f
+    class DirectResp,Response resp
 ```
 
-ハードフィルタ（数値・属性条件）は検索前に SQL WHERE 句で適用し、ランキング調整（intent flags 等）は検索後に適用する。「意味検索とハード制約の分離」がこの構成の要点。役割ペナルティ（removal / counter）は手書きキーワード規則ではなく、oracle テキストから導出した構造化列（target_types / removal）による判定。reranker は「自分が判定できない上流信号を壊さない」原則で、boost クエリと構造化オンリー直行路には適用しない。
+直行路の判定はルーターの**前**に置かれ、該当クエリは LLM を一切呼ばず実測数十 ms で返る（LLM コストとレイテンシの両方をゼロ側に倒す）。ハードフィルタ（数値・属性条件）は検索前に SQL WHERE 句で適用し、ランキング調整（intent flags 等）は検索後に適用する。「意味検索とハード制約の分離」がこの構成の要点。役割ペナルティ（removal / counter）は手書きキーワード規則ではなく、oracle テキストから導出した構造化列（target_types / removal）による判定。reranker は「自分が判定できない上流信号を壊さない」原則で、boost クエリと構造化オンリー直行路には適用しない。
 
 ### 決定的ゲート 5 系統（構造化オンリー直行路の入口）
 
@@ -149,7 +154,7 @@ erDiagram
 - **embedding は別テーブルに分離**（`mtg_embeddings_small_v2` / `base_v2`、FK は CASCADE、HNSW 索引）。構造化列は embed_text に含めないため、列の追加・更新で **reembed（全件再ベクトル化）が不要**。
 - **デッキとカードの多対多関係は `deck_cards` で正規化**。スクレイプ由来の名前ゆれ（`[]` 接頭辞・分割カードの旧区切り ` / `・両面カードの表面名）を正規化して `card_id` を解決し、紐付け率 51.8% → **99.96%**（残 119 行は Planechase 次元カード等、カード DB の対象外＝正当な未解決を NULL で表現）。
 - **生データは JSONB/バルク、検索のホットパスで使う属性だけ列に昇格**（`legalities` / `card_faces_json` は JSONB で保持）。横長スカスカなテーブルを避ける方針。
-- **リーガル / 非リーガルを分離**。Vintage 非リーガル（un 系・Alchemy・リバランス版）約 2,700 枚を `*_nonlegal` テーブルへ退避し、検索対象コア（30,982 枚）をクリーンに保つ。
+- **リーガル / 非リーガルを分離**。Vintage 非リーガル（un 系・Alchemy・リバランス版）2,779 枚を `*_nonlegal` テーブルへ退避し、検索対象コア（30,982 枚）をクリーンに保つ。
 
 全テーブルの列・型・索引、`card_id` 紐付け率、非リーガル退避テーブルの詳細は [DATA_MODEL.md](./DATA_MODEL.md) を参照。
 
@@ -157,7 +162,20 @@ erDiagram
 
 ## AWS 構成の判断と運用詳細
 
-**構成決定の要旨**: クラウド展開の前に、AWS 公式料金表（Bulk Pricing API）から「一切使わず放置した場合の月額」を全構成案について算出した。旧構成案（RDS Proxy + VPC 内 Lambda + Interface エンドポイント）は放置時 ≈ $232/月だったが、2 つの罠——① RDS Proxy は auto-pause と非互換（かつ Serverless v2 へは最低 8 ACU の時間課金）②Interface 型 VPC エンドポイントは稼働と無関係に毎時課金——を特定し、**Lambda を VPC 外に置き RDS Data API で Aurora に入る構成（≈ $0.84/月）**に決定した。構成比較表と分岐点の全文は [README](./README.md) の「AWS サーバーレス構成」節。以下はその決定を支える運用レベルの詳細。
+**構成決定の要旨**: クラウド展開の前に、AWS 公式料金表（Bulk Pricing API）から「一切使わず放置した場合の月額」を全構成案について算出した。旧構成案（RDS Proxy + VPC 内 Lambda + Interface エンドポイント）は放置時 ≈ $232/月だったが、2 つの罠——① RDS Proxy は auto-pause と非互換（かつ Serverless v2 へは最低 8 ACU の時間課金）②Interface 型 VPC エンドポイントは稼働と無関係に毎時課金——を特定し、**Lambda を VPC 外に置き RDS Data API で Aurora に入る構成（≈ $0.84/月）**に決定した。費目の内訳:
+
+| 放置時の月額（東京・1 AZ・DB 2GB 想定） | A: Proxy + VPC 内 Lambda | B: 直結 + VPC 内 Lambda | **C: Data API 型（採用）** |
+|---|---:|---:|---:|
+| Aurora コンピュート | $54.75（Proxy が auto-pause を阻害・0.5 ACU 常時） | $0（auto-pause） | $0（auto-pause） |
+| RDS Proxy（最低 8 ACU の課金床） | $146.00 | — | — |
+| Interface 型 VPC エンドポイント ×3 | $30.66 | $30.66 | — |
+| Aurora ストレージ 2GB | $0.24 | $0.24 | $0.24 |
+| Secrets Manager ×1（Data API の認証に必須） | $0.40 | $0.40 | $0.40 |
+| ECR（コンテナイメージ 2GB） | $0.20 | $0.20 | $0.20 |
+| S3 / CloudFront / API GW / Lambda / CloudWatch | ≈$0.01 | ≈$0.01 | ≈$0.01 |
+| **合計/月** | **≈$232** | **≈$31.5** | **≈$0.84** |
+
+単価は AWS Bulk Pricing API（2026-07-10 版・東京）から SKU 直引き（Aurora SLv2 $0.15/ACU-h・ストレージ $0.12/GB-月・RDS Proxy $0.025/ACU-h・Interface EP $0.014/h）。Lambda / API Gateway / CloudFront はリクエストゼロなら $0、バックアップは DB サイズ 100% まで無料（いずれも公式確認）。以下はこの決定を支える運用レベルの詳細。
 
 - **DB アクセス層**: SQL 実行を単一ドライバ層（`db.py`）に集約し、環境変数 `DB_BACKEND` で psycopg2（ローカル TCP）⇔ RDS Data API（HTTPS + IAM）を切替。psycopg2 側は実接続で検証済み（エラー後も接続が生き残る rollback 一元化を含む）。Data API 側は書式変換（`%s`→`:pN`・型タグ・行デコード）を純関数として単体テスト済みだが、**実 Aurora での検証は未実施**——デプロイ時の必須検証項目: 配列パラメータ／`::vector` キャスト／レスポンス 1 MiB 上限（SELECT に embedding 列を含めない実装ルール）／auto-pause 復帰時のリトライ。
 - **接続プーリングの判断**: デモ流量では RDS Proxy は不要（Aurora Serverless v2 の min 0–0.5 ACU 時、max_connections はデフォルト 2,000。想定同時接続は数〜数十）。製品流量になった時点で Proxy を再検討するが、**Proxy を入れると auto-pause は失われる**（公式ドキュメント明記の非互換）——この前提ごと記録し、将来の再検討時に参照する。
@@ -167,7 +185,7 @@ erDiagram
 
 ### 検討した代替案: S3 ロード型の軽量デモ（採用せず）
 
-当初、DB の常時課金を避ける目的で「ベクトルとメタデータを S3 にエクスポートし、Lambda が読み込んで総当たり cosine + 簡易字句検索 + RRF を行う DB レス構成」を公開デモ用に検討した。33,711 件規模であれば総当たりで十分高速であり、**規模に対して索引（HNSW）が過剰になるケースでは使わない判断もある**、という整理は今も有効である。
+当初、DB の常時課金を避ける目的で「ベクトルとメタデータを S3 にエクスポートし、Lambda が読み込んで総当たり cosine + 簡易字句検索 + RRF を行う DB レス構成」を公開デモ用に検討した。3 万件規模であれば総当たりで十分高速であり、**規模に対して索引（HNSW）が過剰になるケースでは使わない判断もある**、という整理は今も有効である。
 
 ただし採用は見送った。第一に、Data API 型の採用で「DB 常時課金」の問題自体が解消した（放置時 約 $0.84/月）。第二に、DB レス構成でも e5 モデルを積むコンテナ Lambda のコールドスタート（数秒〜十数秒）は残り、「待ちゼロのデモ」にはならない。第三に、pgvector / FTS / RRF の SQL ロジックを Python へ移植した第二のコードパスを維持するコストが見合わない。この判断は後に再浮上した際も、月 30 円差に対して検索ロジックの移植・再検証コストが見合わないとして維持された。
 
@@ -226,7 +244,7 @@ FastAPI の API サーバ（`api_server.py`）と静的 1 ファイル UI（`sta
 - **手書きルールの放棄**: 機能概念を手書き定義で増やし続ける方式の限界を認め、外部の構造化データ（Scryfall）へ寄せる方針転換を行った。
 - **ベクトル検索の限界の確認**: HNSW パラメータを実機ベンチマークし、少数評価セットではベクトル単独の recall が頭打ちになるケースを測定 → ハイブリッド検索が必要な理由を数値で説明できるようにした。
 - **経験則の棄却**: Weighted RRF をグリッドサーチで検証し、自分の仮説（英語 FTS の重みを下げる）が実測で支持されないと分かった時点で標準 RRF に戻した。後の腕別アブレーションでも均等重みが局所最適と追認された。
-- **骨格への疑いも数字で決着**: 「RRF という仕組み自体が欠陥ではないか」という設計骨格への疑いを、判定基準を事前固定した腕別アブレーション（6 条件・決定的評価）で検証——「合議は fuzzy 層で +0.088 を稼ぐ現役・crisp 層はゲートで管轄から外す」という管轄の地図に着地した。フレームへの問いは実装の流れの外（人間）から出て、検証は評価装置が担う分業。
+- **骨格への疑いも数字で決着**: 「RRF という仕組み自体が欠陥ではないか」という設計骨格への疑いを、判定基準を事前固定した腕別アブレーション（6 条件・決定的評価）で検証——「合議は曖昧な意味の層で +0.088 を稼ぐ現役・答えが一意に決まる層はゲートで管轄から外す」という管轄の地図に着地した。フレームへの問いは実装の流れの外（人間）から出て、検証は評価装置が担う分業。
 - **AI への委任と検収**: ローカル 7B ルーターのプロンプト調整は AI に委ね、著者は失敗様式の特定（抽象クエリへの言い換え返答・few-shot 数値リークの事前予測）と採否判定を担った。
 - **代替案の棄却**: S3 ロード型デモ構成を、第二コードパスの維持コストが大きいと判断して採用を見送った（前述）。
 
@@ -260,9 +278,15 @@ FastAPI の API サーバ（`api_server.py`）と静的 1 ファイル UI（`sta
 
 精度差は小さく速度差は約 1.5 倍のため SMALL を採用。LARGE（1024d）は初期検証で SMALL を上回らなかったため見送り（この暫定比較は独自指標での測定であり、標準指標での再測定は未実施）。
 
-### LLM の選定
+### ルーター LLM の選定（単一の「正解モデル」ではなく用途別の 3 役）
 
-開発フェーズでは無料枠の Gemini 2.5 Flash-Lite を採用。AWS 移行フェーズでは Bedrock への切り替えを想定。LLM 呼び出し部はプロバイダ非依存に分離済みで、ルーターは Gemini／ローカル 7B（Ollama）を環境変数で切替できる（検証層は共通）。
+LLM 呼び出し部はプロバイダ非依存に分離済みで（検証層は共通）、ルーターは用途で使い分ける:
+
+- **評価** = Gemini 2.5 Flash-Lite（無料枠）。ルーター出力を静的キャッシュに固定し、評価を決定的かつ API 消費ゼロで再現する（プロンプト変更時のみ再生成）。
+- **開発・ローカル稼働** = ローカル 7B（Ollama・$0・次項）。環境変数 `ROUTER_BACKEND` で切替でき、API サーバのルーターとして稼働中。
+- **AWS 本番用** = Bedrock 上の小型モデル（Amazon Nova Micro）。素のままでは意図フラグの過剰発火が残ったが、7B で確立した調整手法（用語辞書・正負対例の few-shot・数値規則）の移植により意図フラグ全系統 30/30・temp=0 反復の完全一致・約 $0.00013/クエリまで検証済み（本番への配線はデプロイ時）。上位モデルへの課金でなくプロンプト設計で仕様を通す方針は 7B と同じ。
+
+回答生成（解説文）用の LLM は現在 Gemini を使用しており、最終選定は未確定。
 
 ### ローカル 7B ルーターのプロンプト設計（スキーマを削らず本番仕様のまま通す）
 
@@ -317,7 +341,7 @@ FastAPI の API サーバ（`api_server.py`）と静的 1 ファイル UI（`sta
 - **FTS 2 腕の寄与はほぼ加法的**（0.035 + 0.048 ≈ 0.088）＝ 2 腕は重複せず別々のクエリを救う。per-query では英語 FTS はキーワード拡張の受け皿（「マナ加速」+0.53）、日本語 FTS は日本語オラクル定型句の受け皿（「クリーチャーを破壊する除去」+0.27）。
 - **均等重みは試した全方向への変更で悪化する局所最適**。
 - ベクトル単腕は未ラベル混入が 0% → 14.3% に跳ねる＝ FTS 腕には「候補集合を GT プール内に保つ」働きもある。
-- 一方で crisp なクエリに合議を使うと「どの腕も正解を知らないまま、複数の腕にそこそこ顔を出す大会実績の高い有名カードが浮上する」人気者バイアスを実測——合議の管轄は fuzzy 層に限定し、crisp 層は SQL ゲートで管轄から外す役割分担を数字で固定した。
+- 一方で答えが一意に決まるクエリに合議を使うと「どの腕も正解を知らないまま、複数の腕にそこそこ顔を出す大会実績の高い有名カードが浮上する」人気者バイアスを実測——合議の管轄は曖昧な意味の層に限定し、一意に決まる層は SQL ゲートで管轄から外す役割分担を数字で固定した。
 
 ### GIN インデックスの効果（参考・単一クエリ）
 
@@ -383,7 +407,7 @@ recall@k / precision@k / MRR / NDCG@10 と 3 段階 relevance を扱う評価ハ
 - **検索結果の非決定性**: HyDE 融合が Python `set` のハッシュ順に依存し、同点カードの並びが実行ごとにブレて評価が再現しなかった → 名前タイブレーカーで決定化。評価を「実行ごとにブレる」から「決定的に再現可能」に。
 - **キーワード境界**: `LIKE '%飛行%'` が「飛行カウンター」等に誤ヒット → パラメータバインディングで境界を明示。
 - **多義語**: 護法テキストの「打ち消す」がカウンター呪文クエリに混入 → 本物のカウンターは「呪文を対象に取る」が護法は取らない、という構造上の違いを `target_types` 列で判定。
-- **embedding は否定を理解しない**: 「速攻を持たないクリーチャー」に速攻持ちが返る（分布意味論では「持つ」と「持たない」がほぼ同じベクトル）→ crisp な否定は SQL の `NOT` で解く決定的ゲートへ（`COALESCE(front_keywords,'{}')` が急所——キーワード無しカードこそ「持たない」正解集合の主役で、素の NOT は NULL 落ちで全滅する）。
+- **embedding は否定を理解しない**: 「速攻を持たないクリーチャー」に速攻持ちが返る（分布意味論では「持つ」と「持たない」がほぼ同じベクトル）→ 否定は答えが一意に決まる条件なので SQL の `NOT` で解く決定的ゲートへ（`COALESCE(front_keywords,'{}')` が急所——キーワード無しカードこそ「持たない」正解集合の主役で、素の NOT は NULL 落ちで全滅する）。
 - **LLM の境界演算の揺れ**: 「9より小さく7より大きい」で min 側だけ ±1 変換に失敗しパワー 7 が混入 → 排他表現と値が一致するスロットだけをコードが補正する冪等な検証層で解消。
 - **HNSW × 選択的フィルタの取りこぼし**: `hnsw.iterative_scan = relaxed_order` で解消。
 - **psycopg2 の `%` 衝突**: `LIKE '%Instant%'` がプレースホルダと衝突 → `%%` でエスケープ。
