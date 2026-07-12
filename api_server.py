@@ -137,24 +137,41 @@ def search(req: SearchRequest):
 @app.post("/ask")
 def ask(req: SearchRequest):
     """検索 + 回答生成。Gemini を最大2リクエスト消費（ルーター+回答）＝
-    無料枠クォータ（日次約100）を食う。呼ぶのは明示 GO の下で。"""
+    無料枠クォータ（日次約100）を食う。呼ぶのは明示 GO の下で。
+
+    例外＝直行路（structured_direct）: 答えが一意に決まる検索は説明不要なので
+    回答生成をスキップし、検索結果＋定型文を返す（LLM 消費ゼロ・api_key 不要。
+    ROADMAP 原則「説明が要るときだけ LLM」の実装・2026-07-13 本人裁定）。
+    api_key の事前チェックはしない＝直行路をキー無しで通すため。回答生成が
+    実際に要る経路に限り、生成の直前でキーを検査する。"""
     api_key = os.environ.get("GOOGLE_API_KEY")
-    if not api_key:
-        raise HTTPException(status_code=400, detail="GOOGLE_API_KEY が未設定")
     t0 = time.perf_counter()
-    with _lock:
-        result = run_search(_state["searcher"], req.query, fmt=req.format,
-                            top_k=req.top_k, api_key=api_key,
-                            use_rewrite=req.use_rewrite)
-        if not result["cards"]:
+    try:
+        with _lock:
+            result = run_search(_state["searcher"], req.query, fmt=req.format,
+                                top_k=req.top_k, api_key=api_key,
+                                use_rewrite=req.use_rewrite)
+            if not result["cards"]:
+                _log_query("/ask", req, result,
+                           int((time.perf_counter() - t0) * 1000))
+                return {**result, "answer": None}
+            if result["route"] == "structured_direct":
+                answer = (f"条件が一意に決まる検索のため、該当カード"
+                          f" {len(result['cards'])} 件をそのまま返します"
+                          "（回答生成 LLM 不使用）。")
+                _log_query("/ask", req, result,
+                           int((time.perf_counter() - t0) * 1000))
+                return {**result, "answer": answer}
+            if not api_key:
+                raise HTTPException(status_code=400,
+                                    detail="GOOGLE_API_KEY が未設定（回答生成に必要）")
+            context = build_context(result["cards"])
+            answer = ask_gemini(req.query, context, api_key)
             _log_query("/ask", req, result,
                        int((time.perf_counter() - t0) * 1000))
-            return {**result, "answer": None}
-        context = build_context(result["cards"])
-        answer = ask_gemini(req.query, context, api_key)
-        _log_query("/ask", req, result,
-                   int((time.perf_counter() - t0) * 1000))
-    return {**result, "answer": answer}
+        return {**result, "answer": answer}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # 静的フロント（static/index.html）。ルート定義の後に mount する＝

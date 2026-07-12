@@ -702,11 +702,18 @@ def process_question(searcher, question, fmt, top_k, api_key,
         return
 
     fmt_info = f"({result['detected_format']})" if result["detected_format"] else ""
-    print(f" {len(cards)}件取得{fmt_info}。Gemini に問い合わせ中...", end="", flush=True)
 
-    context = build_context(cards)
-    answer  = ask_gemini(question, context, api_key)
-    print(" 完了")
+    if result["route"] == "structured_direct":
+        # 答えが一意に決まるクエリ＝説明不要（ROADMAP 原則「説明が要るときだけ LLM」・
+        # 2026-07-13 本人裁定）。回答生成もスキップ＝直行路は LLM 消費ゼロで応答まで完結。
+        print(f" {len(cards)}件取得{fmt_info}。回答生成をスキップ（結果を直接返す）")
+        answer = (f"条件が一意に決まる検索のため、結果をそのまま返します"
+                  f"（{len(cards)}件・LLM 不使用）。\n\n" + build_context(cards))
+    else:
+        print(f" {len(cards)}件取得{fmt_info}。Gemini に問い合わせ中...", end="", flush=True)
+        context = build_context(cards)
+        answer  = ask_gemini(question, context, api_key)
+        print(" 完了")
 
     # ファイルに出力
     if output_file:
