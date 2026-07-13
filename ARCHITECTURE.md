@@ -15,7 +15,7 @@
 flowchart TB
     User["ユーザー (日本語/英語クエリ)"] --> Gate{"構造化オンリー?（決定的判定・LLM 不使用）"}
     Gate -->|"はい（5 系統・下表）"| Direct["構造化オンリー直行路: SQL WHERE + 大会 play-rate 順（LLM を呼ばず数十 ms）"]
-    Direct --> DirectOut["TOP-K 結果"]
+    Direct --> DB1[("DB")] --> DirectOut["TOP-K 結果"]
     DirectOut --> DirectResp["即時応答"]
     Gate -->|"いいえ（意味の残余あり）"| Router["LLM-as-Query-Router"]
     Router -->|JSON 出力| Validate["検証層: 数値幻覚ガード / 排他境界±1補正 / type_filter幻出ガード（LLMが提案・決定的コードが裁可）"]
@@ -29,12 +29,12 @@ flowchart TB
     HyDESearch --> VectorHyDE["仮想カードテキストのベクトル検索"]
     Hard --> Strength["強度腕 (play-rate 上位を候補注入・boost クエリのみ・役割ゲート付き)"]
     Hard --> EDHArm["EDH腕 (edhrec_rank 上位を候補注入・EDH 意図クエリのみ)"]
-    Vector --> RRF["RRF (k=60, 均等重み)"]
-    FTSEN --> RRF
-    FTSJA --> RRF
-    VectorHyDE --> RRF
-    Strength --> RRF
-    EDHArm --> RRF
+    Vector --> DB2[("DB")] --> RRF["RRF (k=60, 均等重み)"]
+    FTSEN --> DB3[("DB")] --> RRF
+    FTSJA --> DB4[("DB")] --> RRF
+    VectorHyDE --> DB5[("DB")] --> RRF
+    Strength --> DB6[("DB")] --> RRF
+    EDHArm --> DB7[("DB")] --> RRF
     RRF --> Soft["Post-search ranking adjustments: type_filter / tournament_boost / counter_mode / removal_mode"]
     Soft --> CandidateTopK["候補 TOP-K"]
     CandidateTopK --> Reranker["Cross-encoder reranker (bge-reranker-v2-m3)"]
@@ -42,16 +42,20 @@ flowchart TB
     TopK --> LLM["LLM 回答生成 (Exponential Backoff)"]
     LLM --> Response["自然言語応答"]
 
-    subgraph "データ層 (Primary/Standby 検証構成)"
+    subgraph DBLayer["DB 層（PostgreSQL + pgvector・Primary/Standby 検証構成）"]
         Primary[("PostgreSQL Primary")]
-        Standby[("PostgreSQL Standby")]
+        Standby[("PostgreSQL Standby（reembed 中の読取先・フラグで切替）")]
         Primary -. WAL Streaming .-> Standby
+        Reembed["reembed プロセス"] -.->|全件再構築| Primary
     end
-    Vector -. 参照 .-> Primary
-    Reembed["reembed プロセス"] -. フラグファイルで切替 .-> Standby
+    
+    %% 不可視リンク（線は描画されない）: 独立した DB 層の欄をフロー最下段より下へ配置するための rank 制約
+    Response ~~~ Primary
 
     classDef resp fill:#d5f0d5,stroke:#2e8b57,color:#14421f
     class DirectResp,Response resp
+    classDef db fill:#fff5c2,stroke:#b8a94a,color:#5c4d00
+    class DB1,DB2,DB3,DB4,DB5,DB6,DB7 db
 ```
 
 直行路の判定はルーターの**前**に置かれ、該当クエリは LLM を一切呼ばず実測数十 ms で返る（LLM コストとレイテンシの両方をゼロ側に倒す）。ハードフィルタ（数値・属性条件）は検索前に SQL WHERE 句で適用し、ランキング調整（intent flags 等）は検索後に適用する。「意味検索とハード制約の分離」がこの構成の要点。役割ペナルティ（removal / counter）は手書きキーワード規則ではなく、oracle テキストから導出した構造化列（target_types / removal）による判定。reranker は「自分が判定できない上流信号を壊さない」原則で、boost クエリと構造化オンリー直行路には適用しない。
