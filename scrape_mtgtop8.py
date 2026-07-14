@@ -271,6 +271,12 @@ def scrape(format_code: str, meta: int, year: int):
     if format_code == "EDH":
         source   = "mtgtop8_edh"
         sb_board = "commander"
+    elif format_code == "VI":
+        source   = "mtgtop8_vintage"
+        sb_board = "side"
+    elif format_code == "PAU":
+        source   = "mtgtop8_pauper"
+        sb_board = "side"
     else:
         source   = SOURCE
         sb_board = "side"
