@@ -3454,3 +3454,15 @@ destroy target creature,,bilingual,9,Assassin's Strike,暗殺者の一撃,Sorcer
 destroy target creature,,bilingual,10,Lurking Deadeye,隠れ潜む名射手,Creature — Human Assassin,"瞬速
 隠れ潜む名射手が戦場に出たとき、このターンにダメージを受けたクリーチャー１体を対象とする。それを破壊する。","Flash
 When this creature enters, destroy target creature that was dealt damage this turn.",1,
+最強の単体除去,,removal,5,Depower,パワー喪失,Instant,この呪文が攻撃クリーチャーを対象とするなら、これを唱えるためのコストは(２)少なくなる。 クリーチャー１体を対象とする。ターン終了時まで、それは-4/-0の修整を受ける。 カード１枚を引く。,"This spell costs {2} less to cast if it targets an attacking creature.
+Target creature gets -4/-0 until end of turn.
+Draw a card.",0,
+コンボに使えるカード,,abstract,9,Territorial Kavu,縄張り持ちのカヴー,Creature — Kavu,"版図 ― 縄張り持ちのカヴーのパワーとタフネスは、それぞれあなたがコントロールしている土地の中の基本土地タイプの種類数に等しい。
+縄張り持ちのカヴーが攻撃するたび、以下から１つを選ぶ。
+• カード１枚を捨てる。そうしたなら、カード１枚を引く。
+• 墓地からカード最大１枚を対象とする。それを追放する。","Domain — Territorial Kavu's power and toughness are each equal to the number of basic land types among lands you control.
+Whenever this creature attacks, choose one —
+• Discard a card. If you do, draw a card.
+• Exile up to one target card from a graveyard.",1,
+flying creature,,bilingual,4,"Vulture, Feathered Fiend",羽持つ悪鬼、ヴァルチャー,Legendary Creature — Human Artificer Villain,飛行 あなたがコントロールしていて飛行を持つ１体以上のクリーチャーがプレイヤー１人に戦闘ダメージを与えるたび、それらの各クリーチャーの上にそれぞれ+1/+1カウンター１個を置き、カード１枚を引く。,"Flying
+Whenever one or more creatures you control with flying deal combat damage to a player, put a +1/+1 counter on each of those creatures and draw a card.",2,
