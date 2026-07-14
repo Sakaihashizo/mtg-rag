@@ -22,7 +22,8 @@ import sys
 
 sys.path.insert(0, '/mnt/mtg_rag')
 from mtg_hybrid_search_v2 import (extract_keywords, detect_pt_relation,
-                                  detect_tribal, detect_name_search)
+                                  detect_tribal, detect_name_search,
+                                  detect_neg_type)
 
 # カード名部分一致検索の検出（2026-07-12・ナヒリ事故から）
 # (クエリ, 期待する検索語)
@@ -71,6 +72,27 @@ PT_CASES = [
     ("パワー7以上のクリーチャー",                None),
     ("タフネスが高いクリーチャー",               None),
     ("パワフルなクリーチャー",                   None),
+]
+
+# 型の否定検出（2026-07-13・query_log id=38「非クリーチャーカード」にクリーチャー
+# 5/10 混入から）。発動はクエリ末尾のみ（対象語では立てない・誤発動ゼロ優先）
+# (クエリ, 期待 en type)
+NEG_TYPE_CASES = [
+    ("非クリーチャーカード",                             "Creature"),
+    ("マナコスト7以上のよく使われてる非クリーチャーカード", "Creature"),  # id=38 実クエリ
+    ("土地以外のカード",                                 "Land"),
+    ("クリーチャーではないカード",                       "Creature"),
+    ("クリーチャーでないカード",                         "Creature"),
+    ("インスタント以外",                                 "Instant"),
+    ("非アーティファクトのカード",                       "Artifact"),
+    ("エンチャントじゃないカード",                       "Enchantment"),
+    # 不発であるべき（対象語・型語でない「非」・肯定・キーワード否定）
+    ("非クリーチャー呪文を打ち消すカード",               None),  # 末尾ルール＝対象語で立てない
+    ("非情な行動",                                       None),  # 「非」+型語でない
+    ("クリーチャー",                                     None),  # 肯定
+    ("速攻を持たないクリーチャー",                       None),  # kw 否定＝別ゲートの管轄
+    ("アーティファクトを破壊するカード",                 None),
+    ("クリーチャーを追放する除去",                       None),
 ]
 
 # (クエリ, 期待 neg_kw_abilities, 期待 type_filter, 期待 kw_abilities)
@@ -155,6 +177,12 @@ def main() -> int:
         if got != want_term:
             failures.append(f"[name] {query!r}: got {got!r}, want {want_term!r}")
 
+    # 1e) 型の否定の検出
+    for query, want_nt in NEG_TYPE_CASES:
+        got = detect_neg_type(query)
+        if got != want_nt:
+            failures.append(f"[neg_type] {query!r}: got {got!r}, want {want_nt!r}")
+
     # 2) 本線 30 クエリの回帰
     with open("/mnt/mtg_rag/eval_queries.json", encoding="utf-8") as f:
         mainline = [e["query"] for e in json.load(f)]
@@ -171,6 +199,8 @@ def main() -> int:
             failures.append(f"[本線回帰: tribal 誤発動] {q!r}")
         if detect_name_search(q) is not None:
             failures.append(f"[本線回帰: name 誤発動] {q!r}")
+        if detect_neg_type(q) is not None:
+            failures.append(f"[本線回帰: neg_type 誤発動] {q!r}")
 
     print(f"CASES {len(CASES)} 本 + 本線 {len(mainline)} 本")
     if failures:

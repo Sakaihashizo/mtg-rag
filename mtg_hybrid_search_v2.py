@@ -416,6 +416,42 @@ def pt_relation_sql(rel) -> str:
             f" AND c.power::int {op} c.toughness::int")
 
 
+# 型の否定（「非クリーチャーカード」「土地以外のカード」等・2026-07-13 本人発見。
+# query_log id=38:「マナコスト7以上の…非クリーチャーカード」にクリーチャーが 5/10 混入）。
+# type_filter スキーマは肯定8種のみで否定を表現する語彙が無く、embedding は否定を
+# 原理的に見ない（「速攻を持たない」と同構図）＝決定的検出で SQL の NOT に直結する。
+# 発動はクエリ末尾に限る（「非クリーチャー呪文を打ち消すカード」のような対象語では
+# 立てない＝type 語の末尾ルールと同じ思想・誤発動ゼロ優先の非対称設計）。
+_TYPE_ALT = '|'.join(TYPE_WORDS_JA.keys())
+_NEG_TYPE_TAIL_RE = re.compile(
+    rf'(?:非({_TYPE_ALT})|({_TYPE_ALT})(?:以外|では?ない|じゃない))'
+    rf'(?:の)?(?:カード)?$')
+
+
+def detect_neg_type(query: str):
+    """型の否定意図の決定的検出（クエリ末尾のみ）。英語 type か None を返す。"""
+    stripped = query.strip().rstrip('?？。！!、．.　 ')
+    m = _NEG_TYPE_TAIL_RE.search(stripped)
+    if m:
+        return TYPE_WORDS_JA.get(m.group(1) or m.group(2))
+    return None
+
+
+def neg_type_filter_sql(en_type) -> str:
+    """型の否定フィルタの SQL 断片。判定列は face_types＝「手札から直接唱えられる面の
+    type_line 集合」（add_face_types.py・face_cmcs と同一の mana_cost 非空面規則）。
+    唱えられる面に 1 つでも非該当型の面があれば適格: modal_dfc の Valki//Tibalt は
+    Tibalt 面（PW）で「非クリーチャー」を通過し、transform の鏡割りの寓話は表面 Saga
+    で通過（裏面クリーチャーは手札から唱えられない＝2026-07-13 本人の言語化
+    「手札から直接唱えられるか」が判定基準）。COALESCE は populate 前の環境でも
+    type_line 単面判定に落ちる防御。"""
+    if not en_type:
+        return ""
+    return (" AND EXISTS (SELECT 1 FROM"
+            " unnest(COALESCE(c.face_types, ARRAY[c.type_line])) ft"
+            f" WHERE ft NOT LIKE '%{en_type}%')")
+
+
 def extract_keywords(query: str) -> tuple[list[str], list[str], Optional[str], bool, bool, bool, list[str], list[str], bool]:
     """
     クエリからキーワードと各フラグを抽出する。
@@ -854,8 +890,14 @@ class MTGHybridSearcherV2:
         # 既定の近似スキャンだと ef_search 件の近傍を見てから WHERE で絞るため、
         # cmc=1 等の選択的フィルタでは候補がほぼ脱落して数件しか残らない。
         # iterative_scan を有効化し、フィルタを満たす件数が揃うまで反復スキャンさせる。
+        # スキャン順は HNSW_SCAN 環境変数で切替可（relaxed_order=既定 / strict_order）。
+        # relaxed_order は距離近接行の返却順が DB の物理状態に敏感で、全行 UPDATE の後に
+        # eval が微動する実測がある（2026-07-13 id=56・対照実験用に切替を残す）
+        scan = os.environ.get("HNSW_SCAN", "relaxed_order")
+        if scan not in ("relaxed_order", "strict_order"):
+            scan = "relaxed_order"
         try:
-            self.db.execute("SET hnsw.iterative_scan = relaxed_order")
+            self.db.execute(f"SET hnsw.iterative_scan = {scan}")
         except Exception:
             pass  # pgvector < 0.8 では未対応 → 無視（rollback は db 層が実施済み）
         print(f"[MTGHybridSearcherV2] {model_key} ({cfg['model_name']})")
@@ -922,7 +964,6 @@ class MTGHybridSearcherV2:
                 WHERE to_tsvector('english', COALESCE(c.oracle_text, ''))
                       @@ to_tsquery('english', $tsq$)
                   {fmt_sql} {type_sql} {attr_sql}
-                  AND c.set_code NOT IN ('msh', 'msc')  -- Marvel(行のみ・未reembed)は検索不適格。reembed後に外す
                 ORDER BY text_score DESC, c.id
                 LIMIT {top_k * 3};
             """
@@ -954,7 +995,6 @@ class MTGHybridSearcherV2:
                 WHERE to_tsvector('english', COALESCE(c.oracle_text, ''))
                       @@ plainto_tsquery('english', '{primary}')
                   {fmt_sql} {type_sql} {attr_sql}
-                  AND c.set_code NOT IN ('msh', 'msc')  -- Marvel(行のみ・未reembed)は検索不適格。reembed後に外す
                 ORDER BY text_score DESC, c.id
                 LIMIT {top_k * 3};
             """
@@ -1080,7 +1120,6 @@ class MTGHybridSearcherV2:
                 JOIN card_format_strength cfs ON cfs.card_id = c.id
                 WHERE cfs.format_name = %s
                   {fmt_sql} {type_sql} {attr_sql} {role_sql}
-                  AND c.set_code NOT IN ('msh', 'msc')  -- Marvel(未reembed)は検索不適格。reembed後に外す
                 ORDER BY cfs.play_decks DESC, c.id
                 LIMIT {top_k * 3};
             """
@@ -1098,7 +1137,6 @@ class MTGHybridSearcherV2:
                 JOIN card_format_strength cfs ON cfs.card_id = c.id
                 WHERE TRUE
                   {fmt_sql} {type_sql} {attr_sql} {role_sql}
-                  AND c.set_code NOT IN ('msh', 'msc')  -- Marvel(未reembed)は検索不適格。reembed後に外す
                 GROUP BY c.id
                 ORDER BY SUM(cfs.play_decks) DESC, c.id
                 LIMIT {top_k * 3};
@@ -1143,7 +1181,6 @@ class MTGHybridSearcherV2:
             FROM {cfg['cards_table']} c
             WHERE c.edhrec_rank IS NOT NULL
               {fmt_sql} {type_sql} {attr_sql} {role_sql}
-              AND c.set_code NOT IN ('msh', 'msc')  -- Marvel(未reembed)は検索不適格
             ORDER BY c.edhrec_rank ASC, c.id
             LIMIT {top_k * 3};
         """
@@ -1196,7 +1233,6 @@ class MTGHybridSearcherV2:
                 FROM card_format_strength GROUP BY card_id
             ) s ON s.card_id = c.id
             WHERE TRUE {fmt_sql} {type_sql} {attr_sql}
-              AND c.set_code NOT IN ('msh', 'msc')  -- Marvel(未reembed)は検索不適格
             ORDER BY {order}
             LIMIT {top_k};
         """
@@ -1340,6 +1376,7 @@ class MTGHybridSearcherV2:
         power_min=None, power_max=None,
         toughness_min=None, toughness_max=None,
         mana_producer: bool = False,
+        raw_query: Optional[str] = None,
     ) -> list[CardResult]:
         """
         HyDE（Hypothetical Document Embeddings）を使った検索。
@@ -1362,6 +1399,7 @@ class MTGHybridSearcherV2:
             power_min=power_min, power_max=power_max,
             toughness_min=toughness_min, toughness_max=toughness_max,
             mana_producer=mana_producer,
+            raw_query=raw_query,
         )
 
         # HyDE ベクトル検索（hyde_text を embedding してベクトル検索）
@@ -1384,10 +1422,13 @@ class MTGHybridSearcherV2:
         attr_sql += keyword_filter_sql(_kw_abilities, _neg_kw)
         # 機構指定つき除去クエリの門は HyDE 腕にも（search() 本体と対・単独ヒット再流入防止）
         attr_sql += removal_mech_filter_sql(query, _rm or removal_mode_override)
-        # P/T 関係・部族・カード名ゲートも HyDE 腕に（search() 本体と対）
-        attr_sql += pt_relation_sql(detect_pt_relation(query))
-        attr_sql += tribal_filter_sql(detect_tribal(query))
-        attr_sql += name_contains_sql(detect_name_search(query))
+        # P/T 関係・部族・カード名・型否定ゲートも HyDE 腕に（search() 本体と対・
+        # 決定的ゲートはルーターの写しでなく原文 gate_q を見る＝search() と同じ理由）
+        gate_q = raw_query or query
+        attr_sql += pt_relation_sql(detect_pt_relation(gate_q))
+        attr_sql += tribal_filter_sql(detect_tribal(gate_q))
+        attr_sql += name_contains_sql(detect_name_search(gate_q))
+        attr_sql += neg_type_filter_sql(detect_neg_type(gate_q))
         hyde_vec  = self._embed(hyde_text)
         hyde_rows = self._vector_search(hyde_vec, top_k * 2, fmt_sql, type_sql, attr_sql)
 
@@ -1489,10 +1530,16 @@ class MTGHybridSearcherV2:
         power_min=None, power_max=None,
         toughness_min=None, toughness_max=None,
         mana_producer: bool = False,
+        raw_query: Optional[str] = None,
     ) -> list[CardResult]:
         print(f"\n[{self.model_key}] 検索: 「{query}」"
               + (f" [{format}]" if format else ""))
         t0 = time.perf_counter()
+        # 決定的ゲート（P/T・部族・カード名・型否定・EDH 色/ブラケット）はルーターの
+        # 写し（search_query）でなく原文を見る。ルーターが写し間違えると門が不発になる
+        # ため（実測: 7B が「非クリーチャー」→「非クリーチタ」と化かして型否定ゲートが
+        # 素通り・2026-07-13）。raw_query 未指定（eval キャッシュ経路等）は従来どおり。
+        gate_q = raw_query or query
 
         (en_kws, ja_kws, type_filter, tournament_boost,
          removal_mode, counter_mode, kw_abilities, neg_kw_abilities,
@@ -1530,24 +1577,29 @@ class MTGHybridSearcherV2:
         attr_sql += keyword_filter_sql(kw_abilities, neg_kw_abilities)
         attr_sql += removal_mech_filter_sql(query, removal_mode)
         # P/T 列間関係（「パワーとタフネスが同じ」等・決定的検出・全腕+直行路に掛かる）
-        pt_rel = detect_pt_relation(query)
+        pt_rel = detect_pt_relation(gate_q)
         attr_sql += pt_relation_sql(pt_rel)
         if pt_rel:
             print(f"  P/T関係ゲート: {pt_rel}（数値P/Tのみ・::int 比較）")
         # 部族（サブタイプ）ゲート（決定的辞書・全腕+直行路に掛かる）
-        tribal = detect_tribal(query)
+        tribal = detect_tribal(gate_q)
         attr_sql += tribal_filter_sql(tribal)
         if tribal:
             print(f"  部族ゲート: {tribal}（type_line 単語境界照合）")
         # カード名部分一致（「カード名に X とつく」・決定的検出・全腕+直行路に掛かる）
-        name_term = detect_name_search(query)
+        name_term = detect_name_search(gate_q)
         attr_sql += name_contains_sql(name_term)
         if name_term:
             print(f"  カード名ゲート: 「{name_term}」を含む（日英 LIKE）")
+        # 型の否定ゲート（「非クリーチャーカード」等・決定的検出・全腕+直行路に掛かる）
+        neg_type = detect_neg_type(gate_q)
+        attr_sql += neg_type_filter_sql(neg_type)
+        if neg_type:
+            print(f"  型否定ゲート: NOT {neg_type}（face_types＝唱えられる面の型で判定）")
         # EDH 固有色・ブラケットゲート（R13・決定的検出＝ルーター無改修で効く）。
         # attr_sql に足すことで全腕（vec/FTS/強度腕）と直行路に同時に掛かる
-        ci = detect_color_identity(query)
-        bracket = detect_bracket(query)
+        ci = detect_color_identity(gate_q)
+        bracket = detect_bracket(gate_q)
         edh_intent = ci is not None or bracket is not None
         attr_sql += color_identity_filter_sql(ci)
         attr_sql += edh_gate_sql(edh_intent, bracket)
@@ -1592,7 +1644,9 @@ class MTGHybridSearcherV2:
         tribal_direct = tribal is not None and not has_fuzzy_semantic(query)
         # カード名検索も同様（name LIKE で完全定義・並びは play-rate/edhrec）
         name_direct = name_term is not None and not has_fuzzy_semantic(query)
-        if not (tournament_boost or removal_mode or counter_mode) and (kw_only or edh_direct or pt_direct or tribal_direct or name_direct):
+        # 型の否定クエリも同様（face_types の NOT で完全定義・並びは play-rate/edhrec）
+        neg_type_direct = neg_type is not None and not has_fuzzy_semantic(query)
+        if not (tournament_boost or removal_mode or counter_mode) and (kw_only or edh_direct or pt_direct or tribal_direct or name_direct or neg_type_direct):
             print("  構造化オンリー直行路（意味検索スキップ・"
                   + ("EDH＝edhrec順" if edh_intent else "play-rate順") + "）")
             return self._structured_search(top_k, fmt_sql, type_sql, attr_sql,

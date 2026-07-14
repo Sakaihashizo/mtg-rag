@@ -35,8 +35,8 @@ import requests
 sys.path.insert(0, '/mnt/mtg_rag')
 from mtg_hybrid_search_v2 import (MTGHybridSearcherV2, extract_keywords,
                                   detect_pt_relation, detect_tribal,
-                                  detect_name_search, has_fuzzy_semantic,
-                                  TYPE_WORDS_JA)
+                                  detect_name_search, detect_neg_type,
+                                  has_fuzzy_semantic, TYPE_WORDS_JA)
 
 # ─── 設定 ─────────────────────────────────────────────────────
 GEMINI_MODEL   = "gemini-2.5-flash-lite"
@@ -89,7 +89,10 @@ def structured_direct_gate(query: str) -> bool:
                  and not has_fuzzy_semantic(query))
     name_ok = (detect_name_search(query) is not None
                and not has_fuzzy_semantic(query))
-    return ((kw_only or pt_ok or tribal_ok or name_ok) and not (tb or rm or cm)
+    neg_type_ok = (detect_neg_type(query) is not None
+                   and not has_fuzzy_semantic(query))
+    return ((kw_only or pt_ok or tribal_ok or name_ok or neg_type_ok)
+            and not (tb or rm or cm)
             and not re.search(r'[0-9０-９一二三四五六七八九十]', query))
 
 
@@ -422,7 +425,8 @@ def get_archetypes(card_name: str, db) -> list[str]:
 def search_cards(searcher, query, top_k, fmt,
                  tournament_boost=False, removal_mode=False,
                  counter_mode=False, type_filter_override=None,
-                 hyde_text="", ja_hyde_text="", filters=None, router_format=None):
+                 hyde_text="", ja_hyde_text="", filters=None, router_format=None,
+                 raw_query=None):
     filters = filters or {}
     # フォーマット決定の優先順位: 明示引数 > ルーター抽出 > クエリ内キーワード検出。
     # キーワード検出はフォールバック（rewrite はフォーマット語を search_query から
@@ -447,6 +451,7 @@ def search_cards(searcher, query, top_k, fmt,
             removal_mode_override=removal_mode,
             counter_mode_override=counter_mode,
             type_filter_override=type_filter_override,
+            raw_query=raw_query,
             **filters,
         )
     else:
@@ -456,6 +461,7 @@ def search_cards(searcher, query, top_k, fmt,
             removal_mode_override=removal_mode,
             counter_mode_override=counter_mode,
             type_filter_override=type_filter_override,
+            raw_query=raw_query,
             **filters,
         )
     # P/T をまとめて取得（解説の捏造対策・2026-07-10 試飲会の「孤独 4/3」事件:
@@ -547,6 +553,10 @@ def run_search(searcher, question, fmt=None, top_k=5, api_key=None,
         ja_hyde_text=ja_hyde_text,
         filters=filters,
         router_format=router_format,
+        # 決定的ゲート（P/T・部族・カード名・型否定）はルーターの写しでなく原文を見る。
+        # ルーターが search_query を写し間違える（実測: 7B「非クリーチタカード」）と
+        # 門が不発になるため（2026-07-09 Nova の機構語圧縮と同じ故障クラス）
+        raw_query=question,
     )
     return {
         "cards": cards,
