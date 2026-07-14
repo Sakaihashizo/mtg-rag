@@ -574,12 +574,25 @@ def format_filter_sql(fmt: Optional[str]) -> str:
 
 
 # router の format 値（小文字）→ card_format_strength.format_name（先頭大文字）。
-# 集計があるのは大会4フォーマットのみ。これ以外（vintage/pauper 等）は per-format 集計なし＝
-# 全4F合計にフォールバック（None 扱い）。
+# 集計は大会系 7 フォーマット（2026-07-14 に Vintage/Pauper/Duel Commander を追加・
+# 使用率化）。map に無いフォーマットは横断フォールバック＝各フォーマット採用率の
+# MAX（「どこかの環境で一線級なら強い」・新フォーマット追加で既存値が壊れない単調性）。
+# 注意: "commander" クエリに Duel Commander（1v1）の率を使うのは近似（うちの大会
+# データが Duel のため）。多人数 EDH の本命信号は edhrec_rank（EDH 腕）が担う。
 CFS_FORMAT_MAP = {
     "legacy": "Legacy", "modern": "Modern",
     "pioneer": "Pioneer", "standard": "Standard",
+    "vintage": "Vintage", "pauper": "Pauper",
+    "duel": "Duel Commander", "commander": "Duel Commander",
 }
+
+# フォーマット横断フォールバック（format 指定なし）の集計対象＝本線 4 フォーマット。
+# GT の R11 機械採点（「全 4F 合計 250 デッキ」閾値）と同じ土俵に固定する。
+# 2026-07-14 の使用率化実験（id=65〜70）の結論: 横断比較へ新フォーマットを
+# 入れる・率に変える、はどちらも「GT が知らない新顔」を大量に連れてくるため、
+# R11 の率版再設計（GT の機械再採点＝物差し更新）とセットでないと評価できない。
+# per-format の率（Vintage/Pauper/EDH 指定時）だけ先行導入し、横断は現状維持。
+MAINLINE_FORMATS = ("Standard", "Pioneer", "Modern", "Legacy")
 
 
 # ─── EDH（統率者戦）固有色・ブラケット検出（R13・2026-07-08） ──────────
@@ -890,6 +903,12 @@ class MTGHybridSearcherV2:
         # 既定の近似スキャンだと ef_search 件の近傍を見てから WHERE で絞るため、
         # cmc=1 等の選択的フィルタでは候補がほぼ脱落して数件しか残らない。
         # iterative_scan を有効化し、フィルタを満たす件数が揃うまで反復スキャンさせる。
+        # フォーマット横断の採用率比較の平滑化定数（既定 0＝素の率）。
+        # 経緯: 使用率化 v1（id=65）で母数 214 の EDH が率 MAX を支配する「小標本の罠」が
+        # 実証され一時導入（id=66〜68）→ 根治は EDH の物理分離（edh_card_strength・
+        # 2026-07-14 本人裁定）で行い、対症療法の平滑化は撤去。構築 6F は母数が
+        # 同じ桁（984〜2,227）のため素の率で健全。対照実験用に機構だけ残す。
+        self.rate_smooth_k = int(os.environ.get("RATE_SMOOTH_K", "0"))
         # スキャン順は HNSW_SCAN 環境変数で切替可（relaxed_order=既定 / strict_order）。
         # relaxed_order は距離近接行の返却順が DB の物理状態に敏感で、全行 UPDATE の後に
         # eval が微動する実測がある（2026-07-13 id=56・対照実験用に切替を残す）
@@ -1046,34 +1065,44 @@ class MTGHybridSearcherV2:
 
     def _format_strength_map(
         self, card_names: list[str], fmt: Optional[str]
-    ) -> dict[str, int]:
-        """card_name → play_decks を1クエリで引く（#22 boost 用）。
-        fmt が大会4フォーマットのいずれかならその format の play_decks、
-        それ以外（None・vintage 等）は全4フォーマット合計（R11 の GT 機械採点と同じ土俵）。
-        card_format_strength は card_id 基準なので card_name→id を JOIN で解決する。"""
+    ) -> dict[str, float]:
+        """card_name → フォーマット内採用率（play_decks / total_decks）を1クエリで引く
+        （#22 boost 用・2026-07-14 使用率化）。fmt が大会 7 フォーマットのいずれかなら
+        その format の採用率、それ以外（None 等）は**各フォーマット採用率の MAX**
+        （旧実装の全 F 合計 SUM は母数の大きいフォーマット偏重＝Standard 2,227 デッキと
+        Duel Commander 214 デッキを同じ 1 票で足していた。率の MAX は「どこかの環境で
+        一線級」の意味論で、新フォーマット追加でも既存値が動かない）。
+        boost 側は結果内 max で正規化するため値のスケールには非依存。"""
         if not card_names:
             return {}
         cfs_fmt = CFS_FORMAT_MAP.get((fmt or "").lower())
         cfg = self.cfg
         if cfs_fmt:
+            # EDH（シングルトン系）は物理分離テーブルを参照（構築の横断比較に混ぜない）
+            table = ("edh_card_strength" if cfs_fmt == "Duel Commander"
+                     else "card_format_strength")
             sql = f"""
-                SELECT c.card_name, cfs.play_decks
+                SELECT c.card_name,
+                       cfs.play_decks::float / fdc.total_decks AS play_rate
                 FROM {cfg['cards_table']} c
-                JOIN card_format_strength cfs ON cfs.card_id = c.id
+                JOIN {table} cfs ON cfs.card_id = c.id
+                JOIN format_deck_counts fdc ON fdc.format_name = cfs.format_name
                 WHERE c.card_name = ANY(%s) AND cfs.format_name = %s
             """
             params = (card_names, cfs_fmt)
         else:
+            # 横断フォールバック＝本線 4F 合計（R11 の GT 機械採点と同じ土俵・上記注記）
             sql = f"""
                 SELECT c.card_name, SUM(cfs.play_decks) AS play_decks
                 FROM {cfg['cards_table']} c
                 JOIN card_format_strength cfs ON cfs.card_id = c.id
                 WHERE c.card_name = ANY(%s)
+                  AND cfs.format_name = ANY(%s)
                 GROUP BY c.card_name
             """
-            params = (card_names,)
+            params = (card_names, list(MAINLINE_FORMATS))
         try:
-            return {r[0]: int(r[1]) for r in self.db.query(sql, params)}
+            return {r[0]: float(r[1]) for r in self.db.query(sql, params)}
         except Exception as e:
             print(f"  [format_strength] エラー: {e}")
             return {}
@@ -1108,6 +1137,10 @@ class MTGHybridSearcherV2:
             role_sql = " AND c.target_types @> ARRAY['spell']"
         cfs_fmt = CFS_FORMAT_MAP.get((fmt or "").lower())
         if cfs_fmt:
+            # EDH（シングルトン系）は物理分離テーブルを参照。同一フォーマット内は
+            # 分母が共通なので play_decks の絶対数順＝採用率順（率換算は不要）
+            table = ("edh_card_strength" if cfs_fmt == "Duel Commander"
+                     else "card_format_strength")
             sql = f"""
                 SELECT
                     c.card_name, c.type_line, c.oracle_text,
@@ -1117,7 +1150,7 @@ class MTGHybridSearcherV2:
                         ORDER BY cfs.play_decks DESC, c.id
                     ) AS rank
                 FROM {cfg['cards_table']} c
-                JOIN card_format_strength cfs ON cfs.card_id = c.id
+                JOIN {table} cfs ON cfs.card_id = c.id
                 WHERE cfs.format_name = %s
                   {fmt_sql} {type_sql} {attr_sql} {role_sql}
                 ORDER BY cfs.play_decks DESC, c.id
@@ -1125,6 +1158,7 @@ class MTGHybridSearcherV2:
             """
             params: tuple = (cfs_fmt,)
         else:
+            # 横断フォールバック＝本線 4F 合計（R11 と同じ土俵・CFS_FORMAT_MAP 上部の注記）
             sql = f"""
                 SELECT
                     c.card_name, c.type_line, c.oracle_text,
@@ -1135,13 +1169,13 @@ class MTGHybridSearcherV2:
                     ) AS rank
                 FROM {cfg['cards_table']} c
                 JOIN card_format_strength cfs ON cfs.card_id = c.id
-                WHERE TRUE
+                WHERE cfs.format_name = ANY(%s)
                   {fmt_sql} {type_sql} {attr_sql} {role_sql}
                 GROUP BY c.id
                 ORDER BY SUM(cfs.play_decks) DESC, c.id
                 LIMIT {top_k * 3};
             """
-            params = ()
+            params = (list(MAINLINE_FORMATS),)
         try:
             return self.db.query_dicts(sql, params)
         except Exception as e:
@@ -1219,9 +1253,9 @@ class MTGHybridSearcherV2:
         EDH 意図クエリ（固有色/ブラケット・R13）は EDHREC 人気を主にする
         （play-rate は4フォーマット大会由来＝EDH の実勢とは別物）。"""
         cfg = self.cfg
-        order = ("c.edhrec_rank ASC NULLS LAST, COALESCE(s.play_decks, 0) DESC, c.id"
+        order = ("c.edhrec_rank ASC NULLS LAST, COALESCE(s.play_rate, 0) DESC, c.id"
                  if edh_order else
-                 "COALESCE(s.play_decks, 0) DESC, c.edhrec_rank ASC NULLS LAST, c.id")
+                 "COALESCE(s.play_rate, 0) DESC, c.edhrec_rank ASC NULLS LAST, c.id")
         sql = f"""
             SELECT
                 c.card_name, c.type_line, c.oracle_text,
@@ -1229,8 +1263,10 @@ class MTGHybridSearcherV2:
                 c.mana_cost, c.rarity
             FROM {cfg['cards_table']} c
             LEFT JOIN (
-                SELECT card_id, SUM(play_decks) AS play_decks
-                FROM card_format_strength GROUP BY card_id
+                SELECT cfs.card_id, SUM(cfs.play_decks) AS play_rate
+                FROM card_format_strength cfs
+                WHERE cfs.format_name IN ('Standard', 'Pioneer', 'Modern', 'Legacy')
+                GROUP BY cfs.card_id
             ) s ON s.card_id = c.id
             WHERE TRUE {fmt_sql} {type_sql} {attr_sql}
             ORDER BY {order}
