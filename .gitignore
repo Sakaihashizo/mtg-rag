@@ -61,3 +61,11 @@ check_pool_*.py
 regrade_keyword_sweep_*.csv
 WHISPER不一致.md
 md/
+
+# 採点ワークシート（採点結果は GT に union 済み＝中間生成物・push しない）
+removal_direct_pool_*.csv
+removal_regrade_pool_*.csv
+removal_*pool* - *.csv
+# GT のマージ前バックアップ（世代別・ローカルのみ）
+*.premachine_bak_*
+*.preowner_sweep_bak_*

@@ -48,11 +48,18 @@ import psycopg2
 
 sys.path.insert(0, '/mnt/mtg_rag')
 from mtg_hybrid_search_v2 import MTGHybridSearcherV2, extract_keywords
+from removal_direct import is_graduated, removal_direct_gate
 
 from db_config import DB_CONFIG
 
 QUERIES_JSON   = "eval_queries.json"
 TOP_K          = 10
+
+# 検証終了の「床」クエリ（2026-07-17 新設・本人裁定で正準平均の分母外）。
+# 毎 run 測定して回帰は検知するが、看板の平均には入れない——検証済みで高得点の
+# クエリを分母に足すと、検索が変わっていないのに平均が上がるため（EVAL_SCORES 参照）。
+FLOOR_QUERIES  = {"パイオニアの単体除去", "レガシーの単体除去",
+                  "ヴィンテージの単体除去", "パウパーの単体除去"}
 
 
 # ─── eval_runs テーブル作成 ───────────────────────────────────
@@ -202,6 +209,16 @@ def collect_pool(conn, model_key: str = "SMALL_V2", top_k: int = TOP_K,
     """
     with open(queries_json, "r", encoding="utf-8") as f:
         queries = json.load(f)
+
+    # 卒業クエリ（検証終了・2026-07-17 採用ゲート裁定）は採点プールの生成対象から
+    # 外す＝新規採点労務ゼロ化。eval では床として測り続ける（run_eval 側は除外しない）。
+    # 卒業レジストリの正本は removal_direct.GRADUATED
+    graduated = [q for q in queries if is_graduated(q["query"], q.get("format"))]
+    if graduated:
+        for q in graduated:
+            print(f"  卒業（検証終了・プール生成対象外）: 「{q['query']}」")
+        queries = [q for q in queries
+                   if not is_graduated(q["query"], q.get("format"))]
 
     gt_labels = load_gt_labels(gt_path) if gt_path else {}
     if gt_labels:
@@ -423,8 +440,14 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
 
     entries = (router_cache or {}).get("entries", {})
     partial_missing: list = []
+    # 卒業クエリ（除去直行路・検証終了 2026-07-17）はルーターを通らない＝キャッシュ免除。
+    # searcher 内の門で SQL 直行になるため、Gemini ゼロ（キャッシュ再生成なし）で
+    # 正準に組み入れられる。eval では床として測り続ける（回帰検知）
+    direct_qs = [q for q in gt_by_query
+                 if removal_direct_gate(q, fmt_by_query.get(q)) is not None]
     if router_cache is not None:
-        missing = [q for q in gt_by_query if q not in entries]
+        missing = [q for q in gt_by_query
+                   if q not in entries and q not in direct_qs]
         if missing and not allow_partial:
             print(f"エラー: ルーターキャッシュに無いクエリが {len(missing)} 件: {missing}")
             print("build_router_cache.py を再実行するか、--partial で部分評価してください"
@@ -454,7 +477,10 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
     all_metrics = []
     for query, gt in gt_by_query.items():
         fmt = fmt_by_query.get(query)
-        entry = entries[query] if router_cache is not None else None
+        # 卒業クエリはルーターキャッシュを使わない（searcher 内の直行門が発動）
+        direct_q = query in direct_qs
+        entry = (entries[query]
+                 if router_cache is not None and not direct_q else None)
         # pool 収集と同じ Vintage リーガルフィルタを通す（ラベルと評価対象を揃える）
         legal, _ = search_legal(searcher, conn, query, fmt, top_k,
                                 router_entry=entry)
@@ -466,7 +492,8 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
         # 並びは play-rate 順＝reranker が知らない上流信号（id=32 の boost と同じ原則）
         _, _, _, tb_d, rm_d, cm_d, _, _, kw_only = extract_keywords(query)
         structured_q = kw_only and not (tb_d or rm_d or cm_d)
-        if rerank and not boost_q and not structured_q:
+        # 除去直行路も rerank スキップ（並びは検証済みレシピ＝上流信号・同じ原則）
+        if rerank and not boost_q and not structured_q and not direct_q:
             legal = rerank_results(query, legal)
         system_results = [(r.card_name, i + 1) for i, r in enumerate(legal)]
         m = compute_metrics(system_results, gt)
@@ -504,6 +531,12 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
     avg_unlabeled = sum(m["unlabeled_10"] for m in all_metrics) / n
     avg_ndcg_judged = sum(m["ndcg_10_judged"] for m in all_metrics) / n
 
+    # 看板（正準）＝床クエリを分母から外した平均。ndcg_10 列には全クエリ平均が
+    # 保存されるため、正準値はこちらを読む（config_json の avg_ndcg_10_canonical）
+    canon = [m for m in all_metrics if m["query"] not in FLOOR_QUERIES]
+    avg_ndcg_canonical = (sum(m["ndcg_10"] for m in canon) / len(canon)
+                          if canon else 0.0)
+
     config = {
         "model_key": model_key,
         "top_k": top_k,
@@ -515,12 +548,20 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
         # 腕の重み（RRF 実験の条件を焼き込む。無指定=全腕 1.0 の現行）
         "arm_weights": arm_weights or {"vec": 1.0, "en": 1.0, "ja": 1.0},
         "avg_unlabeled_10": avg_unlabeled,
-        # 未採点除外の近似値（正準は ndcg_10 列＝未採点 0 扱いのまま）
+        # 未採点除外の近似値（未採点 0 扱いの厳しい値が本体のまま）
         "avg_ndcg_10_judged": avg_ndcg_judged,
+        # 看板（正準）＝床クエリ（FLOOR_QUERIES）を分母から外した NDCG@10 平均
+        "avg_ndcg_10_canonical": avg_ndcg_canonical,
+        "floor_queries_excluded": sorted(q for q in FLOOR_QUERIES
+                                         if any(m["query"] == q
+                                                for m in all_metrics)),
         "per_query": all_metrics,
     }
     if router_cache is not None:
         config["router_meta"] = router_cache.get("meta", {})
+    if direct_qs:
+        # 除去直行路で評価したクエリ（卒業レジストリ・ルーターキャッシュ不使用）
+        config["removal_direct_queries"] = direct_qs
     if partial_missing:
         config["partial_missing"] = partial_missing
 
@@ -552,9 +593,13 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
     print(f"  precision@5:  {avg['precision_5']:.3f}")
     print(f"  precision@10: {avg['precision_10']:.3f}")
     print(f"  MRR:          {avg['mrr']:.3f}")
-    print(f"  NDCG@10:      {avg['ndcg_10']:.3f}")
+    print(f"  NDCG@10:      {avg['ndcg_10']:.3f}"
+          + (f"  ※床 {n - len(canon)} 本込みの全体平均" if len(canon) != n else ""))
+    if len(canon) != n:
+        print(f"  NDCG@10（正準 {len(canon)} 本・床除外）: {avg_ndcg_canonical:.3f}"
+              f"  ※看板はこちら（検証終了の床は分母外・2026-07-17）")
     print(f"  NDCG@10(採点済みのみ): {avg_ndcg_judged:.3f}"
-          f"  ※未採点を除外した近似値・正準は上の行")
+          f"  ※未採点を除外した近似値")
     print(f"  経路: {'router' if router_cache is not None else 'searcher'}"
           f"  平均未ラベル混入率(top10): {avg_unlabeled:.1%}")
     print("=" * 60)
