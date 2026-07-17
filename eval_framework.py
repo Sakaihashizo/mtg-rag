@@ -470,6 +470,14 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
             legal = rerank_results(query, legal)
         system_results = [(r.card_name, i + 1) for i, r in enumerate(legal)]
         m = compute_metrics(system_results, gt)
+        # 未採点除外（judged-only）の併記（2026-07-15 本人指示）: 正準指標は
+        # 未採点=0 の保守値のまま残す。ただし経路 A/B で片側だけ GT 未収録カードが
+        # 湧く比較（例: HyDE 有無）では 0 扱いが系統誤差になり期待値の近似にならない
+        # ため、「採点済みカードだけに縮約した並び」での値を *_judged として併記する。
+        # ideal は GT 全体のまま＝取りこぼした良カードの罰は残る。
+        judged_results = [(n, r) for n, r in system_results if n in gt]
+        for jk, jv in compute_metrics(judged_results, gt).items():
+            m[jk + "_judged"] = jv
         # GT に存在しないカード（ラベル付けプール外）の混入率。grade 0 扱いになるため、
         # これが高いクエリは「悪い」のではなく「未採点」の可能性がある（ラベル拡張の目印）。
         top10 = [name for name, _ in system_results[:10]]
@@ -477,7 +485,9 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
                              / max(len(top10), 1))
         m["query"] = query
         all_metrics.append(m)
-        unl = f"  未ラベル={m['unlabeled_10']:.0%}" if m["unlabeled_10"] > 0 else ""
+        unl = (f"  未ラベル={m['unlabeled_10']:.0%}"
+               f" NDCGj={m['ndcg_10_judged']:.2f}"
+               if m["unlabeled_10"] > 0 else "")
         print(
             f"  「{query[:28]}」"
             f"  R@5={m['recall_5']:.2f} P@5={m['precision_5']:.2f}"
@@ -492,6 +502,7 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
     gt_count = sum(len(gt) for gt in gt_by_query.values())
 
     avg_unlabeled = sum(m["unlabeled_10"] for m in all_metrics) / n
+    avg_ndcg_judged = sum(m["ndcg_10_judged"] for m in all_metrics) / n
 
     config = {
         "model_key": model_key,
@@ -504,6 +515,8 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
         # 腕の重み（RRF 実験の条件を焼き込む。無指定=全腕 1.0 の現行）
         "arm_weights": arm_weights or {"vec": 1.0, "en": 1.0, "ja": 1.0},
         "avg_unlabeled_10": avg_unlabeled,
+        # 未採点除外の近似値（正準は ndcg_10 列＝未採点 0 扱いのまま）
+        "avg_ndcg_10_judged": avg_ndcg_judged,
         "per_query": all_metrics,
     }
     if router_cache is not None:
@@ -540,6 +553,8 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
     print(f"  precision@10: {avg['precision_10']:.3f}")
     print(f"  MRR:          {avg['mrr']:.3f}")
     print(f"  NDCG@10:      {avg['ndcg_10']:.3f}")
+    print(f"  NDCG@10(採点済みのみ): {avg_ndcg_judged:.3f}"
+          f"  ※未採点を除外した近似値・正準は上の行")
     print(f"  経路: {'router' if router_cache is not None else 'searcher'}"
           f"  平均未ラベル混入率(top10): {avg_unlabeled:.1%}")
     print("=" * 60)
