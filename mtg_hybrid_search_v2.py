@@ -706,10 +706,13 @@ def is_creature_removal(removal_entries: Optional[list],
         if typ in ('destroy', 'exile', 'tuck'):
             if e.get('permanent') is False:
                 continue
-            objv = e.get('object')
-            if objv in ('creature', 'permanent'):
+            # objects = 複数クラス列挙（2026-07-15 enrich 修理④で追加・
+            # 「クリーチャー、エンチャント、PW」型。無ければ従来の object 単独）
+            objset = set(e.get('objects') or ([e.get('object')]
+                                              if e.get('object') else []))
+            if objset & {'creature', 'permanent'}:
                 return True
-            if objv is None and can_hit:
+            if not objset and can_hit:
                 return True
         if typ in ('damage', 'minus') and can_hit:
             return True
@@ -1454,6 +1457,16 @@ class MTGHybridSearcherV2:
         if _kw_only and not (_tb or tournament_boost_override) \
                 and not (_rm or removal_mode_override) \
                 and not (_cm or counter_mode_override):
+            return normal_results[:top_k]
+        # boost クエリ（「最強」「純粋に強い」等）も HyDE を重ねない（2026-07-15）。
+        # 根拠: 公平 A/B（eval id=76/77・全行ラベル済み）で boost 5 クエリ全てが
+        # HyDE 有害（−0.05〜−0.25）。このマージは normal 側を順位だけに潰すため、
+        # search() 内の play-rate boost・役割減点が HyDE 単独ヒットに掛からず、
+        # HyDE 文の言い回しに似た無実績カードが play-rate 順を埋める
+        # （Closing Statement が Fatal Push と同点1位・Depower が減点素通りで5位）。
+        # 「play-rate 順は上流信号・意味の並べ替えで汚さない」＝ reranker スキップ
+        # （id=32）・直行路（上の分岐）と同じ原則の HyDE 版。
+        if _tb or tournament_boost_override:
             return normal_results[:top_k]
         attr_sql += keyword_filter_sql(_kw_abilities, _neg_kw)
         # 機構指定つき除去クエリの門は HyDE 腕にも（search() 本体と対・単独ヒット再流入防止）
