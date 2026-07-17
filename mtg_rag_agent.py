@@ -37,6 +37,7 @@ from mtg_hybrid_search_v2 import (MTGHybridSearcherV2, extract_keywords,
                                   detect_pt_relation, detect_tribal,
                                   detect_name_search, detect_neg_type,
                                   has_fuzzy_semantic, TYPE_WORDS_JA)
+from removal_direct import removal_direct_gate
 
 # ─── 設定 ─────────────────────────────────────────────────────
 GEMINI_MODEL   = "gemini-2.5-flash-lite"
@@ -522,6 +523,11 @@ def run_search(searcher, question, fmt=None, top_k=5, api_key=None,
     if use_rewrite and structured_direct_gate(question):
         route = "structured_direct"
         use_rewrite = False
+    # 除去の卒業クエリ（検証終了・レジストリ完全一致）も同じ位置でルーターをスキップ。
+    # SQL 直行の実体は searcher.search 内の門（raw_query で発動）＝ここは入口の節約だけ
+    elif use_rewrite and removal_direct_gate(question, fmt) is not None:
+        route = "removal_direct"
+        use_rewrite = False
     elif not use_rewrite:
         route = "no_rewrite"
 
@@ -692,6 +698,9 @@ def process_question(searcher, question, fmt, top_k, api_key,
     if result["route"] == "structured_direct":
         print(" [構造化オンリー: LLM ルーターをスキップ（辞書で完結・SQL 直行路へ）]",
               end="")
+    elif result["route"] == "removal_direct":
+        print(" [除去直行路: 検証終了クエリ＝LLM ルーターをスキップ（SQL 直行）]",
+              end="")
     elif result["route"] == "router":
         flags = []
         if f["tournament_boost"]: flags.append("tournament_boost")
@@ -718,6 +727,12 @@ def process_question(searcher, question, fmt, top_k, api_key,
         # 2026-07-13 本人裁定）。回答生成もスキップ＝直行路は LLM 消費ゼロで応答まで完結。
         print(f" {len(cards)}件取得{fmt_info}。回答生成をスキップ（結果を直接返す）")
         answer = (f"条件が一意に決まる検索のため、結果をそのまま返します"
+                  f"（{len(cards)}件・LLM 不使用）。\n\n" + build_context(cards))
+    elif result["route"] == "removal_direct":
+        # 卒業クエリの並びは決定的レシピ（検証済み）＝キーワード直行路と同じく
+        # LLM 消費ゼロで応答まで完結
+        print(f" {len(cards)}件取得{fmt_info}。回答生成をスキップ（結果を直接返す）")
+        answer = (f"検証終了済みの定型クエリのため、決定的ランキングをそのまま返します"
                   f"（{len(cards)}件・LLM 不使用）。\n\n" + build_context(cards))
     else:
         print(f" {len(cards)}件取得{fmt_info}。Gemini に問い合わせ中...", end="", flush=True)

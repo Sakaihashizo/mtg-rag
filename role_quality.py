@@ -5,8 +5,11 @@
 target_types・floor_cmc）。フォーマット実勢は使わない（層2＝カード内在）。
 例外＝enablement 辞書（(メカニズム, フォーマット) の対・人間管理・本人裁定待ちの草案）。
 """
+import re
+
 REMOVABLE_CLASSES = {'creature', 'artifact', 'enchantment', 'planeswalker', 'land'}
 COLOR_WORDS = ('white', 'blue', 'black', 'red', 'green')
+MV_RE = re.compile(r'mana value (\d+)')
 
 # enablement 辞書 v1（草案・本人 ratification 待ち・2026-07-15）
 # 'free' = デッキ構造が無料で満たす／'work' = 構築を曲げるか追加の仕事が要る
@@ -110,6 +113,28 @@ def modes(removal, cmc, floor_cmc):
         cost = base + float(e.get('extra_cost') or 0)
         out.append((cost, e))
     return out
+
+
+def kill_pred(e, target_detail):
+    """1 エントリが脅威 (mv, toughness) を討てるかの述語（テンポ捕捉の kills）。
+    damage/minus は固定値のみ（X はテンポ資格外＝Burst 論法）・
+    destroy 系は MV 上限 qualifier があればそこまで（Push 型）。
+    removal_regrade_pool_20260717 で使った判定の層2部品化（2026-07-17 直行路本実装）。"""
+    typ = e.get('type')
+    if typ in ('damage', 'minus'):
+        a = e.get('amount')
+        if a == 'X':
+            return lambda mv, t: False
+        return (lambda n: lambda mv, t: t <= n)(int(a or 0))
+    if typ in ('destroy', 'exile', 'tuck', 'sacrifice'):
+        if e.get('permanent') is False:
+            return lambda mv, t: False
+        for d in (target_detail or []):
+            m = MV_RE.search(d.get('qualifier') or '')
+            if m:
+                return (lambda n: lambda mv, t: mv <= n)(int(m.group(1)))
+        return lambda mv, t: True
+    return lambda mv, t: False
 
 
 def tempo_gain(mode_cost, kills, population):

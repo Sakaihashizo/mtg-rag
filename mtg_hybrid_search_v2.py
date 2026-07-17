@@ -28,6 +28,7 @@ import psycopg2
 from sentence_transformers import SentenceTransformer
 
 from db import make_db  # DB ドライバ切替層（psycopg2 / Aurora Data API・2026-07-12）
+import removal_direct   # 除去直行路（卒業レジストリ＝検証終了クエリ・2026-07-17）
 # 役割判定（removal/counter）は構造化列 target_types / removal（enrich_removal.py 由来）
 # へ移行済み（P1: 正しさ＞点数）。旧 mtg_removal_rules / mtg_counter_rules の手書き
 # 文字列マッチはもう使わない。
@@ -1292,6 +1293,26 @@ class MTGHybridSearcherV2:
             rrf_score=0.0,
         ) for r in rows]
 
+    def _removal_direct(self, spec: dict, top_k: int) -> list[CardResult]:
+        """除去直行路（卒業レジストリのクエリ専用・2026-07-17 採用ゲート裁定）。
+        WHERE＝役割 SQL＋フォーマット門＋機構門・並び＝レシピ固定
+        （機能/フォーマット系=B: 採用率のみ／superlative=合成 β0.6）。
+        意味検索・HyDE・RRF・reranker を使わない＝キーワード直行路と同族の
+        「SQL に LIMIT を付けただけのもの」。詳細は removal_direct.py の正本参照。"""
+        rows = removal_direct.fetch_direct(self.db, spec, top_k,
+                                           cards_table=self.cfg['cards_table'])
+        return [CardResult(
+            card_name=r["card_name"],
+            type_line=r.get("type_line") or "",
+            oracle_text=r.get("oracle_text") or "",
+            japanese_name=r.get("japanese_name") or "",
+            japanese_oracle_text=r.get("japanese_oracle_text") or "",
+            mana_cost=r.get("mana_cost") or "",
+            rarity=r.get("rarity") or "",
+            vector_rank=None, en_text_rank=None, ja_text_rank=None,
+            rrf_score=0.0,
+        ) for r in rows]
+
     def _rrf_merge(
         self,
         v_rows: list[dict], en_rows: list[dict], ja_rows: list[dict],
@@ -1427,6 +1448,12 @@ class MTGHybridSearcherV2:
         のを、日本語 HyDE が日英両方を持つカードを公平に拾うことで相殺する狙い。
         空/不在のときは英語 HyDE のみ＝従来挙動と完全一致（id=11 を再現できる）。
         """
+        # 除去直行路（卒業レジストリ・2026-07-17）: 検証終了クエリは HyDE を重ねない
+        # （直行の並びは決定的な上流信号＝意味の並べ替えで汚さない。kw_only/boost の
+        #  分岐と同じ原則。search() 内の同じ門が SQL 直行まで面倒を見る）
+        if removal_direct.removal_direct_gate(raw_query or query, format) is not None:
+            return self.search(raw_query or query, top_k=top_k, format=format,
+                               raw_query=raw_query)
         # 通常の検索結果を取得
         normal_results = self.search(
             query, top_k=top_k * 2, format=format,
@@ -1589,6 +1616,15 @@ class MTGHybridSearcherV2:
         # ため（実測: 7B が「非クリーチャー」→「非クリーチタ」と化かして型否定ゲートが
         # 素通り・2026-07-13）。raw_query 未指定（eval キャッシュ経路等）は従来どおり。
         gate_q = raw_query or query
+
+        # 除去直行路（卒業レジストリ完全一致のみ・2026-07-17）: 検証終了クエリは
+        # 意味検索もソフト層も通さず SQL 直行で確定。format 引数がレジストリの検証
+        # 条件と食い違うときは発動しない（gate 側で不発＝ハイブリッドへ・安全側）
+        rd_spec = removal_direct.removal_direct_gate(gate_q, format)
+        if rd_spec is not None:
+            print(f"  除去直行路（検証終了クエリ・レシピ={rd_spec['recipe']}・"
+                  "意味検索スキップ）")
+            return self._removal_direct(rd_spec, top_k)
 
         (en_kws, ja_kws, type_filter, tournament_boost,
          removal_mode, counter_mode, kw_abilities, neg_kw_abilities,

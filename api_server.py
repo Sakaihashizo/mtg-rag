@@ -162,6 +162,14 @@ def ask(req: SearchRequest):
                 _log_query("/ask", req, result,
                            int((time.perf_counter() - t0) * 1000))
                 return {**result, "answer": answer}
+            if result["route"] == "removal_direct":
+                # 卒業クエリ（検証終了・2026-07-17）も LLM 消費ゼロで応答まで完結
+                answer = (f"検証終了済みの定型クエリのため、決定的ランキング"
+                          f" {len(result['cards'])} 件をそのまま返します"
+                          "（回答生成 LLM 不使用）。")
+                _log_query("/ask", req, result,
+                           int((time.perf_counter() - t0) * 1000))
+                return {**result, "answer": answer}
             if not api_key:
                 raise HTTPException(status_code=400,
                                     detail="GOOGLE_API_KEY が未設定（回答生成に必要）")
