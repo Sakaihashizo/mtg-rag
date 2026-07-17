@@ -3,7 +3,7 @@
 MTG RAG System の PostgreSQL スキーマの詳細。README の「データモデル」節の補足。
 本書のスキーマ・件数は実 DB（PostgreSQL 18 + pgvector）から確認したもの（2026-07-14 時点）。
 
-検索対象コア（リーガル・embedding 済み）は **31,635 件**（SMALL / BASE 埋め込みと一致）。Marvel Super Heroes 653 件は先行投入時は英語のみで検索から隔離していたが、2026-07-13 に日本語（カード名・オラクル）を whisper から補填し embedding を付与して検索対象へ昇格済み。Vintage 非リーガル（un 系・Alchemy・リバランス版）2,779 件は `*_nonlegal` テーブルへ退避し検索対象外。
+検索対象コア（リーガル・embedding 済み）は **31,635 件**（SMALL / BASE 埋め込みと一致）。Marvel Super Heroes 653 件は先行投入時は英語のみで検索から隔離していたが、2026-07-13 に日本語（カード名・オラクル）を whisper から補填し embedding を付与して検索対象へ昇格済み。Vintage 非リーガル（un 系・Alchemy・リバランス版）2,779 件は `*_nonlegal` テーブルへ退避し検索対象外。**日本語データの純度（2026-07-17）**: 公式和訳が存在しないカード 831 件に非公式翻訳が混入していたことを検出し（「日本語名なし・日本語テキストあり」の組を指紋として特定）、日本語オラクル列から除去・再 embedding 済み。公式テキストのみを日本語列に保持する方針（非公式訳は採用しない）。テキスト持ちカードの日本語カバレッジは 96.5%。
 
 ---
 
@@ -85,7 +85,7 @@ PK = `id`、UNIQUE = `card_name`。
 
 メモ: `power` / `toughness` / `loyalty` は text（`*` / `X` 等の非数値を含むため）。数値フィルタは整数行のみ CAST して比較する。
 
-メモ（導出列）: `is_mana_boost`・`target_types`・`target`・`removal_types`・`removal`・`front_keywords` は oracle テキスト等からの**導出列**（enrich スクリプトで populate。除去 4 列は `enrich_removal.py`・front_keywords は `enrich_front_keywords.py`）。不在は NULL（番兵値は使わない）・再実行で全件上書きの冪等設計。`embed_text` に含めないため再ベクトル化は不要で、新セット取り込み後はスクリプト再実行で追随する。充填数（2026-07-08 実測・全 31,635 行中）: target_types 10,450 / target 9,713 / removal_types・removal 各 5,679 / is_mana_boost 2,419 / front_keywords 31,323（うちキーワード能力を表面に持つのは 15,342。「能力なし」は空配列で表現＝Scryfall `keywords` の慣例に合わせた確認済みの値であり、不在の NULL とは区別）。
+メモ（導出列）: `is_mana_boost`・`target_types`・`target`・`removal_types`・`removal`・`front_keywords`・`floor_cmc` は oracle テキスト等からの**導出列**（enrich スクリプトで populate。除去 4 列と floor_cmc は `enrich_removal.py`・front_keywords は `enrich_front_keywords.py`）。不在は NULL（番兵値は使わない）・再実行は値が変わる行だけ更新する冪等設計。`embed_text` に含めないため再ベクトル化は不要で、新セット取り込み後はスクリプト再実行で追随する。**2026-07-15〜17 の精密化**: 導出の入力を「手札から唱えられる面」に限定（変身カードの裏面にしか無い除去語の混入を排除）・対象リスト列挙（「クリーチャー、エンチャント、または PW」）と割り振りダメージ構文の対象判定・追加コストの条件化・墓地/ライブラリ操作の領域ガード・キッカー等のモード分解（`extra_cost`）・コスト軽減の床値（`floor_cmc`＝版図/親和/探査/想起/ピッチのベストケース実効コスト）。充填数（2026-07-17 実測・全 31,635 行中）: target_types 10,503 / target 9,784 / removal_types・removal 各 5,343 / floor_cmc 345 / is_mana_boost 2,419 / front_keywords 31,323（「能力なし」は空配列で表現＝不在の NULL とは区別）。
 
 ---
 
