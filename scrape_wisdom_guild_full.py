@@ -97,7 +97,9 @@ def fetch_html(card_name: str) -> tuple[str | None, str | None]:
 
 
 def parse_oracle(body: str) -> tuple[str | None, str | None]:
-    """HTML から日本語オラクルを抽出。戻り値: (ja_text, error_msg)"""
+    """HTML から日本語オラクルを抽出。戻り値: (ja_text, error_msg)
+    注意: 両面カードのページでは dc/lc セル＝表面のみが返る。両面は
+    parse_face_oracles を使うこと（2026-07-15・表//表 複製バグの根本原因）。"""
     m = TEXT_CELL_RE.search(body)
     if not m:
         return None, "text cell not found"
@@ -107,6 +109,29 @@ def parse_oracle(body: str) -> tuple[str | None, str | None]:
     if not is_japanese(ja_text):
         return None, f"not japanese: {ja_text[:60]}"
     return ja_text, None
+
+
+# 両面カードのテキスト欄（2026-07-15 判明）: whisper はどちらの面名で引いても
+# 同一のカードページを返し、表面テキスト＝ th.dc/td.lc・裏面テキスト＝
+# th.ddc/td.dlc に載る（単面カードは dc のみ）。従来の parse_oracle（dc 限定）を
+# 面別ページに使うと常に表面が返り、面別に取得して連結すると「表 // 表」になる
+# ＝日本語複製バグ 53 枚（本人発見・ロクの伝説起点）の根本原因。
+TEXT_CELL_BACK_RE = re.compile(
+    r'<th[^>]*class="ddc"[^>]*>\s*テキスト\s*</th>\s*<td[^>]*class="dlc"[^>]*>(.*?)</td>',
+    re.DOTALL | re.IGNORECASE)
+
+
+def parse_face_oracles(body: str) -> list[str]:
+    """カードページから面別の日本語テキストを [表, 裏] で返す（単面は [表]）。
+    取れない面は含めない＝呼び手が面数と突き合わせて完全時のみ使う（推測で埋めない）。"""
+    faces = []
+    for regex in (TEXT_CELL_RE, TEXT_CELL_BACK_RE):
+        m = regex.search(body)
+        if m:
+            t = clean_html(m.group(1))
+            if t and is_japanese(t):
+                faces.append(t)
+    return faces
 
 
 def get_target_cards(conn) -> list[tuple[int, str, str | None]]:
@@ -209,6 +234,12 @@ def cmd_run(args):
                 continue
 
             ja_text, parse_err = parse_oracle(body)
+            # 両面カードは dc（表面）＋ddc（裏面）を「表 // 裏」で格納
+            # （2026-07-15・従来は表面のみ＝裏面欠落。全面取れたときだけ採用）
+            if ' // ' in card_name:
+                face_texts = parse_face_oracles(body)
+                if len(face_texts) == len(card_name.split(' // ')):
+                    ja_text = ' // '.join(face_texts)
             if not ja_text:
                 # テキストセルが空 = バニラカード等でテキストが存在しない
                 # NULL（未取得）と区別するため全角スペースを挿入

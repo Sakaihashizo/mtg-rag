@@ -33,7 +33,8 @@ import psycopg2
 
 sys.path.insert(0, '/mnt/mtg_rag')
 from db_config import DB_CONFIG
-from scrape_wisdom_guild_full import (fetch_html, parse_oracle, is_japanese,
+from scrape_wisdom_guild_full import (fetch_html, parse_oracle,
+                                      parse_face_oracles, is_japanese,
                                       SLEEP_SEC)
 
 TITLE_RE = re.compile(r'<title>(.+?)/(.+?)：カードデータ')
@@ -74,17 +75,33 @@ def fetch_card(card_name: str, need_sleep: bool):
 
 
 def process_card(card_name: str):
-    """単面/両面を吸収して (ja_name, ja_text, errs) を返す。両面は 'A // B' 連結。"""
+    """単面/両面を吸収して (ja_name, ja_text, errs) を返す。両面は 'A // B' 連結。
+    テキストの取り方（2026-07-15 修正）: whisper は面名どちらでも同一ページを返し、
+    表面＝dc セル・裏面＝ddc セルに分かれて載る。従来の「面別ページを parse_oracle」
+    は常に表面が返り「表 // 表」を作っていた（複製バグ 53 枚の根本原因）。
+    名前は従来どおり面別ページの title から取る。"""
     if ' // ' in card_name:
         faces = card_name.split(' // ')
-        names, texts, errs = [], [], []
-        for f in faces:
-            n, t, e = fetch_card(f, need_sleep=True)
+        names, errs = [], []
+        face_texts: list[str] = []
+        for i, f in enumerate(faces):
+            body, err = fetch_html(f)
+            time.sleep(SLEEP_SEC)
+            if body is None:
+                names.append(None)
+                errs.append(f"fetch: {err}")
+                continue
+            n, nerr = parse_ja_name(body, f)
+            if nerr:
+                errs.append(f"name: {nerr}")
             names.append(n)
-            texts.append(t)
-            errs.extend(e)
+            if i == 0:
+                face_texts = parse_face_oracles(body)
         ja_name = ' // '.join(n for n in names if n) if all(names) else None
-        ja_text = ' // '.join(t for t in texts if t) if any(texts) else None
+        ja_text = (' // '.join(face_texts)
+                   if face_texts and len(face_texts) == len(faces) else None)
+        if ja_text is None:
+            errs.append("text: face cells incomplete")
         return ja_name, ja_text, errs
     return fetch_card(card_name, need_sleep=True)
 
