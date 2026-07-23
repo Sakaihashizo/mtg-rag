@@ -582,14 +582,20 @@ def format_filter_sql(fmt: Optional[str]) -> str:
 # 集計は大会系 7 フォーマット（2026-07-14 に Vintage/Pauper/Duel Commander を追加・
 # 使用率化）。map に無いフォーマットは横断フォールバック＝各フォーマット採用率の
 # MAX（「どこかの環境で一線級なら強い」・新フォーマット追加で既存値が壊れない単調性）。
-# 注意: "commander" クエリに Duel Commander（1v1）の率を使うのは近似（うちの大会
-# データが Duel のため）。多人数 EDH の本命信号は edhrec_rank（EDH 腕）が担う。
+# 2026-07-22（本人GO・moxfield_edh 導入）: "commander" は Duel Commander の近似を
+# 卒業し、実データの多人数 Commander（moxfield_edh・母数431）を見る。"duel" は
+# Duel Commander（mtgtop8_edh・母数959）のまま＝2人用/4人用は format_name 列で
+# 区別（テーブルは edh_card_strength を共用・EDH_FORMAT_NAMES 参照）。
 CFS_FORMAT_MAP = {
     "legacy": "Legacy", "modern": "Modern",
     "pioneer": "Pioneer", "standard": "Standard",
     "vintage": "Vintage", "pauper": "Pauper",
-    "duel": "Duel Commander", "commander": "Duel Commander",
+    "duel": "Duel Commander", "commander": "Commander",
 }
+
+# edh_card_strength（シングルトン系・物理分離テーブル）に属す format_name。
+# card_format_strength（60枚構築）と混ざらないための判定に使う。
+EDH_FORMAT_NAMES = ("Duel Commander", "Commander")
 
 # フォーマット横断フォールバック（format 指定なし）の集計対象＝本線 4 フォーマット。
 # GT の R11 機械採点（「全 4F 合計 250 デッキ」閾値）と同じ土俵に固定する。
@@ -1192,7 +1198,7 @@ class MTGHybridSearcherV2:
         cfg = self.cfg
         if cfs_fmt:
             # EDH（シングルトン系）は物理分離テーブルを参照（構築の横断比較に混ぜない）
-            table = ("edh_card_strength" if cfs_fmt == "Duel Commander"
+            table = ("edh_card_strength" if cfs_fmt in EDH_FORMAT_NAMES
                      else "card_format_strength")
             sql = f"""
                 SELECT c.card_name,
@@ -1252,7 +1258,7 @@ class MTGHybridSearcherV2:
         if cfs_fmt:
             # EDH（シングルトン系）は物理分離テーブルを参照。同一フォーマット内は
             # 分母が共通なので play_decks の絶対数順＝採用率順（率換算は不要）
-            table = ("edh_card_strength" if cfs_fmt == "Duel Commander"
+            table = ("edh_card_strength" if cfs_fmt in EDH_FORMAT_NAMES
                      else "card_format_strength")
             sql = f"""
                 SELECT

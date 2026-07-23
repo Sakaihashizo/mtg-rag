@@ -54,7 +54,7 @@ from tqdm import tqdm
 from db_config import DB_CONFIG
 
 BASE_URL       = "https://www.mtgtop8.com"
-REQUEST_INTERVAL = 2.0  # 秒（礼儀正しいスクレイピング）
+REQUEST_INTERVAL = 2.75  # 秒（礼儀正しいスクレイピング・2026-07-18 夜間実行では2.5-3.0秒指定）
 SOURCE         = "mtgtop8"
 
 HEADERS = {
@@ -71,7 +71,7 @@ FORMAT_NAMES = {
 
 # ─── HTTP ヘルパー ────────────────────────────────────────────
 
-def fetch(url: str, retries: int = 3) -> str | None:
+def fetch(url: str, retries: int = 2) -> str | None:
     """礼儀正しい HTTP GET（インターバル付き・リトライあり）"""
     for attempt in range(retries):
         try:
@@ -102,21 +102,28 @@ def get_event_ids(format_code: str, meta: int) -> list[int]:
     return unique_ids
 
 
-def get_deck_ids(event_id: int) -> list[tuple[int, str, str]]:
+def get_deck_ids(event_id: int) -> tuple[str, str | None, list[tuple[int, str, str]]]:
     """
-    イベントページからデッキIDを取得する。
-    戻り値: [(deck_id, deck_name, player_name), ...]
+    イベントページからイベント名・大会日・デッキIDを取得する。
+    戻り値: (event_name, event_date_iso_or_None, [(deck_id, deck_name, player_name), ...])
     """
     url  = f"{BASE_URL}/event?e={event_id}"
     html = fetch(url)
     if not html:
-        return []
+        return f"Event {event_id}", None, []
 
     soup = BeautifulSoup(html, "html.parser")
 
     # イベント名を取得
     title_div = soup.find("div", class_="event_title")
     event_name = title_div.get_text(strip=True) if title_div else f"Event {event_id}"
+
+    # 大会日を取得（"465 players - 30/12/24" 形式・MTGTop8開設以降のため 20xx 固定で安全）
+    event_date = None
+    date_m = re.search(r'\d+\s+players?\s*-\s*(\d{2})/(\d{2})/(\d{2})', html)
+    if date_m:
+        dd, mm, yy = date_m.groups()
+        event_date = f"20{yy}-{mm}-{dd}"
 
     # デッキIDとデッキ名を取得
     # パターン: href=?e=1&d=101680&f=VI または href=event?e=1&d=101680&f=VI
@@ -136,7 +143,7 @@ def get_deck_ids(event_id: int) -> list[tuple[int, str, str]]:
         player = player_links[i].replace("+", " ") if i < len(player_links) else ""
         results.append((int(deck_id), deck_name.strip(), player.strip()))
 
-    return results
+    return event_name, event_date, results
 
 
 def parse_dec(dec_text: str, sb_board: str = "side") -> tuple[str, str, list[tuple[str, int, str]]]:
@@ -216,11 +223,17 @@ def ensure_columns(conn):
             ADD COLUMN IF NOT EXISTS source_url       TEXT,
             ADD COLUMN IF NOT EXISTS tournament_event_id INTEGER;
         """)
+        # (source, tournament_event_id) は重複検出・バックフィルの JOIN/GROUP BY で
+        # 頻繁に使う組。既存は無索引だったため追加する（2026-07-18 大会名調査より）。
+        cur.execute("""
+            CREATE INDEX IF NOT EXISTS deck_list_tournament_event_id_idx
+            ON deck_list (source, tournament_event_id);
+        """)
     conn.commit()
     print("カラム追加完了")
 
 
-def save_deck(conn, event_id: int, event_name: str,
+def save_deck(conn, event_id: int, event_name: str, event_date: str | None,
               deck_id: int, deck_name: str, player_name: str,
               format_code: str, cards: list[tuple[str, int, str]],
               archetype: str = "", source: str = SOURCE) -> bool:
@@ -231,13 +244,13 @@ def save_deck(conn, event_id: int, event_name: str,
     with conn.cursor() as cur:
         cur.execute("""
             INSERT INTO deck_list
-                (deck_name, set_code, source, tournament_name,
+                (deck_name, set_code, source, tournament_name, tournament_date,
                  player_name, format_name, source_url, tournament_event_id,
                  archetype)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (deck_name) DO NOTHING
             RETURNING id;
-        """, (unique_name, format_code, source, event_name,
+        """, (unique_name, format_code, source, event_name, event_date,
               player_name, FORMAT_NAMES.get(format_code, format_code),
               source_url, event_id, archetype or None))
         result = cur.fetchone()
@@ -298,11 +311,9 @@ def scrape(format_code: str, meta: int, year: int):
     total_cards  = 0
 
     for event_id in tqdm(new_events, desc="イベント処理"):
-        deck_infos = get_deck_ids(event_id)
+        event_name, event_date, deck_infos = get_deck_ids(event_id)
         if not deck_infos:
             continue
-
-        event_name = f"MTGTop8 Event {event_id} ({year} {format_code})"
 
         for deck_id, archetype, player_name in deck_infos:
             cards = get_deck_cards(deck_id, sb_board=sb_board)
@@ -310,7 +321,7 @@ def scrape(format_code: str, meta: int, year: int):
                 continue
 
             saved = save_deck(
-                conn, event_id, event_name,
+                conn, event_id, event_name, event_date,
                 deck_id, archetype, player_name,
                 format_code, cards,
                 archetype=archetype, source=source,

@@ -163,24 +163,56 @@ def import_decks(conn):
 
 # ─── 共起集計 ─────────────────────────────────────────────────
 
-def update_cooccurrence(conn, source: str = SOURCE):
+# EDH（Duel Commander・多人数Commander）は card_cooccurrence と物理分離
+# （2026-07-22 本人裁定）。理由: 共起の意味論が構築と別物——構築は同一
+# アーキタイプの netdeck コピーで co_count が水増しされやすいのに対し、
+# EDH は 100枚シングルトンで各デッキがほぼ独立に構築されるため、高い
+# co_count はより強いシナジー信号になる。スキーマは card_cooccurrence と
+# 同一＝UNION 互換（card_format_strength/edh_card_strength と同じ設計）。
+EDH_COOCCUR_SOURCES = ("mtgtop8_edh", "moxfield_edh")
+
+
+def create_edh_cooccurrence_table(conn) -> None:
+    with conn.cursor() as cur:
+        cur.execute("""
+            CREATE TABLE IF NOT EXISTS edh_card_cooccurrence (
+                card_name_a TEXT NOT NULL,
+                card_name_b TEXT NOT NULL,
+                co_count    INTEGER NOT NULL,
+                source      TEXT NOT NULL,
+                PRIMARY KEY (card_name_a, card_name_b, source)
+            );
+        """)
+        cur.execute("""
+            CREATE INDEX IF NOT EXISTS edh_card_cooccurrence_a_idx
+            ON edh_card_cooccurrence (card_name_a, source);
+        """)
+        cur.execute("""
+            CREATE INDEX IF NOT EXISTS edh_card_cooccurrence_b_idx
+            ON edh_card_cooccurrence (card_name_b, source);
+        """)
+    conn.commit()
+
+
+def update_cooccurrence(conn, source: str = SOURCE, table: str = "card_cooccurrence"):
     """
-    同じデッキに含まれるカードの共起回数を集計して card_cooccurrence に格納する。
+    同じデッキに含まれるカードの共起回数を集計して {table} に格納する。
     card_name_a < card_name_b になるよう正規化（重複防止）。
+    table='edh_card_cooccurrence' は EDH_COOCCUR_SOURCES 専用
+    （create_edh_cooccurrence_table を先に呼ぶこと）。
     時間がかかるので実行後にインデックスを張る。
     """
-    print(f"共起集計中（source={source}）...")
+    print(f"共起集計中（source={source} → {table}）...")
 
     with conn.cursor() as cur:
         # 既存データをクリア
-        cur.execute("""
-            DELETE FROM card_cooccurrence WHERE source = %s
+        cur.execute(f"""
+            DELETE FROM {table} WHERE source = %s
         """, (source,))
 
         # 共起集計（同じデッキのカードペアをカウント）
-        # 共起集計（同じデッキのカードペアをカウント）
-        cur.execute("""
-            INSERT INTO card_cooccurrence (card_name_a, card_name_b, co_count, source)
+        cur.execute(f"""
+            INSERT INTO {table} (card_name_a, card_name_b, co_count, source)
             SELECT
                 a.card_name,
                 b.card_name,
@@ -213,8 +245,8 @@ def update_cooccurrence(conn, source: str = SOURCE):
     conn.commit()
 
     with conn.cursor() as cur:
-        cur.execute("""
-            SELECT COUNT(*) FROM card_cooccurrence WHERE source = %s
+        cur.execute(f"""
+            SELECT COUNT(*) FROM {table} WHERE source = %s
         """, (source,))
         count = cur.fetchone()[0]
 
@@ -222,9 +254,9 @@ def update_cooccurrence(conn, source: str = SOURCE):
 
     # サンプル表示
     with conn.cursor() as cur:
-        cur.execute("""
+        cur.execute(f"""
             SELECT card_name_a, card_name_b, co_count
-            FROM card_cooccurrence
+            FROM {table}
             WHERE source = %s
             ORDER BY co_count DESC
             LIMIT 10

@@ -4,7 +4,7 @@ Recompute per-format tournament strength from linked MTGTop8 deck data.
 v3（2026-07-14・EDH を物理分離）:
   - **card_format_strength = 1v1 構築フォーマット（60枚・4積み）のみ**
     （Standard/Pioneer/Modern/Legacy/Vintage/Pauper・母数 984〜2,227 で同じ桁）。
-  - **edh_card_strength = シングルトン系（Duel Commander）を別テーブルに分離**。
+  - **edh_card_strength = シングルトン系（Commander 系）を別テーブルに分離**。
     同じ列構成＝合併したくなったら UNION で足せる（2026-07-14 本人裁定）。
     分離の理由: デッキ構造（100枚シングルトン）が違い「採用」の意味論が別物・
     母数が一桁小さく（214）、率の横断比較に混ぜると MAX を支配して本線を汚染する
@@ -17,6 +17,17 @@ v3（2026-07-14・EDH を物理分離）:
     物理的に不在なので WHERE 除外に頼らない。EDH 指定クエリだけが
     edh_card_strength を参照する。
   - TRUNCATE は lock_timeout 付き（2026-07-13 ロック渋滞事件の教訓）。
+
+v4（2026-07-22・Moxfield 多人数 Commander を追加・本人 GO）:
+  - **edh_card_strength は「Duel Commander」と「Commander」（多人数）の2つの
+    format_name を同居させる**（テーブルは分けない・GROUP BY dc.card_id,
+    dl.format_name が既に per-format_name で行を割っているため、テーブルを
+    分けなくても混ざらない＝2人用/4人用を分けたい場合は format_name 列で判定
+    すればよいという本人裁定）。母数はそれぞれ format_deck_counts に別行で入る
+    （Duel Commander≈959 decks・Commander≈431 decks）。
+  - 検索側（mtg_hybrid_search_v2.py CFS_FORMAT_MAP）も合わせて改修:
+    "duel"→"Duel Commander"（そのまま）・"commander"→"Commander"（近似の
+    Duel 借用から実データの多人数へ差し替え）。
 
 Usage:
   python recompute_card_format_strength.py
@@ -32,8 +43,9 @@ from db_config import DB_CONFIG
 
 # 1v1 構築（card_format_strength に入る・率の横断比較に参加する）
 CONSTRUCTED_SOURCES = ("mtgtop8", "mtgtop8_vintage", "mtgtop8_pauper")
-# シングルトン系（edh_card_strength に入る・EDH 指定クエリ専用）
-EDH_SOURCES = ("mtgtop8_edh",)
+# シングルトン系（edh_card_strength に入る・EDH 指定クエリ専用・
+# Duel Commander と多人数 Commander は format_name 列で区別・テーブルは共用）
+EDH_SOURCES = ("mtgtop8_edh", "moxfield_edh")
 
 SAMPLE_CARDS = (
     "Fatal Push",
