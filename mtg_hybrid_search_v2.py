@@ -691,6 +691,103 @@ def edh_gate_sql(edh_intent: bool, bracket: Optional[int]) -> str:
     return sql
 
 
+# ─── 統率者名→固有色ゲート（R13 拡張・2026-07-20 本人裁定） ──────────────
+# 「アトラクサで使える除去」= 統率者名から固有色を解決して同じ ⊆ ゲートへ流す。
+# 前提（design-premise-ledger 流に明示）:
+#   - 検索ツールに統率者名を打つ人の圧倒的多数は構築文脈（EDHREC の構造そのもの）
+#     ＝既定 ON。「統率者は目的語になりえない」は文法では偽（「〜を使う」=構築・
+#     「〜対策」=敵対）だが事前確率として採用＝敵対語彙の明示があるときだけ不発
+#     （推定無罪の構造）。敵対語彙は閉集合＝列挙可能な側をリストにする。
+#   - 敵対判定は名前ごとの近傍（クエリ全域にしない）。錨クエリ第1号=「アトラクサを
+#     使ったデッキで相手のウラモグに対応できるカード」→ アトラクサ発動・ウラモグ除外。
+#     全域判定だと「対応」の一語がゲート丸ごと殺す（2026-07-20 設計格上げ）。
+#   - 名前キー: 日本語正式名・読点短縮名（「法務官の声、アトラクサ」→「アトラクサ」）・
+#     無読点名の末尾カタカナ（「寛大なるゼドルー」→「ゼドルー」）・英語正式名（小文字）。
+#   - 同名候補の固有色が単一なら発動（アトラクサ型・無害）・割れたら不発（オムナス型）。
+#     複数の統率者名で固有色が食い違っても不発（安全側）。
+#   - 実測（2026-07-20）: 伝説 3,125 枚・読点短縮名 1,722 種＝一意 85%・
+#     同名同色 5.7%・色割れ 9.2% → 91% を機械で安全に解決できる。
+#   - 既知の限界（v1）: 伝説名を含む非伝説カード名（「ウラモグの手先」等）がクエリに
+#     そのまま書かれると伝説側の名前として誤検知しうる。query_log から実例を拾って
+#     本人レビューで敵対語彙/例外を昇格させる運用（辞書昇格と同じ human-in-the-loop）。
+
+_CMD_HOSTILE_BEFORE = re.compile(r'(?:相手|敵|対戦相手)の$')
+_CMD_HOSTILE_AFTER = re.compile(
+    r'^(?:を|に|への|の)?'
+    r'(?:対策|対応|対処|倒|討|除去|破壊|追放|退場|効く|効き|回答|対象|止め|殺)')
+_CMD_MIN_KEY = 3          # 2文字短縮名（アン等）は一般語と衝突するため索引に載せない
+_CMD_KATAKANA_TAIL = re.compile(r'[ァ-ヴヶー]{3,}$')
+
+
+def build_commander_index(db) -> dict[str, frozenset]:
+    """伝説のクリーチャー全数から「名前キー → 固有色候補の集合」を構築する。
+    値は固有色タプルの frozenset（要素 2 つ以上＝同名で色割れ＝解決不能の印）。
+    起動時 1 回の全数ロード＝新セットの取り込みで自動追随する。"""
+    rows = db.query(
+        "SELECT japanese_name, card_name, color_identity FROM mtg_cards_v2 "
+        "WHERE type_line LIKE '%Legendary Creature%'")
+    index: dict[str, set] = {}
+    for ja, en, ci in rows:
+        ident = tuple(sorted(ci or []))
+        keys = []
+        if ja:
+            keys.append(ja)
+            if '、' in ja:
+                keys.append(ja.rsplit('、', 1)[1])
+            else:
+                m = _CMD_KATAKANA_TAIL.search(ja)
+                if m and m.group(0) != ja:
+                    keys.append(m.group(0))
+        if en:
+            keys.append(en.lower())
+        for k in keys:
+            if len(k) >= _CMD_MIN_KEY:
+                index.setdefault(k, set()).add(ident)
+    return {k: frozenset(v) for k, v in index.items()}
+
+
+def detect_commander_identity(
+        query: str, index: dict[str, frozenset]
+) -> Optional[tuple[list[str], list[str]]]:
+    """クエリ中の統率者名から固有色を決定的に解決する。
+    戻り値: (WUBRG ソート済みリスト, 根拠にした名前のリスト)。不発は None。
+    非対称設計: 敵対文脈の名前は無視・色割れ/食い違いは不発（誤発動ゼロ側）。"""
+    if not index:
+        return None
+    q_lower = query.lower()
+    hits = []
+    for key, idents in index.items():
+        src = q_lower if key.isascii() else query
+        pos = src.find(key)
+        while pos != -1:
+            hits.append((len(key), pos, key, idents))
+            pos = src.find(key, pos + 1)
+    if not hits:
+        return None
+    # 最長一致優先で重なりを解消（「アトラクサの後継、イクセル」はイクセル側が勝つ）
+    hits.sort(key=lambda h: (-h[0], h[1]))
+    taken: list[tuple[int, int, str, frozenset]] = []
+    for ln, pos, key, idents in hits:
+        if all(pos + ln <= s or pos >= e for s, e, _, _ in taken):
+            taken.append((pos, pos + ln, key, idents))
+    resolved = None
+    names: list[str] = []
+    for s, e, key, idents in sorted(taken):
+        if (_CMD_HOSTILE_BEFORE.search(query[:s])
+                or _CMD_HOSTILE_AFTER.match(query[e:])):
+            continue          # 敵対文脈の名前は固有色の根拠にしない
+        if len(idents) > 1:
+            return None       # 同名で色割れ（オムナス型）＝解決不能＝不発
+        ident = next(iter(idents))
+        if resolved is not None and ident != resolved:
+            return None       # 複数統率者名で食い違い＝不発（安全側）
+        resolved = ident
+        names.append(key)
+    if resolved is None:
+        return None
+    return sorted(resolved), names
+
+
 def is_creature_removal(removal_entries: Optional[list],
                         target_types: Optional[list]) -> bool:
     """クリーチャーを討てる恒久除去メカを1つでも持つか（R10 の検索側の写し）。
@@ -927,6 +1024,14 @@ class MTGHybridSearcherV2:
             self.db.execute(f"SET hnsw.iterative_scan = {scan}")
         except Exception:
             pass  # pgvector < 0.8 では未対応 → 無視（rollback は db 層が実施済み）
+        # 統率者名→固有色ゲートの名前索引（R13 拡張・2026-07-20）。
+        # 失敗時は空索引＝名前ゲートだけ眠る（検索全体は殺さない・ただし声は出す）
+        try:
+            self._commander_index = build_commander_index(self.db)
+        except Exception as e:
+            print(f"  [警告] 統率者名索引の構築に失敗"
+                  f"（固有色ゲートは名前検出なしで続行）: {e}")
+            self._commander_index = {}
         print(f"[MTGHybridSearcherV2] {model_key} ({cfg['model_name']})")
 
     def _embed(self, text: str) -> list[float]:
@@ -1531,6 +1636,20 @@ class MTGHybridSearcherV2:
         attr_sql += tribal_filter_sql(detect_tribal(gate_q))
         attr_sql += name_contains_sql(detect_name_search(gate_q))
         attr_sql += neg_type_filter_sql(detect_neg_type(gate_q))
+        # ドロー枚数ゲートも HyDE 腕に（search() 本体と対・単独ヒット再流入防止・R14）
+        attr_sql += draw_filter_sql(detect_draw_min(gate_q))
+        # EDH 固有色・ブラケットゲートも HyDE 腕に（search() 本体と対）。
+        # 2026-07-21 追補: このリストに R13 だけ欠けており、HyDE 単独ヒットが
+        # 固有色ゲートを素通りしていた（統率者名ゲートの e2e で栄誉=W が
+        # ⊆{B,G,U} に混入して発覚＝R13 制定時からの穴・「残差は穴の検出器」の実例）
+        _ci = detect_color_identity(gate_q)
+        if _ci is None:
+            _cmd = detect_commander_identity(gate_q, self._commander_index)
+            if _cmd is not None:
+                _ci = _cmd[0]
+        _bracket = detect_bracket(gate_q)
+        attr_sql += color_identity_filter_sql(_ci)
+        attr_sql += edh_gate_sql(_ci is not None or _bracket is not None, _bracket)
         hyde_vec  = self._embed(hyde_text)
         hyde_rows = self._vector_search(hyde_vec, top_k * 2, fmt_sql, type_sql, attr_sql)
 
@@ -1717,13 +1836,20 @@ class MTGHybridSearcherV2:
         # EDH 固有色・ブラケットゲート（R13・決定的検出＝ルーター無改修で効く）。
         # attr_sql に足すことで全腕（vec/FTS/強度腕）と直行路に同時に掛かる
         ci = detect_color_identity(gate_q)
+        cmd_names = None
+        if ci is None:
+            # 色語が無いときだけ統率者名から固有色を解決（明示の色語が常に優先）
+            cmd = detect_commander_identity(gate_q, self._commander_index)
+            if cmd is not None:
+                ci, cmd_names = cmd
         bracket = detect_bracket(gate_q)
         edh_intent = ci is not None or bracket is not None
         attr_sql += color_identity_filter_sql(ci)
         attr_sql += edh_gate_sql(edh_intent, bracket)
         if ci is not None:
             label = ",".join(ci) if ci else "無色"
-            print(f"  固有色ゲート: ⊆ {{{label}}}（banned 除外"
+            src = f"統率者名 {'/'.join(cmd_names)} → " if cmd_names else ""
+            print(f"  固有色ゲート: {src}⊆ {{{label}}}（banned 除外"
                   + (f"・ブラケット{bracket}" + ("＝GC 除外" if bracket <= 2 else "")
                      if bracket is not None else "") + "）")
         elif bracket is not None:
