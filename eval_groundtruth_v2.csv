@@ -105,10 +105,10 @@ Counter target noncreature spell.",2,
 2マナ以下のカウンター呪文,,counter,10,Delay,遅延,Instant,呪文１つを対象とする。それを打ち消す。これによりそれが打ち消されたなら、それをオーナーの墓地に置く代わりに、それを時間カウンター３個が置かれた状態で追放する。それが待機を持っていないなら、それは待機を得る。（それのオーナーのアップキープの開始時に、そのカードの上から時間カウンター１個を取り除く。最後の１個が取り除かれたとき、そのプレイヤーはそれをマナ・コストを支払わずにプレイする。それがクリーチャーなら、それは速攻を持つ。）,"Counter target spell. If the spell is countered this way, exile it with three time counters on it instead of putting it into its owner's graveyard. If it doesn't have suspend, it gains suspend. (At the beginning of its owner's upkeep, they remove a time counter. When the last is removed, they may play it without paying its mana cost. If it's a creature, it has haste.)",2,
 条件付きカウンター呪文,,counter,1,Force of Negation,否定の力,Instant,"あなたのターンでないなら、この呪文のマナ・コストを支払うのではなく、あなたの手札にある青のカード１枚を追放してもよい。
 クリーチャーでない呪文１つを対象とする。それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。","If it's not your turn, you may exile a blue card from your hand rather than pay this spell's mana cost.
-Counter target noncreature spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",2,
+Counter target noncreature spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
 条件付きカウンター呪文,,counter,2,Force of Will,意志の力,Instant,"この呪文のマナ・コストを支払うのではなく、「１点のライフを支払い、あなたの手札にある青のカード１枚を追放する。」を選んでもよい。
 呪文１つを対象とする。それを打ち消す。","You may pay 1 life and exile a blue card from your hand rather than pay this spell's mana cost.
-Counter target spell.",1,打ち消すカードに条件がない
+Counter target spell.",,打ち消すカードに条件がない｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=1）
 条件付きカウンター呪文,,counter,3,Sublime Epiphany,崇高な天啓,Instant,"以下から１つ以上を選ぶ。
 ・呪文１つを対象とする。それを打ち消す。
 ・起動型か誘発型である能力１つを対象とする。それを打ち消す。
@@ -119,15 +119,15 @@ Counter target spell.",1,打ち消すカードに条件がない
 • Counter target activated or triggered ability.
 • Return target nonland permanent to its owner's hand.
 • Create a token that's a copy of target creature you control.
-• Target player draws a card.",1,打ち消すカードに条件がない
+• Target player draws a card.",,打ち消すカードに条件がない｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=1）
 条件付きカウンター呪文,,counter,4,Daze,目くらまし,Instant,"この呪文のマナ・コストを支払うのではなく、あなたがコントロールしている島１つをオーナーの手札に戻してもよい。
 呪文１つを対象とする。それのコントローラーが{1}を支払わないかぎり、それを打ち消す。","You may return an Island you control to its owner's hand rather than pay this spell's mana cost.
-Counter target spell unless its controller pays {1}.",2,マナ要求は条件に含めることにした
-条件付きカウンター呪文,,counter,5,Counterspell,対抗呪文,Instant,呪文１つを対象とする。それを打ち消す。,Counter target spell.,1,打ち消すカードに条件がない
-条件付きカウンター呪文,,counter,6,Spell Pierce,呪文貫き,Instant,クリーチャーでない呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。,Counter target noncreature spell unless its controller pays {2}.,2,
+Counter target spell unless its controller pays {1}.",,マナ要求は条件に含めることにした｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
+条件付きカウンター呪文,,counter,5,Counterspell,対抗呪文,Instant,呪文１つを対象とする。それを打ち消す。,Counter target spell.,,打ち消すカードに条件がない｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=1）
+条件付きカウンター呪文,,counter,6,Spell Pierce,呪文貫き,Instant,クリーチャーでない呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。,Counter target noncreature spell unless its controller pays {2}.,,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
 条件付きカウンター呪文,,counter,7,Make Disappear,かき消し,Instant,"犠牲１（あなたがこの呪文を唱えるに際し、あなたはパワーが１以上であるクリーチャー１体を生け贄に捧げてもよい。そうしたとき、この呪文をコピーし、あなたはそのコピーの新しい対象を選んでもよい。）
 呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。","Casualty 1 (As you cast this spell, you may sacrifice a creature with power 1 or greater. When you do, copy this spell and you may choose a new target for the copy.)
-Counter target spell unless its controller pays {2}.",2,マナ要求は条件に含めることにした
+Counter target spell unless its controller pays {2}.",,マナ要求は条件に含めることにした｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
 条件付きカウンター呪文,,counter,8,Quandrix Command,クアンドリクスの命令,Instant,"以下から２つを選ぶ。
 • クリーチャーやプレインズウォーカーのうち１体を対象とする。それをオーナーの手札に戻す。
 • アーティファクトやエンチャントである呪文１つを対象とする。それを打ち消す。
@@ -136,11 +136,11 @@ Counter target spell unless its controller pays {2}.",2,マナ要求は条件に
 • Return target creature or planeswalker to its owner's hand.
 • Counter target artifact or enchantment spell.
 • Put two +1/+1 counters on target creature.
-• Target player shuffles up to three target cards from their graveyard into their library.",2,
+• Target player shuffles up to three target cards from their graveyard into their library.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
 条件付きカウンター呪文,,counter,9,Dovin's Veto,ドビンの拒否権,Instant,"この呪文は打ち消されない。
 クリーチャーでない呪文１つを対象とする。それを打ち消す。","This spell can't be countered.
-Counter target noncreature spell.",2,
-条件付きカウンター呪文,,counter,10,No More Lies,喝破,Instant,呪文１つを対象とする。それのコントローラーが{3}を支払わないかぎり、それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。,"Counter target spell unless its controller pays {3}. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",2,マナ要求は条件に含めることにした
+Counter target noncreature spell.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
+条件付きカウンター呪文,,counter,10,No More Lies,喝破,Instant,呪文１つを対象とする。それのコントローラーが{3}を支払わないかぎり、それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。,"Counter target spell unless its controller pays {3}. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",,マナ要求は条件に含めることにした｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
 最強の単体除去,,removal,1,Lightning Bolt,稲妻,Instant,１つを対象とする。稲妻はそれに３点のダメージを与える。,Lightning Bolt deals 3 damage to any target.,1,R11補足a: タフ3上限は実勢で噛む（捕捉率69%）・顔面火力は役割外で数えない・2→1 修正・本人裁定 2026-07-15
 最強の単体除去,,removal,2,Orcish Bowmasters,オークの弓使い,Creature — Orc Archer,"瞬速
 オークの弓使いが戦場に出たとき、ならびに、対戦相手が自分の各ドロー・ステップ内で最初に引くカード以外のカード１枚を引くたび、クリーチャーやプレインズウォーカーやプレイヤーのうち１つを対象とする。オークの弓使いはそれに１点のダメージを与える。その後、オーク動員１を行う。","Flash
@@ -279,10 +279,10 @@ Firebending Lesson deals 2 damage to target creature. If this spell was kicked, 
 • Surveil 2, then draw a card.
 • Prismari Charm deals 1 damage to each of one or two targets.
 • Return target nonland permanent to its owner's hand.",2,点数が低すぎる / 本人sweep 1→2（R2'/補足a 2026-07-17）
-カードを2枚引く,,draw,1,Sylvan Library,森の知恵,Enchantment,あなたのドロー・ステップの開始時に、あなたは追加でカード２枚を引いてもよい。そうしたなら、あなたの手札からこのターンに引いたカード２枚を選ぶ。それらの各カードにつきそれぞれ、４点のライフを支払うか、そのカードをあなたのライブラリーの一番上に置く。,"At the beginning of your draw step, you may draw two additional cards. If you do, choose two cards in your hand drawn this turn. For each of those cards, pay 4 life or put the card on top of your library.",1,
+カードを2枚引く,,draw,1,Sylvan Library,森の知恵,Enchantment,あなたのドロー・ステップの開始時に、あなたは追加でカード２枚を引いてもよい。そうしたなら、あなたの手札からこのターンに引いたカード２枚を選ぶ。それらの各カードにつきそれぞれ、４点のライフを支払うか、そのカードをあなたのライブラリーの一番上に置く。,"At the beginning of your draw step, you may draw two additional cards. If you do, choose two cards in your hand drawn this turn. For each of those cards, pay 4 life or put the card on top of your library.",2,2026-07-23 朝 本人追裁定 1→2「引いているので2」（戻しは後処理・引く行為は発生＝R14 行為ベースの筋・日英同点）
 カードを2枚引く,,draw,2,Seasoned Pyromancer,歴戦の紅蓮術士,Creature — Human Shaman,"歴戦の紅蓮術士が戦場に出たとき、カード２枚を捨て、その後、カード２枚を引く。これにより捨てられて土地でないカード１枚につき、赤の１/１のエレメンタル・クリーチャー・トークン１体を生成する。
 {3}{R}{R}, あなたの墓地にある歴戦の紅蓮術士を追放する：赤の１/１のエレメンタル・クリーチャー・トークン２体を生成する。","When this creature enters, discard two cards, then draw two cards. For each nonland card discarded this way, create a 1/1 red Elemental creature token.
-{3}{R}{R}, Exile this card from your graveyard: Create two 1/1 red Elemental creature tokens.",1,
+{3}{R}{R}, Exile this card from your graveyard: Create two 1/1 red Elemental creature tokens.",2,2026-07-23 旧1掃除 1→2（R14本則: 確定 Draw N はルーター/ETB/条件緩和付きでも満たす・R3 で discard・コスト減点なし・本人裁定「旧採点の1が根っこ」）
 カードを2枚引く,,draw,3,Thought Reflection,思考の反射,Enchantment,あなたがカードを１枚引くなら、代わりにカードを２枚引く。,"If you would draw a card, draw two cards instead.",1,
 カードを2枚引く,,draw,4,Well of Ideas,発想の井戸,Enchantment,"発想の井戸が戦場に出たとき、カードを２枚引く。
 他の各プレイヤーのドロー・ステップの開始時に、そのプレイヤーはカードを追加で１枚引く。
@@ -291,14 +291,14 @@ At the beginning of each other player's draw step, that player draws an addition
 At the beginning of your draw step, draw two additional cards.",2,カードを2枚引くという命題で出るには間違っていないがそれ以外もできすぎてしまう
 カードを2枚引く,,draw,5,Faithless Looting,信仰無き物あさり,Sorcery,"カード２枚を引く。その後、カード２枚を捨てる。
 フラッシュバック{2R}（あなたの墓地にあるこのカードをフラッシュバック・コストで唱えてもよい。その後、これを追放する。）","Draw two cards, then discard two cards.
-Flashback {2}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",1,
+Flashback {2}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",2,2026-07-23 旧1掃除 1→2（R14本則: 確定 Draw N はルーター/ETB/条件緩和付きでも満たす・R3 で discard・コスト減点なし・本人裁定「旧採点の1が根っこ」）
 カードを2枚引く,,draw,6,Predict,予報,Instant,プレイヤー１人を対象とする。カード名１つを選ぶ。その後、そのプレイヤーは自分のライブラリーの一番上のカードを自分の墓地に置く。そのカードがその選ばれた名前を持っているなら、あなたはカードを２枚引く。そうでないなら、カードを１枚引く。,"Choose a card name, then target player mills a card. If a card with the chosen name was milled this way, you draw two cards. Otherwise, you draw a card.",1,
 カードを2枚引く,,draw,7,Inspiration,霊感,Instant,プレイヤー１人を対象とする。そのプレイヤーはカードを２枚引く。,Target player draws two cards.,2,
 カードを2枚引く,,draw,8,Alhammarret's Archive,アルハマレットの書庫,Legendary Artifact,"あなたがライフを得るなら、代わりにあなたはその２倍の点数のライフを得る。
 あなたがあなたの各ドロー・ステップで引く１枚目のカードでないカード１枚を引くなら、代わりにカード２枚を引く。","If you would gain life, you gain twice that much life instead.
 If you would draw a card except the first one you draw in each of your draw steps, draw two cards instead.",1,
 カードを2枚引く,,draw,9,Divination,予言,Sorcery,カードを２枚引く。,Draw two cards.,2,
-カードを2枚引く,,draw,10,Teachings of the Archaics,アルカイックの教え,Sorcery — Lesson,対戦相手１人の手札にあるカードがあなたより多いなら、あなたはカード２枚を引く。対戦相手１人の手札にあるカードがあなたより４枚以上多いなら、代わりにカード３枚を引く。,"If an opponent has more cards in hand than you, draw two cards. Draw three cards instead if an opponent has at least four more cards in hand than you.",1,
+カードを2枚引く,,draw,10,Teachings of the Archaics,アルカイックの教え,Sorcery — Lesson,対戦相手１人の手札にあるカードがあなたより多いなら、あなたはカード２枚を引く。対戦相手１人の手札にあるカードがあなたより４枚以上多いなら、代わりにカード３枚を引く。,"If an opponent has more cards in hand than you, draw two cards. Draw three cards instead if an opponent has at least four more cards in hand than you.",2,2026-07-23 朝 本人裁定 1→2「どう考えても2」＝条件が唱える時点の公開情報（手札枚数比較）で確定できる＝実質確定・隠れ情報への賭け（Predict）とは別（補足b 精密化・日英同点）
 手札補充できる青いカード,,draw,1,The One Ring,一つの指輪,Legendary Artifact,"破壊不能
 一つの指輪が戦場に出たとき、あなたがこれを唱えていた場合、次のあなたのターンまで、あなたはプロテクション（すべて）を得る。
 あなたのアップキープの開始時に、一つの指輪の上にある重荷カウンター１個につき１点のライフを失う。
@@ -920,7 +920,7 @@ draw two cards,,bilingual,1,Careful Study,入念な研究,Sorcery,,"Draw two car
 draw two cards,,bilingual,2,Truce,休戦,Instant,,"Each player may draw up to two cards. For each card less than two a player draws this way, that player gains 2 life.",2,
 draw two cards,,bilingual,3,Words of Wisdom,金言,Instant,,"You draw two cards, then each other player draws a card.",2,
 draw two cards,,bilingual,4,Dual-Sun Technique,双（そう）陽（よう）の妙（みょう）技（ぎ）,Instant,,"Target creature you control gains double strike until end of turn. If it has a +1/+1 counter on it, draw a card.",,
-draw two cards,,bilingual,5,Temporary Truce,一時休戦,Sorcery,,"Each player may draw up to two cards. For each card less than two a player draws this way, that player gains 2 life.",1,
+draw two cards,,bilingual,5,Temporary Truce,一時休戦,Sorcery,,"Each player may draw up to two cards. For each card less than two a player draws this way, that player gains 2 life.",2,2026-07-23 日英そろえ（カードを2枚引く側=2 と同一カード・R14補足a の軸で統一・本人GO）
 draw two cards,,bilingual,6,Divination,予言,Sorcery,カードを２枚引く。,Draw two cards.,2,
 draw two cards,,bilingual,7,Catalog,目録,Instant,カードを２枚引き、その後カード１枚を捨てる。,"Draw two cards, then discard a card.",2,
 draw two cards,,bilingual,8,Bazaar of Baghdad,,Land,,"{T}: Draw two cards, then discard three cards.",2,
@@ -1054,18 +1054,18 @@ Draw a card.",2,
 • Counter target spell unless its controller pays {2}.
 • Destroy target enchantment.
 • Target creature has base power and toughness 5/5 until end of turn.",2,
-条件付きカウンター呪文,,counter,1,Fold into Aether,霊気への折り込み,Instant,呪文１つを対象とし、それを打ち消す。そうした場合、その呪文のコントローラーは自分の手札にあるクリーチャー・カードを１枚場に出してもよい。,"Counter target spell. If that spell is countered this way, its controller may put a creature card from their hand onto the battlefield.",2,
-条件付きカウンター呪文,,counter,3,Countermand,撤回命令,Instant,呪文１つを対象とし、それを打ち消す。それのコントローラーは自分のライブラリーの一番上から４枚のカードを自分の墓地に置く。,Counter target spell. Its controller mills four cards.,1,
+条件付きカウンター呪文,,counter,1,Fold into Aether,霊気への折り込み,Instant,呪文１つを対象とし、それを打ち消す。そうした場合、その呪文のコントローラーは自分の手札にあるクリーチャー・カードを１枚場に出してもよい。,"Counter target spell. If that spell is countered this way, its controller may put a creature card from their hand onto the battlefield.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
+条件付きカウンター呪文,,counter,3,Countermand,撤回命令,Instant,呪文１つを対象とし、それを打ち消す。それのコントローラーは自分のライブラリーの一番上から４枚のカードを自分の墓地に置く。,Counter target spell. Its controller mills four cards.,,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=1）
 条件付きカウンター呪文,,counter,4,Dispelling Exhale,払拭の吐息,Instant,"この呪文を唱えるための追加コストとして、ドラゴンの後見を受けてもよい。（あなたがコントロールしているドラゴン１体を選ぶか、あなたの手札にあるドラゴン・カード１枚を公開してもよい。）
 呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。ドラゴンの後見を受けていたなら、代わりに、それのコントローラーが{4}を支払わないかぎり、それを打ち消す。","As an additional cost to cast this spell, you may behold a Dragon. (You may choose a Dragon you control or reveal a Dragon card from your hand.)
-Counter target spell unless its controller pays {2}. If a Dragon was beheld, counter that spell unless its controller pays {4} instead.",2,
+Counter target spell unless its controller pays {2}. If a Dragon was beheld, counter that spell unless its controller pays {4} instead.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
 条件付きカウンター呪文,,counter,7,Last Word,最後の言葉,Instant,"最後の言葉は呪文や能力によって打ち消されない。
 呪文１つを対象とし、それを打ち消す。","This spell can't be countered.
-Counter target spell.",1,
+Counter target spell.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=1）
 条件付きカウンター呪文,,counter,8,Keep Safe,安全維持,Instant,"あなたがコントロールしているパーマネントを対象としている呪文１つを対象とし、それを打ち消す。
 カードを１枚引く。","Counter target spell that targets a permanent you control.
-Draw a card.",2,
-条件付きカウンター呪文,,counter,10,Hinder,邪魔,Instant,呪文１つを対象とする。それを打ち消す。これによりその呪文が打ち消されたなら、そのカードをオーナーの墓地に置く代わりにそのプレイヤーのライブラリーの一番上か一番下に置く。,"Counter target spell. If that spell is countered this way, put that card on your choice of the top or bottom of its owner's library instead of into that player's graveyard.",1,
+Draw a card.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
+条件付きカウンター呪文,,counter,10,Hinder,邪魔,Instant,呪文１つを対象とする。それを打ち消す。これによりその呪文が打ち消されたなら、そのカードをオーナーの墓地に置く代わりにそのプレイヤーのライブラリーの一番上か一番下に置く。,"Counter target spell. If that spell is countered this way, put that card on your choice of the top or bottom of its owner's library instead of into that player's graveyard.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=1）
 最強の単体除去,,removal,3,Dark Endurance,闇（やみ）の苦（く）難（なん）,Instant,,"This spell costs {1} less to cast if it targets a blocking creature.
 Target creature gets +2/+0 and gains indestructible until end of turn. (Damage and effects that say ""destroy"" don't destroy it.)",0,
 最強の単体除去,,removal,5,Waste Away,やつれ,Instant,,"As an additional cost to cast this spell, discard a card.
@@ -1121,12 +1121,12 @@ Destroy target creature.",2,
 Draw two cards.",2,
 カードを2枚引く,,draw,2,Winternight Stories,冬夜の物語,Sorcery,"カード３枚を引く。その後、あなたがクリーチャー・カード１枚を捨てないかぎり、カード２枚を捨てる。
 調和{4}{U}","Draw three cards. Then discard two cards unless you discard a creature card.
-Harmonize {4}{U} (You may cast this card from your graveyard for its harmonize cost. You may tap a creature you control to reduce that cost by {X}, where X is its power. Then exile this spell.)",1,
+Harmonize {4}{U} (You may cast this card from your graveyard for its harmonize cost. You may tap a creature you control to reduce that cost by {X}, where X is its power. Then exile this spell.)",2,2026-07-23 旧1掃除 1→2（R14本則: 確定 Draw N はルーター/ETB/条件緩和付きでも満たす・R3 で discard・コスト減点なし・本人裁定「旧採点の1が根っこ」）
 カードを2枚引く,,draw,4,Planar Gate,,Artifact,,Creature spells you cast cost {2} less to cast.,0,
 カードを2枚引く,,draw,7,Mental Modulation,精（せい）神（しん）調（ちょう）節（せつ）,Instant,,"This spell costs {1} less to cast during your turn.
 Tap target artifact or creature.
 Draw a card.",0,
-カードを2枚引く,,draw,8,Ill-Timed Explosion,間の悪い爆発,Sorcery,カード２枚を引く。その後、カード２枚を捨ててもよい。そうしたとき、間の悪い爆発は各クリーチャーにそれぞれＸ点のダメージを与える。Ｘは、これにより捨てられたカードの中のマナ総量の最大値に等しい。,"Draw two cards. Then you may discard two cards. When you do, Ill-Timed Explosion deals X damage to each creature, where X is the greatest mana value among cards discarded this way.",1,
+カードを2枚引く,,draw,8,Ill-Timed Explosion,間の悪い爆発,Sorcery,カード２枚を引く。その後、カード２枚を捨ててもよい。そうしたとき、間の悪い爆発は各クリーチャーにそれぞれＸ点のダメージを与える。Ｘは、これにより捨てられたカードの中のマナ総量の最大値に等しい。,"Draw two cards. Then you may discard two cards. When you do, Ill-Timed Explosion deals X damage to each creature, where X is the greatest mana value among cards discarded this way.",2,2026-07-23 旧1掃除 1→2（R14本則: 確定 Draw N はルーター/ETB/条件緩和付きでも満たす・R3 で discard・コスト減点なし・本人裁定「旧採点の1が根っこ」）
 カードを2枚引く,,draw,9,Steamcore Scholar,蒸気核の学者,Creature — Weird Detective,"飛行、警戒
 蒸気核の学者が戦場に出たとき、カード２枚を引く。その後、あなたがインスタントやソーサリーであるカード１枚か飛行を持つクリーチャー・カード１枚を捨てないかぎり、カード２枚を捨てる。","Flying, vigilance
 When this creature enters, draw two cards. Then discard two cards unless you discard an instant or sorcery card or a creature card with flying.",2,
@@ -1149,22 +1149,22 @@ Landfall — Whenever a land you control enters, this creature gets +1/+0 until 
 When this creature enters, create a Lander token. At the beginning of the end step on your next turn, sacrifice that token. (It's an artifact with ""{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle."")",0,
 ドローしながらフィルタリングできるカード,,draw,8,Biotech Specialist,生体工学の専（せん）門（もん）家（か）,Creature — Insect Scientist,,"When this creature enters, create a Lander token. (It's an artifact with ""{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle."")
 Whenever you sacrifice an artifact, this creature deals 2 damage to target opponent.",0,
-インスタントでドローできるカード,,draw,1,Words of Wisdom,金言,Instant,,"You draw two cards, then each other player draws a card.",1,
+インスタントでドローできるカード,,draw,1,Words of Wisdom,金言,Instant,,"You draw two cards, then each other player draws a card.",2,2026-07-23 sweep 1→2（本人裁定「実用的でないという理由の1が間違い」＝R3一般化・0枚になり得る状態依存も引く行為があれば満たす・対称も減点しない・R14補足a）
 インスタントでドローできるカード,,draw,2,Wheel and Deal,権謀術数,Instant,,"Any number of target opponents each discard their hands, then draw seven cards.
-Draw a card.",1,
-インスタントでドローできるカード,,draw,3,Sudden Insight,突然の洞察,Instant,あなたの墓地にあり土地でないカードの中のマナ総量の種類数に等しい枚数のカードを引く。,Draw a card for each different mana value among nonland cards in your graveyard.,1,
-インスタントでドローできるカード,,draw,4,Catalog,目録,Instant,カードを２枚引き、その後カード１枚を捨てる。,"Draw two cards, then discard a card.",1,
-インスタントでドローできるカード,,draw,5,Heartwarming Redemption,心温まる贖罪,Instant,あなたの手札にあるカードをすべて捨て、その後その枚数に１を足した枚数のカードを引く。あなたはあなたの手札にあるカードの枚数に等しい点数のライフを得る。,"Discard all the cards in your hand, then draw that many cards plus one. You gain life equal to the number of cards in your hand.",1,
+Draw a card.",2,2026-07-23 sweep 1→2（本人裁定「実用的でないという理由の1が間違い」＝R3一般化・0枚になり得る状態依存も引く行為があれば満たす・対称も減点しない・R14補足a）
+インスタントでドローできるカード,,draw,3,Sudden Insight,突然の洞察,Instant,あなたの墓地にあり土地でないカードの中のマナ総量の種類数に等しい枚数のカードを引く。,Draw a card for each different mana value among nonland cards in your graveyard.,2,2026-07-23 sweep 1→2（本人裁定「実用的でないという理由の1が間違い」＝R3一般化・0枚になり得る状態依存も引く行為があれば満たす・対称も減点しない・R14補足a）
+インスタントでドローできるカード,,draw,4,Catalog,目録,Instant,カードを２枚引き、その後カード１枚を捨てる。,"Draw two cards, then discard a card.",2,2026-07-23 sweep 1→2（本人裁定「実用的でないという理由の1が間違い」＝R3一般化・0枚になり得る状態依存も引く行為があれば満たす・対称も減点しない・R14補足a）
+インスタントでドローできるカード,,draw,5,Heartwarming Redemption,心温まる贖罪,Instant,あなたの手札にあるカードをすべて捨て、その後その枚数に１を足した枚数のカードを引く。あなたはあなたの手札にあるカードの枚数に等しい点数のライフを得る。,"Discard all the cards in your hand, then draw that many cards plus one. You gain life equal to the number of cards in your hand.",2,2026-07-23 sweep 1→2（本人裁定「実用的でないという理由の1が間違い」＝R3一般化・0枚になり得る状態依存も引く行為があれば満たす・対称も減点しない・R14補足a）
 インスタントでドローできるカード,,draw,6,Refocus,再集中,Instant,"クリーチャー１体を対象とし、それをアンタップする。
 カードを１枚引く。","Untap target creature.
-Draw a card.",1,
-インスタントでドローできるカード,,draw,7,Thirst for Identity,個性の渇望,Instant,カード３枚を引く。その後、あなたがクリーチャー・カード１枚を捨てないかぎり、カード２枚を捨てる。,Draw three cards. Then discard two cards unless you discard a creature card.,1,
+Draw a card.",2,2026-07-23 sweep 1→2（本人裁定「実用的でないという理由の1が間違い」＝R3一般化・0枚になり得る状態依存も引く行為があれば満たす・対称も減点しない・R14補足a）
+インスタントでドローできるカード,,draw,7,Thirst for Identity,個性の渇望,Instant,カード３枚を引く。その後、あなたがクリーチャー・カード１枚を捨てないかぎり、カード２枚を捨てる。,Draw three cards. Then discard two cards unless you discard a creature card.,2,2026-07-23 sweep 1→2（本人裁定「実用的でないという理由の1が間違い」＝R3一般化・0枚になり得る状態依存も引く行為があれば満たす・対称も減点しない・R14補足a）
 インスタントでドローできるカード,,draw,8,Foreshadow,予兆,Instant,,"Choose a card name, then target opponent mills a card. If a card with the chosen name was milled this way, you draw a card.
-Draw a card at the beginning of the next turn's upkeep.",1,
-インスタントでドローできるカード,,draw,9,Practical Research,実践研究,Instant,カード４枚を引く。その後、あなたがインスタントかソーサリーであるカード１枚を捨てないかぎり、カード２枚を捨てる。,Draw four cards. Then discard two cards unless you discard an instant or sorcery card.,1,
+Draw a card at the beginning of the next turn's upkeep.",2,2026-07-23 sweep 1→2（本人裁定「実用的でないという理由の1が間違い」＝R3一般化・0枚になり得る状態依存も引く行為があれば満たす・対称も減点しない・R14補足a）
+インスタントでドローできるカード,,draw,9,Practical Research,実践研究,Instant,カード４枚を引く。その後、あなたがインスタントかソーサリーであるカード１枚を捨てないかぎり、カード２枚を捨てる。,Draw four cards. Then discard two cards unless you discard an instant or sorcery card.,2,2026-07-23 sweep 1→2（本人裁定「実用的でないという理由の1が間違い」＝R3一般化・0枚になり得る状態依存も引く行為があれば満たす・対称も減点しない・R14補足a）
 インスタントでドローできるカード,,draw,10,Pop Quiz,抜き打ち試験,Instant,"カード１枚を引く。
 履修を行う。（あなたは、ゲームの外部からあなたがオーナーである講義・カード１枚を公開しあなたの手札に加えるか、カード１枚を捨てカード１枚を引くか、どちらかを行ってもよい。）","Draw a card.
-Learn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",1,
+Learn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)",2,2026-07-23 sweep 1→2（本人裁定「実用的でないという理由の1が間違い」＝R3一般化・0枚になり得る状態依存も引く行為があれば満たす・対称も減点しない・R14補足a）
 飛行を持つクリーチャー,,keyword_creature,1,Combat Calligrapher,戦闘書家,Creature — Bird Cleric,"飛行
 すべての墨獣は、あなたやあなたがコントロールしているプレインズウォーカーを攻撃できない。
 プレイヤー１人があなたの対戦相手１人を攻撃するたび、その攻撃プレイヤーは、飛行を持つ白黒の２/１の墨獣・クリーチャー・トークン１体を、タップ状態かつその攻撃されたプレイヤーを攻撃している状態で生成する。","Flying
@@ -1429,9 +1429,9 @@ counter target spell,,bilingual,9,Keep Safe,安全維持,Instant,"あなたが�
 カードを１枚引く。","Counter target spell that targets a permanent you control.
 Draw a card.",1,
 draw two cards,,bilingual,2,Scrying Glass,占いの鏡,Artifact,,"{3}, {T}: Choose a number greater than 0 and a color. Target opponent reveals their hand. If that opponent reveals exactly the chosen number of cards of the chosen color, you draw a card.",1,
-draw two cards,,bilingual,5,Cut a Deal,取り引き,Sorcery,各対戦相手はそれぞれカード１枚を引く。その後、あなたはこれによりカードを引いた対戦相手１人につき１枚のカードを引く。,"Each opponent draws a card, then you draw a card for each opponent who drew a card this way.",2,
+draw two cards,,bilingual,5,Cut a Deal,取り引き,Sorcery,各対戦相手はそれぞれカード１枚を引く。その後、あなたはこれによりカードを引いた対戦相手１人につき１枚のカードを引く。,"Each opponent draws a card, then you draw a card for each opponent who drew a card this way.",1,2026-07-23 R14補足b: 相手が引いた数だけ＝1対1では1枚・盤面依存＝1（2→1・本人裁定）
 draw two cards,,bilingual,7,See Beyond,先読み,Sorcery,カードを２枚引き、その後あなたの手札にあるカードを１枚あなたのライブラリーに加えて切り直す。,"Draw two cards, then shuffle a card from your hand into your library.",2,
-draw two cards,,bilingual,9,Trade Secrets,企業秘密,Sorcery,対戦相手１人はカードを２枚引き、その後あなたはカードを最大４枚まで引く。 その対戦相手はこの手順を、そのプレイヤーが望む回数だけ繰り返してよい。,"Target opponent draws two cards, then you draw up to four cards. That opponent may repeat this process as many times as they choose.",1,
+draw two cards,,bilingual,9,Trade Secrets,企業秘密,Sorcery,対戦相手１人はカードを２枚引き、その後あなたはカードを最大４枚まで引く。 その対戦相手はこの手順を、そのプレイヤーが望む回数だけ繰り返してよい。,"Target opponent draws two cards, then you draw up to four cards. That opponent may repeat this process as many times as they choose.",2,2026-07-23 日英そろえ（カードを2枚引く側=2 と同一カード・R14補足a の軸で統一・本人GO）
 destroy target creature,,bilingual,4,Devastate,滅却,Sorcery,,Destroy target land. Devastate deals 1 damage to each creature and each player.,1,
 destroy target creature,,bilingual,6,Torch the Tower,塔の点火,Instant,"協約（この呪文を唱えるに際し、アーティファクトやエンチャントやトークンのうち１つを生け贄に捧げてもよい。）
 クリーチャーやプレインズウォーカーのうち１体を対象とする。塔の点火はそれに２点のダメージを与える。この呪文が協約されていたなら、代わりに、これはそのパーマネントに３点のダメージを与え、あなたは占術１を行う。
@@ -1525,7 +1525,7 @@ Destroy target creature.",2,本人sweep 1→2（R2'/補足a 2026-07-17）
 Draw two cards.",2,
 カードを2枚引く,,draw,7,Winged Words,翼ある言葉,Sorcery,"あなたが飛行を持つクリーチャーをコントロールしているなら、この呪文を唱えるためのコストは{1}少なくなる。
 カード２枚を引く。","This spell costs {1} less to cast if you control a creature with flying.
-Draw two cards.",1,
+Draw two cards.",2,2026-07-23 旧1掃除 1→2（R14本則: 確定 Draw N はルーター/ETB/条件緩和付きでも満たす・R3 で discard・コスト減点なし・本人裁定「旧採点の1が根っこ」）
 カードを2枚引く,,draw,9,Vibrating Sphere,,Artifact,,"During your turn, creatures you control get +2/+0.
 During turns other than yours, creatures you control get -0/-2.",0,
 手札補充できる青いカード,,draw,1,Well of Ideas,発想の井戸,Enchantment,"発想の井戸が戦場に出たとき、カードを２枚引く。
@@ -1558,12 +1558,12 @@ Flying
 Whenever Cyclonus deals combat damage to a player, convert it. If you do, there is an additional beginning phase after this phase. (The beginning phase includes the untap, upkeep, and draw steps.)",2,
 ドローしながらフィルタリングできるカード,,draw,10,Discerning Peddler,具眼の行商人,Creature — Human Rogue,具眼の行商人が戦場に出たとき、カード１枚を捨ててもよい。そうしたなら、カード１枚を引く。,"When this creature enters, you may discard a card. If you do, draw a card.",1,
 インスタントでドローできるカード,,draw,4,Mental Note,留意,Instant,カードを２枚切削する。 カードを１枚引く。,"Mill two cards.
-Draw a card.",1,
+Draw a card.",2,2026-07-23 sweep 1→2（本人裁定「実用的でないという理由の1が間違い」＝R3一般化・0枚になり得る状態依存も引く行為があれば満たす・対称も減点しない・R14補足a）
 インスタントでドローできるカード,,draw,7,Accumulated Knowledge,蓄積した知識,Instant,カードを１枚引き、その後、すべての墓地にある「蓄積した知識」という名前のカードの総数に等しい枚数のカードを引く。,"Draw a card, then draw cards equal to the number of cards named Accumulated Knowledge in all graveyards.",2,
-インスタントでドローできるカード,,draw,9,Refute,論破,Instant,呪文１つを対象とする。それを打ち消す。あなたはカード１枚を引き、その後、カード１枚を捨てる。,"Counter target spell. Draw a card, then discard a card.",1,
+インスタントでドローできるカード,,draw,9,Refute,論破,Instant,呪文１つを対象とする。それを打ち消す。あなたはカード１枚を引き、その後、カード１枚を捨てる。,"Counter target spell. Draw a card, then discard a card.",2,2026-07-23 sweep 1→2（本人裁定「実用的でないという理由の1が間違い」＝R3一般化・0枚になり得る状態依存も引く行為があれば満たす・対称も減点しない・R14補足a）
 インスタントでドローできるカード,,draw,10,Council's Deliberation,会議の末の熟慮,Instant,"カード１枚を引く。
 あなたが占術を行うたび、あなたが島をコントロールしている場合、あなたの墓地にある会議の末の熟慮を追放してもよい。そうしたなら、カード１枚を引く。","Draw a card.
-Whenever you scry, if you control an Island, you may exile this card from your graveyard. If you do, draw a card.",1,
+Whenever you scry, if you control an Island, you may exile this card from your graveyard. If you do, draw a card.",2,2026-07-23 sweep 1→2（本人裁定「実用的でないという理由の1が間違い」＝R3一般化・0枚になり得る状態依存も引く行為があれば満たす・対称も減点しない・R14補足a）
 飛行を持つクリーチャー,,keyword_creature,1,Quantum Riddler,量子の謎かけ屋,Creature — Sphinx,飛行 このクリーチャーが戦場に出たとき、カード１枚を引く。 あなたの手札にあるカードが１枚以下であるかぎり、あなたが１枚以上のカードを引くなら、代わりにその枚数に１を足した枚数のカードを引く。 ワープ(１)(青),"Flying
 When this creature enters, draw a card.
 As long as you have one or fewer cards in hand, if you would draw one or more cards, you draw that many cards plus one instead.
@@ -1693,9 +1693,9 @@ counter target spell,,bilingual,10,Last Word,最後の言葉,Instant,"最後の�
 呪文１つを対象とし、それを打ち消す。","This spell can't be countered.
 Counter target spell.",2,
 draw two cards,,bilingual,1,Preordain,定業,Sorcery,占術２を行う。その後、カード１枚を引く。,"Scry 2, then draw a card. (To scry 2, look at the top two cards of your library, then put any number of them on the bottom and the rest on top in any order.)",0,
-draw two cards,,bilingual,8,Slate of Ancestry,系図の石版,Artifact,"{4}, {T}, あなたの手札をすべて捨てる：あなたがコントロールするクリーチャー１体につきカードを１枚引く。","{4}, {T}, Discard your hand: Draw a card for each creature you control.",0,
-draw two cards,,bilingual,9,Sift,ふるい分け,Sorcery,カードを３枚引く。その後、カード１枚を捨てる。,"Draw three cards, then discard a card.",1,
-draw two cards,,bilingual,10,Prying Eyes,詮索の目,Instant,カードを４枚引き、その後カード２枚を捨てる。,"Draw four cards, then discard two cards.",1,
+draw two cards,,bilingual,8,Slate of Ancestry,系図の石版,Artifact,"{4}, {T}, あなたの手札をすべて捨てる：あなたがコントロールするクリーチャー１体につきカードを１枚引く。","{4}, {T}, Discard your hand: Draw a card for each creature you control.",1,2026-07-23 R14補足b: 起動型エンジン＝1（Sylvan と同族・0→1 整合是正）
+draw two cards,,bilingual,9,Sift,ふるい分け,Sorcery,カードを３枚引く。その後、カード１枚を捨てる。,"Draw three cards, then discard a card.",2,2026-07-23 旧1掃除 1→2（R14本則: 確定 Draw N はルーター/ETB/条件緩和付きでも満たす・R3 で discard・コスト減点なし・本人裁定「旧採点の1が根っこ」）
+draw two cards,,bilingual,10,Prying Eyes,詮索の目,Instant,カードを４枚引き、その後カード２枚を捨てる。,"Draw four cards, then discard two cards.",2,2026-07-23 旧1掃除 1→2（R14本則: 確定 Draw N はルーター/ETB/条件緩和付きでも満たす・R3 で discard・コスト減点なし・本人裁定「旧採点の1が根っこ」）
 destroy target creature,,bilingual,1,Eliminate,取り除き,Instant,マナ総量が３以下の、クリーチャー１体かプレインズウォーカー１体を対象とする。それを破壊する。,Destroy target creature or planeswalker with mana value 3 or less.,2,本人sweep 1→2（R2'/補足a 2026-07-17）
 destroy target creature,,bilingual,3,You Are Already Dead,お前はもう死んでいる,Instant,"このターンにダメージを受けたクリーチャー１体を対象とする。それを破壊する。
 カード１枚を引く。","Destroy target creature that was dealt damage this turn.
@@ -1721,7 +1721,7 @@ Whenever you attack with two or more creatures with flying, draw a card.",2,
 flying creature,,bilingual,10,Cartographer's Hawk,地図作りの鷹,Creature — Bird,"飛行
 地図作りの鷹が、土地をあなたよりも多くコントロールしているプレイヤー１人に戦闘ダメージを与えたとき、これをオーナーの手札に戻す。そうしたなら、「あなたのライブラリーから平地・カード１枚を探し、タップ状態で戦場に出す。その後、ライブラリーを切り直す。」を選んでもよい。","Flying
 When this creature deals combat damage to a player who controls more lands than you, return it to its owner's hand. If you do, you may search your library for a Plains card, put it onto the battlefield tapped, then shuffle.",2,生得キーワード=2（R9 mechanical・2026-07-05 sweep）
-条件付きカウンター呪文,,counter,10,Quench,火消し,Instant,呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。,Counter target spell unless its controller pays {2}.,2,
+条件付きカウンター呪文,,counter,10,Quench,火消し,Instant,呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。,Counter target spell unless its controller pays {2}.,,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
 クリーチャーを追放する除去,,removal,5,Wander Off,道に迷う,Instant,クリーチャー１体を対象とする。それを追放する。,Exile target creature.,1,
 クリーチャーを追放する除去,,removal,6,Dire Tactics,不吉な戦術,Instant,クリーチャー１体を対象とし、それを追放する。あなたが人間をコントロールしていないなら、あなたはそのクリーチャーのタフネスに等しい点数のライフを失う。,"Exile target creature. If you don't control a Human, you lose life equal to that creature's toughness.",2,
 クリーチャーを追放する除去,,removal,7,Second Thoughts,考え直し,Instant,"攻撃クリーチャー１体を対象とし、それを追放する。
@@ -1818,7 +1818,7 @@ Draw a card.",2,
 • Counter target creature or enchantment spell.
 • Return one or two target creatures and/or enchantments you own to your hand.",2,
 2マナ以下のカウンター呪文,,counter,10,Rebuff the Wicked,不愉快の拒絶,Instant,あなたがコントロールしているパーマネントを対象としている呪文１つを対象とし、それを打ち消す。,Counter target spell that targets a permanent you control.,2,
-条件付きカウンター呪文,,counter,9,Desertion,奪取,Instant,呪文１つを対象とし、それを打ち消す。これによりアーティファクト・呪文かクリーチャー・呪文が打ち消されたなら、そのカードをオーナーの墓地に置く代わりに、それをあなたのコントロール下で戦場に出す。,"Counter target spell. If an artifact or creature spell is countered this way, put that card onto the battlefield under your control instead of into its owner's graveyard.",1,
+条件付きカウンター呪文,,counter,9,Desertion,奪取,Instant,呪文１つを対象とし、それを打ち消す。これによりアーティファクト・呪文かクリーチャー・呪文が打ち消されたなら、そのカードをオーナーの墓地に置く代わりに、それをあなたのコントロール下で戦場に出す。,"Counter target spell. If an artifact or creature spell is countered this way, put that card onto the battlefield under your control instead of into its owner's graveyard.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=1）
 最強の単体除去,,removal,10,Eliminate the Competition,競争排除,Sorcery,"この呪文を唱えるための追加コストとして、クリーチャーＸ体を生け贄に捧げる。
 クリーチャーＸ体を対象とする。それらを破壊する。","As an additional cost to cast this spell, sacrifice X creatures.
 Destroy X target creatures.",1,
@@ -1838,7 +1838,7 @@ Flashback {1}{W} (You may cast this card from your graveyard for its flashback c
 カードを2枚引く,,draw,7,Fateful Handoff,運命的連携,Sorcery,アーティファクトやクリーチャーのうちあなたがコントロールしている１つを対象とする。それのマナ総量に等しい枚数のカードを引く。対戦相手１人はそのパーマネントのコントロールを得る。,Draw cards equal to the mana value of target artifact or creature you control. An opponent gains control of that permanent.,1,
 カードを2枚引く,,draw,9,Invasion of Alara // Awaken the Maelstrom,アラーラへの侵攻 // 大渦の目覚め,Battle — Siege // Sorcery,"アラーラへの侵攻が戦場に出たとき、あなたのライブラリーの一番上から、マナ総量が４点以下であり土地でないカード２枚が追放されるまで１枚ずつ追放していく。あなたはそれらのカード２枚のうち１枚を、マナ・コストを支払うことなく唱えてもよい。その中の１枚をあなたの手札に加える。その後、これにより追放されてそれらでないカードを、あなたのライブラリーの一番下に無作為の順番で置く。 // 大渦の目覚めはすべての色である。
 プレイヤー１人を対象とし、対戦相手１人がコントロールしているパーマネント１つを対象とする。その前者のプレイヤーはカード２枚を引く。あなたはあなたの手札にあるアーティファクト・カード１枚を戦場に出してもよい。あなたがコントロールしているパーマネント１つのコピーであるトークン１つを生成する。あなたがコントロールしているクリーチャー１体か２体か３体に、＋１/＋１カウンター３個を割り振って置く。その後者のパーマネントを破壊する。","When this Siege enters, exile cards from the top of your library until you exile two nonland cards with mana value 4 or less. You may cast one of those two cards without paying its mana cost. Put one of them into your hand. Then put the other cards exiled this way on the bottom of your library in a random order. // Awaken the Maelstrom is all colors.
-Target player draws two cards. You may put an artifact card from your hand onto the battlefield. Create a token that's a copy of a permanent you control. Distribute three +1/+1 counters among one, two, or three creatures you control. Destroy target permanent an opponent controls.",2,
+Target player draws two cards. You may put an artifact card from your hand onto the battlefield. Create a token that's a copy of a permanent you control. Distribute three +1/+1 counters among one, two, or three creatures you control. Destroy target permanent an opponent controls.",0,2026-07-23 口頭裁定 2→0（R14 問2: 衝動的ドローは引くでない・制定に伴う再採点）
 手札補充できる青いカード,,draw,4,Of One Mind,心を一つに,Sorcery,"あなたが人間・クリーチャーと人間でないクリーチャーをコントロールしているなら、この呪文を唱えるためのコストは{2}少なくなる。
 カードを２枚引く。","This spell costs {2} less to cast if you control a Human creature and a non-Human creature.
 Draw two cards.",2,
@@ -1884,9 +1884,9 @@ Whenever Mr. Foxglove attacks, draw cards equal to the number of cards in defend
 あなたが各ターン内のあなたの２枚目のカードを引くたび、各対戦相手はそれぞれ１点のライフを失い、あなたは１点のライフを得る。","Flying
 Whenever this creature enters or attacks, exile up to one target card from a graveyard. If a creature card is exiled this way, create a Clue token. (It's an artifact with ""{2}, Sacrifice this token: Draw a card."")
 Whenever you draw your second card each turn, each opponent loses 1 life and you gain 1 life.",1,
-インスタントでドローできるカード,,draw,7,Inspiration,霊感,Instant,プレイヤー１人を対象とする。そのプレイヤーはカードを２枚引く。,Target player draws two cards.,1,
+インスタントでドローできるカード,,draw,7,Inspiration,霊感,Instant,プレイヤー１人を対象とする。そのプレイヤーはカードを２枚引く。,Target player draws two cards.,2,2026-07-23 sweep 1→2（本人裁定「実用的でないという理由の1が間違い」＝R3一般化・0枚になり得る状態依存も引く行為があれば満たす・対称も減点しない・R14補足a）
 インスタントでドローできるカード,,draw,9,Burnout,,Instant,インスタント呪文１つを対象とする。それが青である場合、打ち消す。 次のターンのアップキープの開始時に、カードを１枚引く。,"Counter target instant spell if it's blue.
-Draw a card at the beginning of the next turn's upkeep.",1,
+Draw a card at the beginning of the next turn's upkeep.",2,2026-07-23 sweep 1→2（本人裁定「実用的でないという理由の1が間違い」＝R3一般化・0枚になり得る状態依存も引く行為があれば満たす・対称も減点しない・R14補足a）
 飛行を持つクリーチャー,,keyword_creature,8,Abhorrent Oculus,忌まわしき眼魔,Creature — Eye,"この呪文を唱えるための追加コストとして、あなたの墓地にあるカード６枚を追放する。
 飛行
 各対戦相手のアップキープの開始時に、あなたは戦慄予示する。（あなたのライブラリーの一番上にあるカード２枚を見る。それらのうち１枚を２/２のクリーチャーとして裏向きで戦場に出し、残りをあなたの墓地に置く。それがクリーチャー・カードなら、そのマナ・コストで、いつでも表向きにしてよい。）","As an additional cost to cast this spell, exile six cards from your graveyard.
@@ -2258,7 +2258,7 @@ Whenever you cast a permanent spell using mana produced by The Myriad Pools, up 
 {P} — Create a 1/1 white Rabbit creature token.
 {P}{P} — Exile target nonland permanent. Its controller draws a card.
 {P}{P}{P} — Return target permanent card with mana value 3 or less from your graveyard to the battlefield with an indestructible counter on it.",1,
-カードを2枚引く,,draw,24,Lat-Nam's Legacy,ラト=ナムの遺産,Instant,あなたの手札のカードを１枚、あなたのライブラリーに加えて切り直す。そうした場合、次のターンのアップキープの開始時にカードを２枚引く。,"Shuffle a card from your hand into your library. If you do, draw two cards at the beginning of the next turn's upkeep.",1,
+カードを2枚引く,,draw,24,Lat-Nam's Legacy,ラト=ナムの遺産,Instant,あなたの手札のカードを１枚、あなたのライブラリーに加えて切り直す。そうした場合、次のターンのアップキープの開始時にカードを２枚引く。,"Shuffle a card from your hand into your library. If you do, draw two cards at the beginning of the next turn's upkeep.",2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
 カードを2枚引く,,draw,25,Will of the Temur,ティムールの意志,Sorcery,"以下から１つを選ぶ。この呪文を唱えるに際し、あなたが統率者をコントロールしているなら、代わりに両方を選んでもよい。
 ・ パーマネント１つを対象とする。他のタイプに加えて４/４のドラゴン・クリーチャーであり飛行を持つことを除きそのパーマネントのコピーであるトークン１体を生成する。
 ・ プレイヤー１人を対象とする。そのプレイヤーはあなたがコントロールしているパーマネントのマナ総量の中の最大値に等しい枚数のカードを引く。","Choose one. If you control a commander as you cast this spell, you may choose both instead.
@@ -2723,71 +2723,71 @@ Counter target spell.",2,
 2マナ以下のカウンター呪文,,counter,37,Syncopate,中略,Instant,呪文１つを対象とする。それのコントローラーが{X}を支払わないかぎり、それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。,"Counter target spell unless its controller pays {X}. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",1,
 2マナ以下のカウンター呪文,,counter,38,Flash Counter,緊急阻止,Instant,インスタント呪文１つを対象とし、それを打ち消す。,Counter target instant spell.,2,
 2マナ以下のカウンター呪文,,counter,39,Countersquall,対抗突風,Instant,クリーチャーでない呪文１つを対象とし、それを打ち消す。それのコントローラーは２点のライフを失う。,Counter target noncreature spell. Its controller loses 2 life.,2,
-条件付きカウンター呪文,,counter,4,Vex,難題,Instant,呪文１つを対象とし、それを打ち消す。 その呪文のコントローラーは、カードを１枚引いてもよい。,Counter target spell. That spell's controller may draw a card.,1,
+条件付きカウンター呪文,,counter,4,Vex,難題,Instant,呪文１つを対象とし、それを打ち消す。 その呪文のコントローラーは、カードを１枚引いてもよい。,Counter target spell. That spell's controller may draw a card.,,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=1）
 条件付きカウンター呪文,,counter,5,Foil,撃退,Instant,"あなたはこの呪文のマナ・コストを支払うのではなく、島・カード１枚と他のカード１枚を捨ててもよい。
 呪文１つを対象とし、それを打ち消す。","You may discard an Island card and another card rather than pay this spell's mana cost.
-Counter target spell.",1,
-条件付きカウンター呪文,,counter,6,Counterlash,対抗激,Instant,呪文１つを対象とし、それを打ち消す。あなたはあなたの手札にある、その呪文と共通のカード・タイプを持つ土地でないカード１枚を、それのマナ・コストを支払うことなく唱えてもよい。,Counter target spell. You may cast a spell that shares a card type with it from your hand without paying its mana cost.,1,
-条件付きカウンター呪文,,counter,7,Convolute,巻き込み,Instant,呪文１つを対象とする。それのコントローラーが{4}を支払わないかぎり、それを打ち消す。,Counter target spell unless its controller pays {4}.,2,
-条件付きカウンター呪文,,counter,10,Overrule,棄却,Instant,呪文１つを対象とする。それのコントローラーが{X}を支払わないかぎり、それを打ち消す。 あなたはＸ点のライフを得る。,Counter target spell unless its controller pays {X}. You gain X life.,2,
+Counter target spell.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=1）
+条件付きカウンター呪文,,counter,6,Counterlash,対抗激,Instant,呪文１つを対象とし、それを打ち消す。あなたはあなたの手札にある、その呪文と共通のカード・タイプを持つ土地でないカード１枚を、それのマナ・コストを支払うことなく唱えてもよい。,Counter target spell. You may cast a spell that shares a card type with it from your hand without paying its mana cost.,,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=1）
+条件付きカウンター呪文,,counter,7,Convolute,巻き込み,Instant,呪文１つを対象とする。それのコントローラーが{4}を支払わないかぎり、それを打ち消す。,Counter target spell unless its controller pays {4}.,,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
+条件付きカウンター呪文,,counter,10,Overrule,棄却,Instant,呪文１つを対象とする。それのコントローラーが{X}を支払わないかぎり、それを打ち消す。 あなたはＸ点のライフを得る。,Counter target spell unless its controller pays {X}. You gain X life.,,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
 条件付きカウンター呪文,,counter,15,Contradict,否定,Instant,"呪文１つを対象とし、それを打ち消す。
 カードを１枚引く。","Counter target spell.
-Draw a card.",1,
-条件付きカウンター呪文,,counter,17,Override,踏みにじり,Instant,呪文１つを対象とする。それのコントローラーが、あなたがコントロールしているアーティファクト１つにつき{1}を支払わないかぎり、それを打ち消す。,Counter target spell unless its controller pays {1} for each artifact you control.,2,
+Draw a card.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=1）
+条件付きカウンター呪文,,counter,17,Override,踏みにじり,Instant,呪文１つを対象とする。それのコントローラーが、あなたがコントロールしているアーティファクト１つにつき{1}を支払わないかぎり、それを打ち消す。,Counter target spell unless its controller pays {1} for each artifact you control.,,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
 条件付きカウンター呪文,,counter,18,Complicate,紛糾,Instant,"呪文１つを対象とする。それのコントローラーが(３)を支払わないかぎり、それを打ち消す。 サイクリング(２)(青)（(２)(青),このカードを捨てる：カードを１枚引く。） あなたが紛糾をサイクリングしたとき、あなたは呪文１つを対象とし「それのコントローラーが(１)を支払わないかぎり、それを打ち消す」ことを選んでもよい。","Counter target spell unless its controller pays {3}.
 Cycling {2}{U} ({2}{U}, Discard this card: Draw a card.)
-When you cycle this card, you may counter target spell unless its controller pays {1}.",2,
+When you cycle this card, you may counter target spell unless its controller pays {1}.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
 条件付きカウンター呪文,,counter,21,Drown in the Loch,湖での水難,Instant,"以下から１つを選ぶ。
 ・マナ総量がそれのコントローラーの墓地にあるカードの枚数以下である呪文１つを対象とする。それを打ち消す。
 ・マナ総量がそれのコントローラーの墓地にあるカードの枚数以下であるクリーチャー１体を対象とする。それを破壊する。","Choose one —
 • Counter target spell with mana value less than or equal to the number of cards in its controller's graveyard.
-• Destroy target creature with mana value less than or equal to the number of cards in its controller's graveyard.",2,
+• Destroy target creature with mana value less than or equal to the number of cards in its controller's graveyard.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
 条件付きカウンター呪文,,counter,22,Arcane Denial,秘儀の否定,Instant,"呪文１つを対象とする。それを打ち消す。次のターンのアップキープの開始時に、それのコントローラーはカード最大２枚を引いてもよい。
 次のターンのアップキープの開始時に、あなたはカード１枚を引く。","Counter target spell. Its controller may draw up to two cards at the beginning of the next turn's upkeep.
-You draw a card at the beginning of the next turn's upkeep.",1,
+You draw a card at the beginning of the next turn's upkeep.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=1）
 条件付きカウンター呪文,,counter,23,Soul Read,魂読み,Instant,"以下から１つを選ぶ。
 ・呪文１つを対象とする。それのコントローラーが{4}を支払わないかぎり、それを打ち消す。
 ・カード２枚を引く。","Choose one —
 • Counter target spell unless its controller pays {4}.
-• Draw two cards.",2,
-条件付きカウンター呪文,,counter,24,Delay,遅延,Instant,呪文１つを対象とする。それを打ち消す。これによりそれが打ち消されたなら、それをオーナーの墓地に置く代わりに、それを時間カウンター３個が置かれた状態で追放する。それが待機を持っていないなら、それは待機を得る。（それのオーナーのアップキープの開始時に、そのカードの上から時間カウンター１個を取り除く。最後の１個が取り除かれたとき、そのプレイヤーはそれをマナ・コストを支払わずにプレイする。それがクリーチャーなら、それは速攻を持つ。）,"Counter target spell. If the spell is countered this way, exile it with three time counters on it instead of putting it into its owner's graveyard. If it doesn't have suspend, it gains suspend. (At the beginning of its owner's upkeep, they remove a time counter. When the last is removed, they may play it without paying its mana cost. If it's a creature, it has haste.)",2,
-条件付きカウンター呪文,,counter,25,Counterbore,呪文穿ち,Instant,呪文１つを対象とし、それを打ち消す。 それのコントローラーの墓地と手札とライブラリーから、その呪文と同じ名前を持つカードをすべて探し、それらをゲームから取り除く。 その後、そのプレイヤーは自分のライブラリーを切り直す。,"Counter target spell. Search its controller's graveyard, hand, and library for all cards with the same name as that spell and exile them. Then that player shuffles.",1,
+• Draw two cards.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
+条件付きカウンター呪文,,counter,24,Delay,遅延,Instant,呪文１つを対象とする。それを打ち消す。これによりそれが打ち消されたなら、それをオーナーの墓地に置く代わりに、それを時間カウンター３個が置かれた状態で追放する。それが待機を持っていないなら、それは待機を得る。（それのオーナーのアップキープの開始時に、そのカードの上から時間カウンター１個を取り除く。最後の１個が取り除かれたとき、そのプレイヤーはそれをマナ・コストを支払わずにプレイする。それがクリーチャーなら、それは速攻を持つ。）,"Counter target spell. If the spell is countered this way, exile it with three time counters on it instead of putting it into its owner's graveyard. If it doesn't have suspend, it gains suspend. (At the beginning of its owner's upkeep, they remove a time counter. When the last is removed, they may play it without paying its mana cost. If it's a creature, it has haste.)",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
+条件付きカウンター呪文,,counter,25,Counterbore,呪文穿ち,Instant,呪文１つを対象とし、それを打ち消す。 それのコントローラーの墓地と手札とライブラリーから、その呪文と同じ名前を持つカードをすべて探し、それらをゲームから取り除く。 その後、そのプレイヤーは自分のライブラリーを切り直す。,"Counter target spell. Search its controller's graveyard, hand, and library for all cards with the same name as that spell and exile them. Then that player shuffles.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=1）
 条件付きカウンター呪文,,counter,26,Archmage's Charm,大魔導師の魔除け,Instant,"以下から１つを選ぶ。
 ・呪文１つを対象とする。それを打ち消す。
 ・プレイヤー１人を対象とする。そのプレイヤーはカード２枚を引く。
 ・マナ総量が１以下であり土地でないパーマネント１つを対象とする。それのコントロールを得る。","Choose one —
 • Counter target spell.
 • Target player draws two cards.
-• Gain control of target nonland permanent with mana value 1 or less.",1,
+• Gain control of target nonland permanent with mana value 1 or less.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=1）
 条件付きカウンター呪文,,counter,28,Logic Knot,論理の結び目,Instant,"探査（この呪文を唱える段階であなたがあなたの墓地から追放した各カードは、{1}を支払う。）
 呪文１つを対象とする。それのコントローラーが{X}を支払わないかぎり、それを打ち消す。","Delve (Each card you exile from your graveyard while casting this spell pays for {1}.)
-Counter target spell unless its controller pays {X}.",2,
+Counter target spell unless its controller pays {X}.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
 条件付きカウンター呪文,,counter,29,Quandrix Charm,クアンドリクスの魔除け,Instant,"以下から１つを選ぶ。
 ・呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。
 ・エンチャント１つを対象とする。それを破壊する。
 ・クリーチャー１体を対象とする。ターン終了時まで、それの基本のパワーとタフネスは５/５である。","Choose one —
 • Counter target spell unless its controller pays {2}.
 • Destroy target enchantment.
-• Target creature has base power and toughness 5/5 until end of turn.",2,
-条件付きカウンター呪文,,counter,31,Minamo's Meddling,水面院の翻弄,Instant,呪文１つを対象とし、それを打ち消す。 その呪文のコントローラーは手札を公開し、その呪文に連繋されているカードと同じ名前のカードをすべて捨てる。,"Counter target spell. That spell's controller reveals their hand, then discards each card with the same name as a card spliced onto that spell.",1,
+• Target creature has base power and toughness 5/5 until end of turn.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
+条件付きカウンター呪文,,counter,31,Minamo's Meddling,水面院の翻弄,Instant,呪文１つを対象とし、それを打ち消す。 その呪文のコントローラーは手札を公開し、その呪文に連繋されているカードと同じ名前のカードをすべて捨てる。,"Counter target spell. That spell's controller reveals their hand, then discards each card with the same name as a card spliced onto that spell.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=1）
 条件付きカウンター呪文,,counter,34,Deprive,剥奪,Instant,"剥奪を唱えるための追加コストとして、あなたがコントロールする土地１つをオーナーの手札に戻す。
 呪文１つを対象とし、それを打ち消す。","As an additional cost to cast this spell, return a land you control to its owner's hand.
-Counter target spell.",1,
+Counter target spell.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=1）
 条件付きカウンター呪文,,counter,36,Get Out,今のうちに出よう,Instant,"以下から１つを選ぶ。
 ・エンチャントやクリーチャーである呪文１つを対象とする。それを打ち消す。
 ・あなたがオーナーでありエンチャントやクリーチャーである１つか２つを対象とする。それらをあなたの手札に戻す。","Choose one —
 • Counter target creature or enchantment spell.
-• Return one or two target creatures and/or enchantments you own to your hand.",2,
-条件付きカウンター呪文,,counter,37,Reject,却下,Instant,クリーチャーかプレインズウォーカーである呪文１つを対象とする。それのコントローラーが{3}を支払わないかぎり、それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。,"Counter target creature or planeswalker spell unless its controller pays {3}. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",2,
+• Return one or two target creatures and/or enchantments you own to your hand.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
+条件付きカウンター呪文,,counter,37,Reject,却下,Instant,クリーチャーかプレインズウォーカーである呪文１つを対象とする。それのコントローラーが{3}を支払わないかぎり、それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。,"Counter target creature or planeswalker spell unless its controller pays {3}. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
 条件付きカウンター呪文,,counter,38,Change the Equation,方程式の改変,Instant,"以下から１つを選ぶ。
 ・マナ総量が２以下である呪文１つを対象とする。それを打ち消す。
 ・マナ総量が６以下であり赤や緑である呪文１つを対象とする。それを打ち消す。","Choose one —
 • Counter target spell with mana value 2 or less.
-• Counter target red or green spell with mana value 6 or less.",2,
+• Counter target red or green spell with mana value 6 or less.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
 条件付きカウンター呪文,,counter,39,Lookout's Dispersal,見張りによる消散,Instant,"あなたが海賊をコントロールしているなら、この呪文を唱えるためのコストは{1}少なくなる。
 呪文１つを対象とする。それのコントローラーが{4}を支払わないかぎり、それを打ち消す。","This spell costs {1} less to cast if you control a Pirate.
-Counter target spell unless its controller pays {4}.",2,
-条件付きカウンター呪文,,counter,40,Spelljack,呪文乗っ取り,Instant,呪文１つを対象とし、それを打ち消す。その呪文がこれにより打ち消された場合、それをオーナーの墓地に置く代わりに追放する。それが追放され続けているかぎり、あなたはそのマナ・コストを支払うことなくプレイしてもよい。（そのマナ・コストにＸが含まれている場合、Ｘは０である。）,"Counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard. You may play it without paying its mana cost for as long as it remains exiled. (If it has X in its mana cost, X is 0.)",1,
+Counter target spell unless its controller pays {4}.",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=2）
+条件付きカウンター呪文,,counter,40,Spelljack,呪文乗っ取り,Instant,呪文１つを対象とし、それを打ち消す。その呪文がこれにより打ち消された場合、それをオーナーの墓地に置く代わりに追放する。それが追放され続けているかぎり、あなたはそのマナ・コストを支払うことなくプレイしてもよい。（そのマナ・コストにＸが含まれている場合、Ｘは０である。）,"Counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard. You may play it without paying its mana cost for as long as it remains exiled. (If it has X in its mana cost, X is 0.)",,｜退役2026-07-19（偽ペルソナ・確定カウンターへ置換・旧grade=1）
 最強の単体除去,,removal,1,Make Disappear,かき消し,Instant,"犠牲１（あなたがこの呪文を唱えるに際し、あなたはパワーが１以上であるクリーチャー１体を生け贄に捧げてもよい。そうしたとき、この呪文をコピーし、あなたはそのコピーの新しい対象を選んでもよい。）
 呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。","Casualty 1 (As you cast this spell, you may sacrifice a creature with power 1 or greater. When you do, copy this spell and you may choose a new target for the copy.)
 Counter target spell unless its controller pays {2}.",0,
@@ -3600,7 +3600,7 @@ Draw a card.",2,
 インスタントでドローできるカード,,draw,6,Dream Fracture,夢の破れ目,Instant,"呪文１つを対象とする。それを打ち消す。それのコントローラーはカード１枚を引く。
 あなたはカード１枚を引く。","Counter target spell. Its controller draws a card.
 Draw a card.",2,
-インスタントでドローできるカード,,draw,9,Inspiring Call,鼓舞する呼び声,Instant,あなたがコントロールしていて＋１/＋１カウンターが置かれているクリーチャー１体につき１枚のカードを引く。ターン終了時まで、それらのクリーチャーは破壊不能を得る。（ダメージや「破壊」と書かれた効果では、それらは破壊されない。）,"Draw a card for each creature you control with a +1/+1 counter on it. Those creatures gain indestructible until end of turn. (Damage and effects that say ""destroy"" don't destroy them.)",1,
+インスタントでドローできるカード,,draw,9,Inspiring Call,鼓舞する呼び声,Instant,あなたがコントロールしていて＋１/＋１カウンターが置かれているクリーチャー１体につき１枚のカードを引く。ターン終了時まで、それらのクリーチャーは破壊不能を得る。（ダメージや「破壊」と書かれた効果では、それらは破壊されない。）,"Draw a card for each creature you control with a +1/+1 counter on it. Those creatures gain indestructible until end of turn. (Damage and effects that say ""destroy"" don't destroy them.)",2,2026-07-23 sweep 1→2（本人裁定「実用的でないという理由の1が間違い」＝R3一般化・0枚になり得る状態依存も引く行為があれば満たす・対称も減点しない・R14補足a）
 インスタントでドローできるカード,,draw,10,Decaying Time Loop,減衰するタイムループ,Instant,"あなたの手札にあるすべてのカードを捨て、その後、その枚数に等しい枚数のカードを引く。
 回顧（あなたはあなたの墓地にあるこのカードを、他のコストの支払いに加えて土地・カード１枚を捨てることで唱えてもよい。）","Discard all the cards in your hand, then draw that many cards.
 Retrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)",2,
@@ -4682,3 +4682,301 @@ Flashback—Sacrifice a Mountain. (You may cast this card from your graveyard fo
 パウパーの単体除去,pauper,removal_regrade_r2p,40,Tithing Blade // Consuming Sepulcher,税血の刃 // 貪る墓所,Artifact // Artifact,"税血の刃が戦場に出たとき、各対戦相手はそれぞれクリーチャー１体を生け贄に捧げる。
 クリーチャーで作製{4}{B} （{4}{B}, このアーティファクトを追放する, あなたがコントロールしているクリーチャーやあなたの墓地にあるクリーチャー・カードである１つを追放する：このカードをオーナーのコントロール下で変身させた状態で戻す。作製はソーサリーとしてのみ行う。） // あなたのアップキープの開始時に、各対戦相手はそれぞれ１点のライフを失い、あなたは１点のライフを得る。","When this artifact enters, each opponent sacrifices a creature of their choice.
 Craft with creature {4}{B} ({4}{B}, Exile this artifact, Exile a creature you control or a creature card from your graveyard: Return this card transformed under its owner's control. Craft only as a sorcery.) // At the beginning of your upkeep, each opponent loses 1 life and you gain 1 life.",1,機械採点:R2' 1（本人GO 2026-07-17・提案埋め）
+確定カウンター呪文,,counter_kakutei,1,Logic Knot,論理の結び目,Instant,"探査（この呪文を唱える段階であなたがあなたの墓地から追放した各カードは、{1}を支払う。）
+呪文１つを対象とする。それのコントローラーが{X}を支払わないかぎり、それを打ち消す。","Delve (Each card you exile from your graveyard while casting this spell pays for {1}.)
+Counter target spell unless its controller pays {X}.",1,機械提案:1（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,2,Sublime Epiphany,崇高な天啓,Instant,"以下から１つ以上を選ぶ。
+・呪文１つを対象とする。それを打ち消す。
+・起動型か誘発型である能力１つを対象とする。それを打ち消す。
+・土地でないパーマネント１つを対象とする。それをオーナーの手札に戻す。
+・あなたがコントロールしているクリーチャー１体を対象とする。それのコピーであるトークン１体を生成する。
+・プレイヤー１人を対象とする。そのプレイヤーはカード１枚を引く。","Choose one or more —
+• Counter target spell.
+• Counter target activated or triggered ability.
+• Return target nonland permanent to its owner's hand.
+• Create a token that's a copy of target creature you control.
+• Target player draws a card.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,3,Get Out,今のうちに出よう,Instant,"以下から１つを選ぶ。
+・エンチャントやクリーチャーである呪文１つを対象とする。それを打ち消す。
+・あなたがオーナーでありエンチャントやクリーチャーである１つか２つを対象とする。それらをあなたの手札に戻す。","Choose one —
+• Counter target creature or enchantment spell.
+• Return one or two target creatures and/or enchantments you own to your hand.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,4,Counterspell,対抗呪文,Instant,呪文１つを対象とする。それを打ち消す。,Counter target spell.,2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,5,Make Disappear,かき消し,Instant,"犠牲１（あなたがこの呪文を唱えるに際し、あなたはパワーが１以上であるクリーチャー１体を生け贄に捧げてもよい。そうしたとき、この呪文をコピーし、あなたはそのコピーの新しい対象を選んでもよい。）
+呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。","Casualty 1 (As you cast this spell, you may sacrifice a creature with power 1 or greater. When you do, copy this spell and you may choose a new target for the copy.)
+Counter target spell unless its controller pays {2}.",1,機械提案:1（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,6,Spell Pierce,呪文貫き,Instant,クリーチャーでない呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。,Counter target noncreature spell unless its controller pays {2}.,1,機械提案:1（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,7,No More Lies,喝破,Instant,呪文１つを対象とする。それのコントローラーが{3}を支払わないかぎり、それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。,"Counter target spell unless its controller pays {3}. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",1,機械提案:1（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,8,Change the Equation,方程式の改変,Instant,"以下から１つを選ぶ。
+・マナ総量が２以下である呪文１つを対象とする。それを打ち消す。
+・マナ総量が６以下であり赤や緑である呪文１つを対象とする。それを打ち消す。","Choose one —
+• Counter target spell with mana value 2 or less.
+• Counter target red or green spell with mana value 6 or less.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,9,Daze,目くらまし,Instant,"この呪文のマナ・コストを支払うのではなく、あなたがコントロールしている島１つをオーナーの手札に戻してもよい。
+呪文１つを対象とする。それのコントローラーが{1}を支払わないかぎり、それを打ち消す。","You may return an Island you control to its owner's hand rather than pay this spell's mana cost.
+Counter target spell unless its controller pays {1}.",1,機械提案:1（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,10,Dovin's Veto,ドビンの拒否権,Instant,"この呪文は打ち消されない。
+クリーチャーでない呪文１つを対象とする。それを打ち消す。","This spell can't be countered.
+Counter target noncreature spell.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,11,Force of Will,意志の力,Instant,"この呪文のマナ・コストを支払うのではなく、「１点のライフを支払い、あなたの手札にある青のカード１枚を追放する。」を選んでもよい。
+呪文１つを対象とする。それを打ち消す。","You may pay 1 life and exile a blue card from your hand rather than pay this spell's mana cost.
+Counter target spell.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,12,Force of Negation,否定の力,Instant,"あなたのターンでないなら、この呪文のマナ・コストを支払うのではなく、あなたの手札にある青のカード１枚を追放してもよい。
+クリーチャーでない呪文１つを対象とする。それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。","If it's not your turn, you may exile a blue card from your hand rather than pay this spell's mana cost.
+Counter target noncreature spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,13,Archmage's Charm,大魔導師の魔除け,Instant,"以下から１つを選ぶ。
+・呪文１つを対象とする。それを打ち消す。
+・プレイヤー１人を対象とする。そのプレイヤーはカード２枚を引く。
+・マナ総量が１以下であり土地でないパーマネント１つを対象とする。それのコントロールを得る。","Choose one —
+• Counter target spell.
+• Target player draws two cards.
+• Gain control of target nonland permanent with mana value 1 or less.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,14,Dispelling Exhale,払拭の吐息,Instant,"この呪文を唱えるための追加コストとして、ドラゴンの後見を受けてもよい。（あなたがコントロールしているドラゴン１体を選ぶか、あなたの手札にあるドラゴン・カード１枚を公開してもよい。）
+呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。ドラゴンの後見を受けていたなら、代わりに、それのコントローラーが{4}を支払わないかぎり、それを打ち消す。","As an additional cost to cast this spell, you may behold a Dragon. (You may choose a Dragon you control or reveal a Dragon card from your hand.)
+Counter target spell unless its controller pays {2}. If a Dragon was beheld, counter that spell unless its controller pays {4} instead.",1,機械提案:1（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,15,Quandrix Charm,クアンドリクスの魔除け,Instant,"以下から１つを選ぶ。
+・呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。
+・エンチャント１つを対象とする。それを破壊する。
+・クリーチャー１体を対象とする。ターン終了時まで、それの基本のパワーとタフネスは５/５である。","Choose one —
+• Counter target spell unless its controller pays {2}.
+• Destroy target enchantment.
+• Target creature has base power and toughness 5/5 until end of turn.",1,機械提案:1（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,16,Drown in the Loch,湖での水難,Instant,"以下から１つを選ぶ。
+・マナ総量がそれのコントローラーの墓地にあるカードの枚数以下である呪文１つを対象とする。それを打ち消す。
+・マナ総量がそれのコントローラーの墓地にあるカードの枚数以下であるクリーチャー１体を対象とする。それを破壊する。","Choose one —
+• Counter target spell with mana value less than or equal to the number of cards in its controller's graveyard.
+• Destroy target creature with mana value less than or equal to the number of cards in its controller's graveyard.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,17,Delay,遅延,Instant,呪文１つを対象とする。それを打ち消す。これによりそれが打ち消されたなら、それをオーナーの墓地に置く代わりに、それを時間カウンター３個が置かれた状態で追放する。それが待機を持っていないなら、それは待機を得る。（それのオーナーのアップキープの開始時に、そのカードの上から時間カウンター１個を取り除く。最後の１個が取り除かれたとき、そのプレイヤーはそれをマナ・コストを支払わずにプレイする。それがクリーチャーなら、それは速攻を持つ。）,"Counter target spell. If the spell is countered this way, exile it with three time counters on it instead of putting it into its owner's graveyard. If it doesn't have suspend, it gains suspend. (At the beginning of its owner's upkeep, they remove a time counter. When the last is removed, they may play it without paying its mana cost. If it's a creature, it has haste.)",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,18,Minamo's Meddling,水面院の翻弄,Instant,呪文１つを対象とし、それを打ち消す。 その呪文のコントローラーは手札を公開し、その呪文に連繋されているカードと同じ名前のカードをすべて捨てる。,"Counter target spell. That spell's controller reveals their hand, then discards each card with the same name as a card spliced onto that spell.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,19,Reject,却下,Instant,クリーチャーかプレインズウォーカーである呪文１つを対象とする。それのコントローラーが{3}を支払わないかぎり、それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。,"Counter target creature or planeswalker spell unless its controller pays {3}. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",1,機械提案:1（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,20,Desertion,奪取,Instant,呪文１つを対象とし、それを打ち消す。これによりアーティファクト・呪文かクリーチャー・呪文が打ち消されたなら、そのカードをオーナーの墓地に置く代わりに、それをあなたのコントロール下で戦場に出す。,"Counter target spell. If an artifact or creature spell is countered this way, put that card onto the battlefield under your control instead of into its owner's graveyard.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,21,Fold into Aether,霊気への折り込み,Instant,呪文１つを対象とし、それを打ち消す。そうした場合、その呪文のコントローラーは自分の手札にあるクリーチャー・カードを１枚場に出してもよい。,"Counter target spell. If that spell is countered this way, its controller may put a creature card from their hand onto the battlefield.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,22,Hinder,邪魔,Instant,呪文１つを対象とする。それを打ち消す。これによりその呪文が打ち消されたなら、そのカードをオーナーの墓地に置く代わりにそのプレイヤーのライブラリーの一番上か一番下に置く。,"Counter target spell. If that spell is countered this way, put that card on your choice of the top or bottom of its owner's library instead of into that player's graveyard.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,23,Override,踏みにじり,Instant,呪文１つを対象とする。それのコントローラーが、あなたがコントロールしているアーティファクト１つにつき{1}を支払わないかぎり、それを打ち消す。,Counter target spell unless its controller pays {1} for each artifact you control.,1,機械提案:1（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,24,Contradict,否定,Instant,"呪文１つを対象とし、それを打ち消す。
+カードを１枚引く。","Counter target spell.
+Draw a card.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,25,Quandrix Command,クアンドリクスの命令,Instant,"以下から２つを選ぶ。
+• クリーチャーやプレインズウォーカーのうち１体を対象とする。それをオーナーの手札に戻す。
+• アーティファクトやエンチャントである呪文１つを対象とする。それを打ち消す。
+• クリーチャー１体を対象とする。それの上に＋１/＋１カウンター２個を置く。
+• プレイヤー１人を対象とし、そのプレイヤーの墓地にあるカード最大３枚を対象とする。そのプレイヤーは、それらのカードをライブラリーに加えて切り直す。","Choose two —
+• Return target creature or planeswalker to its owner's hand.
+• Counter target artifact or enchantment spell.
+• Put two +1/+1 counters on target creature.
+• Target player shuffles up to three target cards from their graveyard into their library.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,26,Countermand,撤回命令,Instant,呪文１つを対象とし、それを打ち消す。それのコントローラーは自分のライブラリーの一番上から４枚のカードを自分の墓地に置く。,Counter target spell. Its controller mills four cards.,2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,27,Convolute,巻き込み,Instant,呪文１つを対象とする。それのコントローラーが{4}を支払わないかぎり、それを打ち消す。,Counter target spell unless its controller pays {4}.,1,機械提案:1（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,28,Deprive,剥奪,Instant,"剥奪を唱えるための追加コストとして、あなたがコントロールする土地１つをオーナーの手札に戻す。
+呪文１つを対象とし、それを打ち消す。","As an additional cost to cast this spell, return a land you control to its owner's hand.
+Counter target spell.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,29,Soul Read,魂読み,Instant,"以下から１つを選ぶ。
+・呪文１つを対象とする。それのコントローラーが{4}を支払わないかぎり、それを打ち消す。
+・カード２枚を引く。","Choose one —
+• Counter target spell unless its controller pays {4}.
+• Draw two cards.",1,機械提案:1（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,30,Foil,撃退,Instant,"あなたはこの呪文のマナ・コストを支払うのではなく、島・カード１枚と他のカード１枚を捨ててもよい。
+呪文１つを対象とし、それを打ち消す。","You may discard an Island card and another card rather than pay this spell's mana cost.
+Counter target spell.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,31,Arcane Denial,秘儀の否定,Instant,"呪文１つを対象とする。それを打ち消す。次のターンのアップキープの開始時に、それのコントローラーはカード最大２枚を引いてもよい。
+次のターンのアップキープの開始時に、あなたはカード１枚を引く。","Counter target spell. Its controller may draw up to two cards at the beginning of the next turn's upkeep.
+You draw a card at the beginning of the next turn's upkeep.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,32,Last Word,最後の言葉,Instant,"最後の言葉は呪文や能力によって打ち消されない。
+呪文１つを対象とし、それを打ち消す。","This spell can't be countered.
+Counter target spell.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,33,Quench,火消し,Instant,呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。,Counter target spell unless its controller pays {2}.,1,機械提案:1（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,34,Spelljack,呪文乗っ取り,Instant,呪文１つを対象とし、それを打ち消す。その呪文がこれにより打ち消された場合、それをオーナーの墓地に置く代わりに追放する。それが追放され続けているかぎり、あなたはそのマナ・コストを支払うことなくプレイしてもよい。（そのマナ・コストにＸが含まれている場合、Ｘは０である。）,"Counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard. You may play it without paying its mana cost for as long as it remains exiled. (If it has X in its mana cost, X is 0.)",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,35,Overrule,棄却,Instant,呪文１つを対象とする。それのコントローラーが{X}を支払わないかぎり、それを打ち消す。 あなたはＸ点のライフを得る。,Counter target spell unless its controller pays {X}. You gain X life.,1,機械提案:1（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,36,Complicate,紛糾,Instant,"呪文１つを対象とする。それのコントローラーが(３)を支払わないかぎり、それを打ち消す。 サイクリング(２)(青)（(２)(青),このカードを捨てる：カードを１枚引く。） あなたが紛糾をサイクリングしたとき、あなたは呪文１つを対象とし「それのコントローラーが(１)を支払わないかぎり、それを打ち消す」ことを選んでもよい。","Counter target spell unless its controller pays {3}.
+Cycling {2}{U} ({2}{U}, Discard this card: Draw a card.)
+When you cycle this card, you may counter target spell unless its controller pays {1}.",1,機械提案:1（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,37,Counterlash,対抗激,Instant,呪文１つを対象とし、それを打ち消す。あなたはあなたの手札にある、その呪文と共通のカード・タイプを持つ土地でないカード１枚を、それのマナ・コストを支払うことなく唱えてもよい。,Counter target spell. You may cast a spell that shares a card type with it from your hand without paying its mana cost.,2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,38,Keep Safe,安全維持,Instant,"あなたがコントロールしているパーマネントを対象としている呪文１つを対象とし、それを打ち消す。
+カードを１枚引く。","Counter target spell that targets a permanent you control.
+Draw a card.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,39,Lookout's Dispersal,見張りによる消散,Instant,"あなたが海賊をコントロールしているなら、この呪文を唱えるためのコストは{1}少なくなる。
+呪文１つを対象とする。それのコントローラーが{4}を支払わないかぎり、それを打ち消す。","This spell costs {1} less to cast if you control a Pirate.
+Counter target spell unless its controller pays {4}.",1,機械提案:1（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,40,Vex,難題,Instant,呪文１つを対象とし、それを打ち消す。 その呪文のコントローラーは、カードを１枚引いてもよい。,Counter target spell. That spell's controller may draw a card.,2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,41,Counterbore,呪文穿ち,Instant,呪文１つを対象とし、それを打ち消す。 それのコントローラーの墓地と手札とライブラリーから、その呪文と同じ名前を持つカードをすべて探し、それらをゲームから取り除く。 その後、そのプレイヤーは自分のライブラリーを切り直す。,"Counter target spell. Search its controller's graveyard, hand, and library for all cards with the same name as that spell and exile them. Then that player shuffles.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,42,Spell Snare,呪文嵌め,Instant,マナ総量が２である呪文１つを対象とする。それを打ち消す。,Counter target spell with mana value 2.,2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,43,Subtlety,緻密,Creature — Elemental Incarnation,"瞬速
+飛行
+緻密が戦場に出たとき、クリーチャー・呪文かプレインズウォーカー・呪文、最大１つを対象とする。それのオーナーはそれを自分のライブラリーの一番上か一番下に置く。
+想起―あなたの手札から青のカード１枚を追放する。","Flash
+Flying
+When this creature enters, choose up to one target creature spell or planeswalker spell. Its owner puts it on their choice of the top or bottom of their library.
+Evoke—Exile a blue card from your hand.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,44,Jeskai Revelation,ジェスカイの啓示,Instant,呪文やパーマネントである１つを対象とし、１つを対象とする。その前者をオーナーの手札に戻す。ジェスカイの啓示はその後者に４点のダメージを与える。あなたは果敢を持つ白の１/１のモンク・クリーチャー・トークン２体を生成し、カード２枚を引き、４点のライフを得る。,Return target spell or permanent to its owner's hand. Jeskai Revelation deals 4 damage to any target. Create two 1/1 white Monk creature tokens with prowess. Draw two cards. You gain 4 life.,2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,45,Three Steps Ahead,三歩先,Instant,"放題
+＋ {1}{U} ― 呪文１つを対象とする。それを打ち消す。
+＋ {3} ― あなたがコントロールしていてアーティファクトやクリーチャーである１つを対象とする。それのコピーであるトークン１つを生成する。
+＋ {2} ― カード２枚を引く。その後、カード１枚を捨てる。","Spree (Choose one or more additional costs.)
++ {1}{U} — Counter target spell.
++ {3} — Create a token that's a copy of target artifact or creature you control.
++ {2} — Draw two cards, then discard a card.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,46,Consign to Memory,記憶への放逐,Instant,"複製{1}（あなたがこの呪文を唱えたとき、あなたが複製コストを支払った回数１回につき１回、これをコピーする。それらのコピーの新しい対象を選んでもよい。）
+誘発型能力か無色の呪文である１つを対象とする。それを打ち消す。","Replicate {1} (When you cast this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.)
+Counter target triggered ability or colorless spell.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,47,Pyroblast,紅蓮破,Instant,"以下から１つを選ぶ。
+• 呪文１つを対象とする。それが青なら、それを打ち消す。
+• パーマネント１つを対象とする。それが青なら、それを破壊する。","Choose one —
+• Counter target spell if it's blue.
+• Destroy target permanent if it's blue.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,48,Negate,否認,Instant,クリーチャーでない呪文１つを対象とする。それを打ち消す。,Counter target noncreature spell.,2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,49,Aven Interrupter,エイヴンの阻む者,Creature — Bird Rogue,"瞬速
+飛行
+エイヴンの阻む者が戦場に出たとき、呪文１つを対象とする。それを追放する。それは計画された状態になる。（後のターンに、それのオーナーはそれをソーサリーとしてマナ・コストを支払うことなく唱えてもよい。）
+対戦相手が墓地や追放領域から呪文を唱えるためのコストは{2}多くなる。","Flash
+Flying
+When this creature enters, exile target spell. It becomes plotted. (Its owner may cast it as a sorcery on a later turn without paying its mana cost.)
+Spells your opponents cast from graveyards or from exile cost {2} more to cast.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,50,Pact of Negation,否定の契約,Instant,"呪文１つを対象とする。それを打ち消す。
+あなたの次のアップキープの開始時に、{3}{U}{U}を支払う。そうしないなら、あなたはこのゲームに敗北する。","Counter target spell.
+At the beginning of your next upkeep, pay {3}{U}{U}. If you don't, you lose the game.",2,機械提案:2（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+確定カウンター呪文,,counter_kakutei,51,It'll Quench Ya!,飲めば潤う！,Instant — Lesson,呪文１つを対象とする。それのコントローラーが{2}を支払わないかぎり、それを打ち消す。,Counter target spell unless its controller pays {2}.,1,機械提案:1（確定線=soft でなければ 2・状態依存は死角＝目視）｜本人採点2026-07-18（機械提案と51枚全一致・類型分割 soft/scope 検証）
+2マナ以下のカウンター呪文,,counter,10,Arcane Denial,秘儀の否定,Instant,"呪文１つを対象とする。それを打ち消す。次のターンのアップキープの開始時に、それのコントローラーはカード最大２枚を引いてもよい。
+次のターンのアップキープの開始時に、あなたはカード１枚を引く。","Counter target spell. Its controller may draw up to two cards at the beginning of the next turn's upkeep.
+You draw a card at the beginning of the next turn's upkeep.",2,｜補充採点2026-07-19（スクレイプ増分の未採点）
+飛行を持つクリーチャー,,keyword_creature,10,Griselbrand,グリセルブランド,Legendary Creature — Demon,"飛行、絆魂
+７点のライフを支払う：カードを７枚引く。","Flying, lifelink
+Pay 7 life: Draw seven cards.",2,｜補充採点2026-07-19（スクレイプ増分の未採点）
+環境で強いクリーチャー,,abstract,10,"Tamiyo, Inquisitive Student // Tamiyo, Seasoned Scholar",知りたがりの学徒、タミヨウ // 老練の学匠、タミヨウ,Legendary Creature — Moonfolk Wizard // Legendary Planeswalker — Tamiyo,"飛行
+知りたがりの学徒、タミヨウが攻撃するたび、調査を行う。（手掛かり・トークン１つを生成する。それは「{2}, このアーティファクトを生け贄に捧げる：カード１枚を引く。」を持つアーティファクトである。）
+あなたが各ターン内のあなたの３枚目のカードを引いたとき、これを追放する。その後、これをオーナーのコントロール下で変身させた状態で戦場に戻す。 // +2：次のあなたのターンまで、クリーチャー１体があなたやあなたがコントロールしているプレインズウォーカー１体を攻撃するたび、ターン終了時まで、そのクリーチャーは－１/ー０の修整を受ける。
+-3：あなたの墓地にありインスタントやソーサリーであるカード１枚を対象とする。それをあなたの手札に戻す。それが緑のカードなら、好きな色１色のマナ１点を加える。
+-7：あなたのライブラリーにあるカードの枚数の端数を切り上げた半分に等しい枚数のカードを引く。あなたは「あなたの手札の上限はなくなる。」を持つ紋章を得る。","Flying
+Whenever Tamiyo attacks, investigate. (Create a Clue token. It's an artifact with ""{2}, Sacrifice this token: Draw a card."")
+When you draw your third card in a turn, exile Tamiyo, then return her to the battlefield transformed under her owner's control. // +2: Until your next turn, whenever a creature attacks you or a planeswalker you control, it gets -1/-0 until end of turn.
+−3: Return target instant or sorcery card from your graveyard to your hand. If it's a green card, add one mana of any color.
+−7: Draw cards equal to half the number of cards in your library, rounded up. You get an emblem with ""You have no maximum hand size.""",2,｜補充採点2026-07-19（スクレイプ増分の未採点）
+コンボに使えるカード,,abstract,9,Claim Jumper,乗っ取り屋,Creature — Rabbit Mercenary,"警戒
+このクリーチャーが戦場に出たとき、対戦相手１人があなたよりも多くの土地をコントロールしている場合、「あなたのライブラリーから平地・カード１枚を探し、タップ状態で戦場に出す。」を選んでもよい。その後、対戦相手１人があなたよりも多くの土地をコントロールしているなら、この手順をもう１回繰り返す。これによりあなたのライブラリーからカードを探したなら、ライブラリーを切り直す。","Vigilance
+When this creature enters, if an opponent controls more lands than you, you may search your library for a Plains card and put it onto the battlefield tapped. Then if an opponent controls more lands than you, repeat this process once. If you search your library this way, shuffle.",0,｜補充採点2026-07-19（スクレイプ増分の未採点）
+draw two cards,,bilingual,7,Astrolabe,,Artifact,,"{1}, {T}, Sacrifice this artifact: Add two mana of any one color. Draw a card at the beginning of the next turn's upkeep.",0,｜補充採点2026-07-19（スクレイプ増分の未採点）
+flying creature,,bilingual,7,Keen-Eyed Raven,,Creature — Bird,,"Flying (This creature can't be blocked except by creatures with flying or reach.)
+When this creature enters, put a +1/+1 counter on another target creature you control.",2,｜補充採点2026-07-19（スクレイプ増分の未採点）
+最強の単体除去,,removal,,Erode,浸食作用,Instant,クリーチャーやプレインズウォーカーである１体を対象とする。それを破壊する。それのコントローラーは「自分のライブラリーから基本土地・カード１枚を探し、タップ状態で戦場に出す。その後、ライブラリーを切り直す。」を選んでもよい。,"Destroy target creature or planeswalker. Its controller may search their library for a basic land card, put it onto the battlefield tapped, then shuffle.",2,口頭採点2026-07-19（スクレイプ増分・卒業クエリ未採点補充）
+最強の単体除去,,removal,,Bitter Triumph,苦々しい勝利,Instant,"この呪文を唱えるための追加コストとして、カード１枚を捨てるか、３点のライフを支払う。
+クリーチャーやプレインズウォーカーである１体を対象とする。それを破壊する。","As an additional cost to cast this spell, discard a card or pay 3 life.
+Destroy target creature or planeswalker.",2,口頭採点2026-07-19（スクレイプ増分・卒業クエリ未採点補充）
+スタンダードの単体除去,standard,removal,,Vibrant Outburst,鮮やかな迸り,Instant,１つを対象とし、クリーチャー最大１体を対象とする。鮮やかな迸りはその前者に３点のダメージを与える。その後者をタップする。,Vibrant Outburst deals 3 damage to any target. Tap up to one target creature.,1,口頭採点2026-07-19（スクレイプ増分・卒業クエリ未採点補充）
+2マナ以下のカウンター呪文,,counter,10,Mana Drain,マナ吸収,Instant,呪文１つを対象とする。それを打ち消す。次のあなたのメイン・フェイズの開始時に、その呪文のマナ総量に等しい点数の{C}を加える。,"Counter target spell. At the beginning of your next main phase, add an amount of {C} equal to that spell's mana value.",2,2026-07-23 口頭採点（機械提案一致）
+カードを2枚引く,,draw,10,Thirst for Identity,個性の渇望,Instant,カード３枚を引く。その後、あなたがクリーチャー・カード１枚を捨てないかぎり、カード２枚を捨てる。,Draw three cards. Then discard two cards unless you discard a creature card.,2,2026-07-23 口頭採点（機械提案一致・R14）
+インスタントでドローできるカード,,draw,7,Thoughtflare,思考閃光,Instant,カードを４枚引き、その後カードを２枚捨てる。,"Draw four cards, then discard two cards.",2,2026-07-23 口頭採点（機械提案一致・R14）
+接死を持つクリーチャー,,keyword_creature,10,Gifted Aetherborn,才気ある霊基体,Creature — Aetherborn Vampire,接死、絆魂,"Deathtouch, lifelink",2,2026-07-23 口頭採点（機械提案一致・R8補足a）
+速攻を持つクリーチャー,,keyword_creature,10,Reality Smasher,現実を砕くもの,Creature — Eldrazi,"（{C}は無色マナを表す。）
+トランプル、速攻
+現実を砕くものが対戦相手がコントロールする呪文１つの対象となるたび、その呪文のコントローラーがカードを１枚捨てないかぎりそれを打ち消す。","({C} represents colorless mana.)
+Trample, haste
+Whenever this creature becomes the target of a spell an opponent controls, counter that spell unless its controller discards a card.",2,2026-07-23 口頭採点（機械提案一致・R8補足a）
+環境で強いクリーチャー,,abstract,10,"Atraxa, Grand Unifier",偉大なる統一者、アトラクサ,Legendary Creature — Phyrexian Angel,"飛行、警戒、接死、絆魂
+これが戦場に出たとき、あなたのライブラリーの一番上にあるカード１０枚を公開する。各カード・タイプにつきそれぞれ、それらの公開されたカードの中からそのタイプであるカード１枚をあなたの手札に加えてもよい。残りをあなたのライブラリーの一番下に無作為の順番で置く。","Flying, vigilance, deathtouch, lifelink
+When Atraxa enters, reveal the top ten cards of your library. For each card type, you may put a card of that type from among the revealed cards into your hand. Put the rest on the bottom of your library in a random order. (Artifact, battle, creature, enchantment, instant, land, planeswalker, and sorcery are card types.)",2,2026-07-23 口頭採点（機械提案一致・R11 全5F採用）
+draw two cards,,bilingual,4,Sylvan Library,森の知恵,Enchantment,あなたのドロー・ステップの開始時に、あなたは追加でカード２枚を引いてもよい。そうしたなら、あなたの手札からこのターンに引いたカード２枚を選ぶ。それらの各カードにつきそれぞれ、４点のライフを支払うか、そのカードをあなたのライブラリーの一番上に置く。,"At the beginning of your draw step, you may draw two additional cards. If you do, choose two cards in your hand drawn this turn. For each of those cards, pay 4 life or put the card on top of your library.",2,2026-07-23 朝 本人追裁定 1→2「引いているので2」（戻しは後処理・引く行為は発生＝R14 行為ベースの筋・日英同点）
+draw two cards,,bilingual,5,Gush,噴出,Instant,"あなたは噴出のマナ・コストを支払うのではなく、あなたがコントロールする島を２つオーナーの手札に戻してもよい。
+カードを２枚引く。","You may return two Islands you control to their owner's hand rather than pay this spell's mana cost.
+Draw two cards.",2,2026-07-23 口頭採点（機械提案一致・R3 代替コスト不減点）
+draw two cards,,bilingual,9,Well of Ideas,発想の井戸,Enchantment,"発想の井戸が戦場に出たとき、カードを２枚引く。
+他の各プレイヤーのドロー・ステップの開始時に、そのプレイヤーはカードを追加で１枚引く。
+あなたのドロー・ステップの開始時に、カードを追加で２枚引く。","When this enchantment enters, draw two cards.
+At the beginning of each other player's draw step, that player draws an additional card.
+At the beginning of your draw step, draw two additional cards.",2,2026-07-23 口頭採点（機械提案一致・R8 ETB即時達成）
+モダンの単体除去,modern,removal,,Dismember,四肢切断,Instant,"（{B/P}は{B}でも２点のライフでも支払うことができる。）
+クリーチャー１体を対象とする。ターン終了時まで、それは－５/－５の修整を受ける。","({B/P} can be paid with either {B} or 2 life.)
+Target creature gets -5/-5 until end of turn.",2,2026-07-23 口頭採点（R2補足a: 対象を取る minus は機構不問で 2・税血錨）
+draw two cards,,draw,,Predict,予報,Instant,プレイヤー１人を対象とする。カード名１つを選ぶ。その後、そのプレイヤーは自分のライブラリーの一番上のカードを自分の墓地に置く。そのカードがその選ばれた名前を持っているなら、あなたはカードを２枚引く。そうでないなら、カードを１枚引く。,"Choose a card name, then target player mills a card. If a card with the chosen name was milled this way, you draw two cards. Otherwise, you draw a card.",1,2026-07-23 R14補足b: 条件依存（当てれば2・確定1）＝賭けは1
+draw two cards,,draw,,Inspiration,霊感,Instant,プレイヤー１人を対象とする。そのプレイヤーはカードを２枚引く。,Target player draws two cards.,2,2026-07-23 R14補足b: 対象に自分を選べば確実に2＝自己完結の選択・日英そろえ
+draw two cards,,draw,,Teachings of the Archaics,アルカイックの教え,Sorcery — Lesson,対戦相手１人の手札にあるカードがあなたより多いなら、あなたはカード２枚を引く。対戦相手１人の手札にあるカードがあなたより４枚以上多いなら、代わりにカード３枚を引く。,"If an opponent has more cards in hand than you, draw two cards. Draw three cards instead if an opponent has at least four more cards in hand than you.",2,2026-07-23 朝 本人裁定 1→2「どう考えても2」＝条件が唱える時点の公開情報（手札枚数比較）で確定できる＝実質確定・隠れ情報への賭け（Predict）とは別（補足b 精密化・日英同点）
+カードを2枚引く,,draw,,Ancestral Recall,祖先の回想,Instant,プレイヤー１人を対象とする。そのプレイヤーはカードを３枚引く。,Target player draws three cards.,2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+カードを2枚引く,,draw,,Treasure Cruise,宝船の巡航,Sorcery,"探査（この呪文を唱える段階であなたの墓地から追放した各カードはそれぞれ{1}を支払う。）
+カード３枚を引く。","Delve (Each card you exile from your graveyard while casting this spell pays for {1}.)
+Draw three cards.",2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+カードを2枚引く,,draw,,Lórien Revealed,ロリアンの発見,Sorcery,"カード３枚を引く。
+島サイクリング{1} （{1}, このカードを捨てる：あなたのライブラリーから島・カード１枚を探す。それを公開し、あなたの手札に加える。その後、ライブラリーを切り直す。）","Draw three cards.
+Islandcycling {1} ({1}, Discard this card: Search your library for an Island card, reveal it, put it into your hand, then shuffle.)",2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+カードを2枚引く,,draw,,Three Steps Ahead,三歩先,Instant,"放題
+＋ {1}{U} ― 呪文１つを対象とする。それを打ち消す。
+＋ {3} ― あなたがコントロールしていてアーティファクトやクリーチャーである１つを対象とする。それのコピーであるトークン１つを生成する。
+＋ {2} ― カード２枚を引く。その後、カード１枚を捨てる。","Spree (Choose one or more additional costs.)
++ {1}{U} — Counter target spell.
++ {3} — Create a token that's a copy of target artifact or creature you control.
++ {2} — Draw two cards, then discard a card.",2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+カードを2枚引く,,draw,,Jeskai Revelation,ジェスカイの啓示,Instant,呪文やパーマネントである１つを対象とし、１つを対象とする。その前者をオーナーの手札に戻す。ジェスカイの啓示はその後者に４点のダメージを与える。あなたは果敢を持つ白の１/１のモンク・クリーチャー・トークン２体を生成し、カード２枚を引き、４点のライフを得る。,Return target spell or permanent to its owner's hand. Jeskai Revelation deals 4 damage to any target. Create two 1/1 white Monk creature tokens with prowess. Draw two cards. You gain 4 life.,2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+カードを2枚引く,,draw,,Abandon Attachments,愛着を捨てる,Instant — Lesson,あなたはカード１枚を捨ててもよい。そうしたなら、カード２枚を引く。,"You may discard a card. If you do, draw two cards.",2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+カードを2枚引く,,draw,,Fable of the Mirror-Breaker // Reflection of Kiki-Jiki,鏡割りの寓話 // キキジキの鏡像,Enchantment — Saga // Enchantment Creature — Goblin Shaman,"（この英雄譚が出た際とあなたのドロー・ステップの後に、伝承カウンター１個を加える。）
+I — 「このクリーチャーが攻撃するたび、宝物・トークン１つを生成する。」を持つ赤の２/２のゴブリン・シャーマン・クリーチャー・トークン１体を生成する。
+II — あなたは最大２枚のカードを捨ててもよい。そうしたなら、その枚数に等しい枚数のカードを引く。
+III — この英雄譚を追放する。その後、これを変身させた状態であなたのコントロール下で戦場に戻す。 // {1}, {T}：あなたがコントロールしていてこれでも伝説でもないクリーチャー１体を対象とする。速攻を持つことを除きそれのコピーであるトークン１体を生成する。次の終了ステップの開始時に、それを生け贄に捧げる。","(As this Saga enters and after your draw step, add a lore counter.)
+I — Create a 2/2 red Goblin Shaman creature token with ""Whenever this token attacks, create a Treasure token.""
+II — You may discard up to two cards. If you do, draw that many cards.
+III — Exile this Saga, then return it to the battlefield transformed under your control. // {1}, {T}: Create a token that's a copy of another target nonlegendary creature you control, except it has haste. Sacrifice it at the beginning of the next end step.",2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+カードを2枚引く,,draw,,The One Ring,一つの指輪,Legendary Artifact,"破壊不能
+一つの指輪が戦場に出たとき、あなたがこれを唱えていた場合、次のあなたのターンまで、あなたはプロテクション（すべて）を得る。
+あなたのアップキープの開始時に、一つの指輪の上にある重荷カウンター１個につき１点のライフを失う。
+{T}：一つの指輪の上に重荷カウンター１個を置く。その後、一つの指輪の上にある重荷カウンター１個につき１枚のカードを引く。","Indestructible
+When The One Ring enters, if you cast it, you gain protection from everything until your next turn.
+At the beginning of your upkeep, you lose 1 life for each burden counter on The One Ring.
+{T}: Put a burden counter on The One Ring, then draw a card for each burden counter on The One Ring.",2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+カードを2枚引く,,draw,,Griselbrand,グリセルブランド,Legendary Creature — Demon,"飛行、絆魂
+７点のライフを支払う：カードを７枚引く。","Flying, lifelink
+Pay 7 life: Draw seven cards.",2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+カードを2枚引く,,draw,,"Kaito, Bane of Nightmares",悪夢滅ぼし、魁渡,Legendary Planeswalker — Kaito,"忍術{1}{U}{B}
+あなたのターンの間、これの上に１個以上の忠誠カウンターがあるかぎり、これは呪禁を持つ３/４の忍者・クリーチャーである。
++1：「あなたがコントロールしているすべての忍者は＋１/＋１の修整を受ける。」の紋章を得る。
+0：諜報２を行う。その後、このターンにライフを失った対戦相手１人につき１枚のカードを引く。
+-2：クリーチャー１体を対象とする。それをタップする。それの上に麻痺カウンター２個を置く。","Ninjutsu {1}{U}{B} ({1}{U}{B}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)
+During your turn, as long as Kaito has one or more loyalty counters on him, he's a 3/4 Ninja creature and has hexproof.
++1: You get an emblem with ""Ninjas you control get +1/+1.""
+0: Surveil 2. Then draw a card for each opponent who lost life this turn.
+−2: Tap target creature. Put two stun counters on it.",1,2026-07-23 口頭採点（R14補足b: 一回あたりN未満のPWエンジン=1・日英同点）
+draw two cards,,draw,,Brainstorm,渦まく知識,Instant,カード３枚を引く。その後、あなたの手札にあるカード２枚をあなたのライブラリーの一番上に望む順番で置く。,"Draw three cards, then put two cards from your hand on top of your library in any order.",2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+draw two cards,,draw,,Ancestral Recall,祖先の回想,Instant,プレイヤー１人を対象とする。そのプレイヤーはカードを３枚引く。,Target player draws three cards.,2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+draw two cards,,draw,,Treasure Cruise,宝船の巡航,Sorcery,"探査（この呪文を唱える段階であなたの墓地から追放した各カードはそれぞれ{1}を支払う。）
+カード３枚を引く。","Delve (Each card you exile from your graveyard while casting this spell pays for {1}.)
+Draw three cards.",2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+draw two cards,,draw,,Lórien Revealed,ロリアンの発見,Sorcery,"カード３枚を引く。
+島サイクリング{1} （{1}, このカードを捨てる：あなたのライブラリーから島・カード１枚を探す。それを公開し、あなたの手札に加える。その後、ライブラリーを切り直す。）","Draw three cards.
+Islandcycling {1} ({1}, Discard this card: Search your library for an Island card, reveal it, put it into your hand, then shuffle.)",2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+draw two cards,,draw,,Three Steps Ahead,三歩先,Instant,"放題
+＋ {1}{U} ― 呪文１つを対象とする。それを打ち消す。
+＋ {3} ― あなたがコントロールしていてアーティファクトやクリーチャーである１つを対象とする。それのコピーであるトークン１つを生成する。
+＋ {2} ― カード２枚を引く。その後、カード１枚を捨てる。","Spree (Choose one or more additional costs.)
++ {1}{U} — Counter target spell.
++ {3} — Create a token that's a copy of target artifact or creature you control.
++ {2} — Draw two cards, then discard a card.",2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+draw two cards,,draw,,Jeskai Revelation,ジェスカイの啓示,Instant,呪文やパーマネントである１つを対象とし、１つを対象とする。その前者をオーナーの手札に戻す。ジェスカイの啓示はその後者に４点のダメージを与える。あなたは果敢を持つ白の１/１のモンク・クリーチャー・トークン２体を生成し、カード２枚を引き、４点のライフを得る。,Return target spell or permanent to its owner's hand. Jeskai Revelation deals 4 damage to any target. Create two 1/1 white Monk creature tokens with prowess. Draw two cards. You gain 4 life.,2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+draw two cards,,draw,,Abandon Attachments,愛着を捨てる,Instant — Lesson,あなたはカード１枚を捨ててもよい。そうしたなら、カード２枚を引く。,"You may discard a card. If you do, draw two cards.",2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+draw two cards,,draw,,Fable of the Mirror-Breaker // Reflection of Kiki-Jiki,鏡割りの寓話 // キキジキの鏡像,Enchantment — Saga // Enchantment Creature — Goblin Shaman,"（この英雄譚が出た際とあなたのドロー・ステップの後に、伝承カウンター１個を加える。）
+I — 「このクリーチャーが攻撃するたび、宝物・トークン１つを生成する。」を持つ赤の２/２のゴブリン・シャーマン・クリーチャー・トークン１体を生成する。
+II — あなたは最大２枚のカードを捨ててもよい。そうしたなら、その枚数に等しい枚数のカードを引く。
+III — この英雄譚を追放する。その後、これを変身させた状態であなたのコントロール下で戦場に戻す。 // {1}, {T}：あなたがコントロールしていてこれでも伝説でもないクリーチャー１体を対象とする。速攻を持つことを除きそれのコピーであるトークン１体を生成する。次の終了ステップの開始時に、それを生け贄に捧げる。","(As this Saga enters and after your draw step, add a lore counter.)
+I — Create a 2/2 red Goblin Shaman creature token with ""Whenever this token attacks, create a Treasure token.""
+II — You may discard up to two cards. If you do, draw that many cards.
+III — Exile this Saga, then return it to the battlefield transformed under your control. // {1}, {T}: Create a token that's a copy of another target nonlegendary creature you control, except it has haste. Sacrifice it at the beginning of the next end step.",2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+draw two cards,,draw,,The One Ring,一つの指輪,Legendary Artifact,"破壊不能
+一つの指輪が戦場に出たとき、あなたがこれを唱えていた場合、次のあなたのターンまで、あなたはプロテクション（すべて）を得る。
+あなたのアップキープの開始時に、一つの指輪の上にある重荷カウンター１個につき１点のライフを失う。
+{T}：一つの指輪の上に重荷カウンター１個を置く。その後、一つの指輪の上にある重荷カウンター１個につき１枚のカードを引く。","Indestructible
+When The One Ring enters, if you cast it, you gain protection from everything until your next turn.
+At the beginning of your upkeep, you lose 1 life for each burden counter on The One Ring.
+{T}: Put a burden counter on The One Ring, then draw a card for each burden counter on The One Ring.",2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+draw two cards,,draw,,Griselbrand,グリセルブランド,Legendary Creature — Demon,"飛行、絆魂
+７点のライフを支払う：カードを７枚引く。","Flying, lifelink
+Pay 7 life: Draw seven cards.",2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+draw two cards,,draw,,Lat-Nam's Legacy,ラト=ナムの遺産,Instant,あなたの手札のカードを１枚、あなたのライブラリーに加えて切り直す。そうした場合、次のターンのアップキープの開始時にカードを２枚引く。,"Shuffle a card from your hand into your library. If you do, draw two cards at the beginning of the next turn's upkeep.",2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+draw two cards,,draw,,Faithless Looting,信仰無き物あさり,Sorcery,"カード２枚を引く。その後、カード２枚を捨てる。
+フラッシュバック{2R}（あなたの墓地にあるこのカードをフラッシュバック・コストで唱えてもよい。その後、これを追放する。）","Draw two cards, then discard two cards.
+Flashback {2}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+draw two cards,,draw,,Winternight Stories,冬夜の物語,Sorcery,"カード３枚を引く。その後、あなたがクリーチャー・カード１枚を捨てないかぎり、カード２枚を捨てる。
+調和{4}{U}","Draw three cards. Then discard two cards unless you discard a creature card.
+Harmonize {4}{U} (You may cast this card from your graveyard for its harmonize cost. You may tap a creature you control to reduce that cost by {X}, where X is its power. Then exile this spell.)",2,2026-07-23 口頭採点（R14補足b 追裁定: 一回の解決で確定N枚が手札に増える起動/章立ては2・日英同点）
+draw two cards,,draw,,"Kaito, Bane of Nightmares",悪夢滅ぼし、魁渡,Legendary Planeswalker — Kaito,"忍術{1}{U}{B}
+あなたのターンの間、これの上に１個以上の忠誠カウンターがあるかぎり、これは呪禁を持つ３/４の忍者・クリーチャーである。
++1：「あなたがコントロールしているすべての忍者は＋１/＋１の修整を受ける。」の紋章を得る。
+0：諜報２を行う。その後、このターンにライフを失った対戦相手１人につき１枚のカードを引く。
+-2：クリーチャー１体を対象とする。それをタップする。それの上に麻痺カウンター２個を置く。","Ninjutsu {1}{U}{B} ({1}{U}{B}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)
+During your turn, as long as Kaito has one or more loyalty counters on him, he's a 3/4 Ninja creature and has hexproof.
++1: You get an emblem with ""Ninjas you control get +1/+1.""
+0: Surveil 2. Then draw a card for each opponent who lost life this turn.
+−2: Tap target creature. Put two stun counters on it.",1,2026-07-23 口頭採点（R14補足b: 一回あたりN未満のPWエンジン=1・日英同点）
