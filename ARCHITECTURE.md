@@ -18,12 +18,12 @@ flowchart TB
     Direct --> DB1[("DB")] --> DirectOut["TOP-K 結果"]
     DirectOut --> DirectResp["即時応答"]
     Gate -->|"いいえ（意味の残余あり）"| GradGate{"検証終了クエリ?（レジストリ完全一致・決定的判定）"}
-    GradGate -->|"はい（除去 9 クエリ）"| RemDirect["除去直行路: 役割の SQL WHERE + 検証済みレシピ順（採用率 / 機能品質の合成・LLM 不使用）"]
+    GradGate -->|"はい（除去 9＋確定カウンター 1）"| RemDirect["検証終了直行路: 役割の SQL WHERE + 検証済みレシピ順（採用率 / 機能品質の合成・LLM 不使用）"]
     RemDirect --> DB8[("DB")] --> RemOut["TOP-K 結果"] --> DirectResp
     GradGate -->|"いいえ"| Router["LLM-as-Query-Router"]
     Router -->|JSON 出力| Validate["検証層: 数値幻覚ガード / 排他境界±1補正 / type_filter幻出ガード（LLMが提案・決定的コードが裁可）"]
     Validate --> Parsed["search_query + intent flags + type_filter(validated) + 数値/属性フィルタ + HyDE texts(en/ja)"]
-    Parsed --> Hard["SQL hard filters before search: cmc / face_cmcs / power / toughness / mana_producer / is_mana_boost / front_keywords(+NOT) / type_line / 部族 / カード名"]
+    Parsed --> Hard["SQL hard filters before search: cmc / face_cmcs / power / toughness / mana_producer / is_mana_boost / front_keywords(+NOT) / type_line / 部族 / カード名 / draw_count（ドロー枚数）"]
     Hard --> Search3["通常検索（3 系統）"]
     Hard --> HyDESearch["HyDE 検索（4 系統目）"]
     Search3 --> Vector["ベクトル検索 (pgvector HNSW)"]
@@ -78,6 +78,14 @@ flowchart TB
 ### 除去直行路（検証終了クエリの移行・2026-07-17）
 
 除去系のうち人手採点で検証を完了した 9 クエリ（例:「クリーチャーを追放する除去」「パウパーの単体除去」「最強の単体除去」）は、上記 5 系統と同じ位置の決定的ゲートで LLM ルーターごとスキップし、役割の構造化列による SQL WHERE ＋検証済みの並び規則（機能・フォーマット系=フォーマット別大会採用率順／「最強の〜」=採用率×機能品質〔討てる対象の幅・上限の有無・テンポ効率〕の合成順）で返す。発動は**検証済みクエリの一覧（卒業レジストリ・`removal_direct.py`）への完全一致のみ**——似たクエリへの汎化は検証を持たないため行わず、一致しなければ従来のハイブリッド経路に落ちる（誤発動=有害・取り逃し=無害の非対称設計。専用の安全試験 38 ケースで誤発動ゼロを担保）。検証成績はファミリー 9 クエリ平均 NDCG@10 0.987（[EVAL_SCORES.md](./EVAL_SCORES.md) 参照）。「クリーチャーを破壊する除去」だけはハイブリッド経路が上回ったため移行していない。
+
+### 確定カウンター直行路（2026-07-19）
+
+「確定カウンター呪文」（旧「条件付きカウンター呪文」を、実在の利用者が使う語彙へ置換した新クエリ）も同じ卒業レジストリ方式で直行する（`counter_direct.py`・完全一致のみ・安全試験 19 ケース）。並びは確定打ち消しの構造化判定＋フォーマット別大会採用率順。**並びの規則（レシピ）は除去と共有しない**——同じ「採用率順」でも、除去では機能品質の補正が効き、カウンターでは確定段の絞り込みが効く。「役割が違えばレシピが違う」ことを実測（レシピ相互適用の比較）で確認した上での分離。
+
+### ドロー枚数ゲート（採点規約 R14 の検索側・2026-07-23）
+
+枚数指定のドロークエリ（「カードを2枚引く」「draw two cards」等）では、oracle テキストの**命令形「Draw N card(s)」だけ**を数えた導出列 `draw_count`（可変枚数＝Draw X / that many / for each は `draw_x`）に対し、`draw_count >= N OR draw_x` の WHERE を候補生成の全系統（ベクトル / FTS / 強度腕 / HyDE 腕）へ掛ける（導出は `enrich_draw.py`）。パーサーは誘発の条件文（Whenever you draw ...）と置換文（If you would draw ...）に現れる draw を数えない——「破壊不能」カードが destroy の字面で除去クエリに浮いた問題のドロー版（『引いたとき』の報酬カードや『引く代わりに』の置換カードが、ドロー源の顔で上位に浮く）への対処。「手札補充」「フィルタリング」系クエリには掛けない（引かずに手札へ加える選別カードも正解に含む＝「補充」は「引く」より広い語、という人手採点の実測に基づく線引き）。効果は同一 DB 状態のゲート ON/OFF 対照走行で +0.011（draw two cards 0.394→0.798）・非ドロークエリの変動ゼロ（誤発動ゼロ）を実測。安全試験 87 ケースを併設（`test_draw_gate.py`）。
 
 ### LLM 出力の検証層（プロバイダ非依存）
 
@@ -370,7 +378,7 @@ LLM 呼び出し部はプロバイダ非依存に分離済みで（検証層は�
 
 ### 評価フレームワーク（標準指標・ルーター経路・決定的）
 
-recall@k / precision@k / MRR / NDCG@10 と 3 段階 relevance を扱う評価ハーネス。**クエリルーター経路を通した決定的な評価**で、各機能の寄与を同一条件の A/B で測定する（GT は 34 クエリ・1,532 採点ペア。正準の看板は従来比較可能な 30 クエリ平均で維持し、2026-07-17 新設の除去直行 4 クエリは「検証終了の床」として分母外で毎回測定・未ラベル混入率ほぼ 0% を維持する運用）。
+recall@k / precision@k / MRR / NDCG@10 と 3 段階 relevance を扱う評価ハーネス。**クエリルーター経路を通した決定的な評価**で、各機能の寄与を同一条件の A/B で測定する（GT は 34 クエリ・1,588 採点ペア。正準の看板は従来比較可能な 30 クエリ平均で維持し、2026-07-17 新設の除去直行 4 クエリは「検証終了の床」として分母外で毎回測定・未ラベル混入率ほぼ 0% を維持する運用）。
 
 構成要素の積み上げ（初期スタック）:
 

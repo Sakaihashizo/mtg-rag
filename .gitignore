@@ -69,3 +69,5 @@ removal_*pool* - *.csv
 # GT のマージ前バックアップ（世代別・ローカルのみ）
 *.premachine_bak_*
 *.preowner_sweep_bak_*
+counter_kakutei_pool_*.csv
+counter_direct_proto_*.py
