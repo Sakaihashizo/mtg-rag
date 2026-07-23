@@ -51,6 +51,9 @@ MODEL_REGISTRY = {
         "cards_table": "mtg_cards_v2",
         "embeddings_table": "mtg_embeddings_small_v2",
     },
+    # BASE_V2 は 2026-07-20 退役（一対比較 eval id=92 vs 93 でベクトル所有層の
+    # 全敗を確認・本人裁定）。テーブルは DROP 済み＝このキーの指定は実行時に落ちる。
+    # 復元: pg_restore -d rag_dev /mnt/new_hdd/db_archives/mtg_embeddings_base_v2_archive_20260720.dump
     "BASE_V2": {
         "model_name": "intfloat/multilingual-e5-base",
         "prefix": "query: ",

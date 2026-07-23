@@ -48,6 +48,8 @@ MODEL_CONFIGS = {
         "table_cards": "mtg_cards_v2",
         "table_embed": "mtg_embeddings_small_v2",
     },
+    # BASE_V2 は 2026-07-20 退役（テーブル DROP 済み・復元は
+    # /mnt/new_hdd/db_archives/ の pg_dump から）
     "BASE_V2": {
         "model_name": "intfloat/multilingual-e5-base",
         "prefix": "passage: ",

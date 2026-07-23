@@ -360,8 +360,13 @@ def check_status():
         cur.execute("SELECT COUNT(*) FROM mtg_embeddings_small_v2")
         small = cur.fetchone()[0]
 
-        cur.execute("SELECT COUNT(*) FROM mtg_embeddings_base_v2")
-        base = cur.fetchone()[0]
+        # BASE_V2 テーブルは退役済みのことがある（2026-07-20 DROP・
+        # アーカイブ /mnt/new_hdd/db_archives/）——存在するときだけ数える
+        cur.execute("SELECT to_regclass('mtg_embeddings_base_v2')")
+        base = None
+        if cur.fetchone()[0]:
+            cur.execute("SELECT COUNT(*) FROM mtg_embeddings_base_v2")
+            base = cur.fetchone()[0]
 
         cur.execute("""
             SELECT card_name, embed_text
@@ -373,7 +378,8 @@ def check_status():
     conn.close()
     print(f"mtg_cards_v2:              {total} 件")
     print(f"mtg_embeddings_small_v2:   {small} 件")
-    print(f"mtg_embeddings_base_v2:    {base} 件")
+    print(f"mtg_embeddings_base_v2:    "
+          f"{f'{base} 件' if base is not None else '—（退役 2026-07-20）'}")
     if row:
         print(f"\nCounterspell の embed_text:")
         print(f"  {row[1][:200]}")
