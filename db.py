@@ -81,6 +81,13 @@ class PsycopgDriver:
         import psycopg2
         from db_config import get_db_config
         self.conn = psycopg2.connect(**get_db_config())
+        # 読み取り主体のこのアプリでは autocommit=True にする（#29 恒久修正・
+        # 2026-07-18）。psycopg2 は既定 autocommit=False＝SELECT 一発で暗黙 BEGIN が
+        # 張られ、query() が commit/rollback しないため、持ち回し接続が
+        # 「idle in transaction」で ACCESS SHARE ロックを抱え続け ALTER/TRUNCATE/
+        # recompute と衝突していた。autocommit で暗黙トランザクションを開かせない
+        # （1 文ごと確定・execute() は単文なので一括ロールバック能力は不要＝副作用なし）。
+        self.conn.autocommit = True
 
     def query(self, sql: str, params=None) -> list[tuple]:
         try:
