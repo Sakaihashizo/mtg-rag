@@ -135,6 +135,12 @@ QUERY_EXPAND = {
     "ドロー":          {"en": "draw a card",            "ja": ["カードを引く"]},
     "2枚引く":         {"en": "draw two cards",         "ja": ["カードを２枚引く"]},
     "二枚引く":        {"en": "draw two cards",         "ja": ["カードを２枚引く"]},
+    # 英語定型キー（照合は substring なので言語不問。日本語キーだけだと素の英語
+    # クエリが辞書に掛からず FTS 展開ゼロ＝ベクトル一本腕で走る非対称があった
+    # ——「draw two cards」の en_fts:0/ja_fts:0 実測から発見・2026-07-23 是正）
+    "draw two cards":  {"en": "draw two cards",         "ja": ["カードを２枚引く"]},
+    "draw a card":     {"en": "draw a card",            "ja": ["カードを引く"]},
+    "draw cards":      {"en": "draw cards",             "ja": ["カードを引く"]},
     # 除去系
     # 「除去」= 対戦相手のパーマネントを戦場から別の領域に移動させること
     # 墓地のカードを追放する（歩く彫像の攪乱者等）は除去ではない
@@ -455,6 +461,63 @@ def neg_type_filter_sql(en_type) -> str:
     return (" AND EXISTS (SELECT 1 FROM"
             " unnest(COALESCE(c.face_types, ARRAY[c.type_line])) ft"
             f" WHERE ft NOT LIKE '%{en_type}%')")
+
+
+# ドロー枚数ゲート（R14「ドロー族＝行為ベース」2026-07-23 の検索側・決定的検出）。
+# 判定列は draw_count/draw_x（enrich_draw.py＝命令形 Draw N のみ数えた列）。
+# ルーターの写しでも主要トークン（N枚引く/ドロー/draw N cards）は保存される実測
+# （eval_router_cache 確認済み）なので、既存ゲート同様 gate_q（原文優先）を見る。
+_DRAW_EN_RE = re.compile(
+    r'\bdraw(?:s|ing)?\s+(a|an|one|two|three|four|five|six|seven|eight|nine|'
+    r'ten|\d+)\s+cards?\b', re.I)
+_DRAW_JA_N_RE = re.compile(r'([0-9０-９一二三四五六七八九十]+)\s*枚\s*(?:カードを?)?(?:引|ドロー)')
+# 「手札補充」は対象外（GT 実測 2026-07-23: 引かずに手札へ加える選別カード〔Narset・
+# Consult the Star Charts 型〕が正解に含まれる＝「補充」は「引く」より広い語）。
+# 「フィルタリング」等の選別文脈も対象外（R14 問3「選別は別クエリの担当」・
+# GT 実測で grade2 の過半が非ドローの選別カード）。
+_DRAW_JA_ANY_RE = re.compile(r'ドロー|カードを引')
+_DRAW_EXCLUDE_RE = re.compile(r'フィルタ|ルーティング|選別')
+_DRAW_NUM = {'a': 1, 'an': 1, 'one': 1, 'two': 2, 'three': 3, 'four': 4,
+             'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10}
+_JA_NUM = {'一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7,
+           '八': 8, '九': 9, '十': 10}
+
+
+def detect_draw_min(query: str):
+    """ドロー意図の決定的検出。最小 Draw 枚数 N(int) か None（不発）を返す。
+    枚数指定（「2枚引く」「draw two cards」）→ N、枚数なしのドロー語
+    （「ドロー」「カードを引く」）→ 1。誤発動ゼロが必須の非対称設計
+    （draw 語が無いクエリでは絶対に発動しない）。
+    DRAW_GATE=off で不発化（対照実験用・HNSW_SCAN と同じ流儀）。"""
+    if os.environ.get('DRAW_GATE') == 'off':
+        return None
+    q = query or ''
+    m = _DRAW_EN_RE.search(q)
+    if m:
+        w = m.group(1).lower()
+        return _DRAW_NUM.get(w) or int(w)
+    m = _DRAW_JA_N_RE.search(q)
+    if m:
+        w = m.group(1)
+        # 全角→半角→int、漢数字は辞書（十一以上の合成は枚数クエリに実在しない想定）
+        h = w.translate(str.maketrans('０１２３４５６７８９', '0123456789'))
+        if h.isdigit():
+            return int(h)
+        if w in _JA_NUM:
+            return _JA_NUM[w]
+    # 枚数なしのドロー語は選別文脈（フィルタリング等）では発動しない（上の定数の注記）
+    if _DRAW_JA_ANY_RE.search(q) and not _DRAW_EXCLUDE_RE.search(q):
+        return 1
+    return None
+
+
+def draw_filter_sql(n) -> str:
+    """ドロー枚数ゲートの SQL 断片。draw_count >= N（命令形の実ドロー）に加え、
+    draw_x（可変枚数＝X を N 以上で選べば引ける）も通す＝R14 モード裁定
+    「選択2枚でも2枚引けることはひける」の同族。全腕＋直行路に掛かる attr_sql 用。"""
+    if not n:
+        return ""
+    return f" AND (c.draw_count >= {int(n)} OR c.draw_x)"
 
 
 def extract_keywords(query: str) -> tuple[list[str], list[str], Optional[str], bool, bool, bool, list[str], list[str], bool]:
@@ -1839,6 +1902,12 @@ class MTGHybridSearcherV2:
         attr_sql += neg_type_filter_sql(neg_type)
         if neg_type:
             print(f"  型否定ゲート: NOT {neg_type}（face_types＝唱えられる面の型で判定）")
+        # ドロー枚数ゲート（R14・決定的検出・全腕+直行路に掛かる）
+        draw_min = detect_draw_min(gate_q)
+        attr_sql += draw_filter_sql(draw_min)
+        if draw_min:
+            print(f"  ドロー枚数ゲート: draw_count >= {draw_min}"
+                  "（命令形の実ドローのみ・可変 X は draw_x で通過・R14）")
         # EDH 固有色・ブラケットゲート（R13・決定的検出＝ルーター無改修で効く）。
         # attr_sql に足すことで全腕（vec/FTS/強度腕）と直行路に同時に掛かる
         ci = detect_color_identity(gate_q)
