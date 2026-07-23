@@ -38,6 +38,7 @@ from mtg_hybrid_search_v2 import (MTGHybridSearcherV2, extract_keywords,
                                   detect_name_search, detect_neg_type,
                                   has_fuzzy_semantic, TYPE_WORDS_JA)
 from removal_direct import removal_direct_gate
+from counter_direct import counter_direct_gate
 
 # ─── 設定 ─────────────────────────────────────────────────────
 GEMINI_MODEL   = "gemini-2.5-flash-lite"
@@ -497,6 +498,34 @@ def search_cards(searcher, query, top_k, fmt,
     return cards, fmt
 
 
+# ─── 守備範囲外検出（正直な不発・2026-07-20） ─────────────────────────
+# 境界プローブ（docs/me/boundary_probe_20260720.md）で実証した「自信満々に間違える」
+# 面の対策。検索そのものは一切変えない（ラベルのみ＝eval 無風・情報も隠さない）。
+# /ask はこの注記があるとき LLM 生成の代わりに定型の正直文を返す（api_server 側）。
+# 語彙は閉集合の家族レジストリ＝配線が実装されたら家族ごと退役する（卒業の対極）。
+# 並び順は「特定的な家族が先」（「ヴォーソス的に相性がいい」はヴォーソス側に落とす）。
+OUT_OF_SCOPE_FAMILIES = [
+    (("ヴォーソス", "フレーバー"), "vorthos",
+     "フレーバー・ストーリー的な関連の検索は守備範囲外です"
+     "（物語のデータを持っていません）。以下は通常のカード検索の結果です。"),
+    (("コンボ",), "combo",
+     "コンボの検索はまだ守備範囲外です（コンボデータベースとの接続が未実装）。"
+     "以下は通常のカード検索の結果で、コンボ成立の裏付けはありません。"),
+    (("相性", "シナジー"), "synergy",
+     "カード同士の相性・シナジーの検索はまだ守備範囲外です"
+     "（共起データは構築済み・検索への配線が未実装）。"
+     "以下は通常のカード検索の結果で、相性の裏付けはありません。"),
+]
+
+
+def detect_out_of_scope(question: str):
+    """守備範囲外クエリ族の決定的検出。戻り値: (family_key, 正直文) / None。"""
+    for words, key, msg in OUT_OF_SCOPE_FAMILIES:
+        if any(w in question for w in words):
+            return key, msg
+    return None
+
+
 # ─── コンテキスト構築 ─────────────────────────────────────────
 
 def run_search(searcher, question, fmt=None, top_k=5, api_key=None,
@@ -527,6 +556,10 @@ def run_search(searcher, question, fmt=None, top_k=5, api_key=None,
     # SQL 直行の実体は searcher.search 内の門（raw_query で発動）＝ここは入口の節約だけ
     elif use_rewrite and removal_direct_gate(question, fmt) is not None:
         route = "removal_direct"
+        use_rewrite = False
+    # 確定カウンターの卒業クエリも同じ位置でルーターをスキップ（2026-07-19）
+    elif use_rewrite and counter_direct_gate(question, fmt) is not None:
+        route = "counter_direct"
         use_rewrite = False
     elif not use_rewrite:
         route = "no_rewrite"
@@ -564,12 +597,15 @@ def run_search(searcher, question, fmt=None, top_k=5, api_key=None,
         # 門が不発になるため（2026-07-09 Nova の機構語圧縮と同じ故障クラス）
         raw_query=question,
     )
+    scope = detect_out_of_scope(question)
     return {
         "cards": cards,
         "detected_format": detected_fmt,
         "route": route,
         "router_backend": backend if route == "router" else None,
         "search_query": search_query,
+        "scope": scope[0] if scope else None,
+        "scope_note": scope[1] if scope else None,
         "flags": {
             "tournament_boost": tournament_boost,
             "removal_mode":     removal_mode,
@@ -698,8 +734,8 @@ def process_question(searcher, question, fmt, top_k, api_key,
     if result["route"] == "structured_direct":
         print(" [構造化オンリー: LLM ルーターをスキップ（辞書で完結・SQL 直行路へ）]",
               end="")
-    elif result["route"] == "removal_direct":
-        print(" [除去直行路: 検証終了クエリ＝LLM ルーターをスキップ（SQL 直行）]",
+    elif result["route"] in ("removal_direct", "counter_direct"):
+        print(" [直行路: 検証終了クエリ＝LLM ルーターをスキップ（SQL 直行）]",
               end="")
     elif result["route"] == "router":
         flags = []
@@ -728,7 +764,7 @@ def process_question(searcher, question, fmt, top_k, api_key,
         print(f" {len(cards)}件取得{fmt_info}。回答生成をスキップ（結果を直接返す）")
         answer = (f"条件が一意に決まる検索のため、結果をそのまま返します"
                   f"（{len(cards)}件・LLM 不使用）。\n\n" + build_context(cards))
-    elif result["route"] == "removal_direct":
+    elif result["route"] in ("removal_direct", "counter_direct"):
         # 卒業クエリの並びは決定的レシピ（検証済み）＝キーワード直行路と同じく
         # LLM 消費ゼロで応答まで完結
         print(f" {len(cards)}件取得{fmt_info}。回答生成をスキップ（結果を直接返す）")

@@ -63,6 +63,11 @@ def parse(oracle):
             rf"target ({TOK}(?:[, ]+(?:or )?{TOK}){{0,10}})", tl):
         phrase = m.group(1).strip().rstrip(',')
         words = [w.strip(',') for w in phrase.split()]
+        # 修理⑨（2026-07-18・錨=熾火心の挑戦者）: 「becomes the target of a spell」
+        # ＝"対象に**なる**" 側の句。"target of ..." は対象を**取る**句ではないので
+        # 型抽出から除外（counter 役割の逆向き偽陽性・直行プレビューの目視で検出）
+        if words and words[0] == 'of':
+            continue
         if 'spell' in words:
             target_types.add('spell')
             i = words.index('spell')
@@ -82,10 +87,23 @@ def parse(oracle):
             # 検出側に倒れる＝条件付きが plain 扱いになるだけ・偽陽性は出ない）。
             # ピッチ等の代替コストは「唱えること」への条件＝打ち消しは無条件（R12・FoW）
             # なので、ここでは counter 句の修飾と unless だけを見る。
-            if (q not in (None, 'target')
-                    or i + 1 < len(words)
-                    or re.search(r'unless[^.]{0,60}pays?', tl)):
+            _soft  = bool(re.search(r'unless[^.]{0,60}pays?', tl))
+            # 後置修飾が unless 節そのもの（"spell unless its controller pays"）の
+            # ときは範囲でない。"spell that targets/with mana value/if it's blue" 等の
+            # 後置だけを scope に数える
+            _scope = ((q not in (None, 'target'))
+                      or (i + 1 < len(words) and words[i + 1] != 'unless'))
+            if _soft or _scope:
                 target_types.add('spell_conditional')
+                # 類型分割（2026-07-18 カウンター便・案B）: 「確定カウンター」の
+                # 採点線は R2' と同精神＝範囲制限（対象/MV）は確定性を削らない・
+                # 支払い回避（unless pays）だけが不確定。soft/scope を別トークンに
+                # して機械判定可能にする。既存 spell_conditional は不変（挙動据え置き・
+                # 状態依存は v1 同様未捕捉＝過小検出側・ワークシートの目視対象）。
+                if _soft:
+                    target_types.add('spell_conditional_soft')
+                if _scope:
+                    target_types.add('spell_conditional_scope')
         else:
             # or/カンマの型別名列挙は broadening＝qualifier に混ぜない（修理④）。
             # 各セグメントの主型を 1 語ずつ除いた残りだけが qualifier

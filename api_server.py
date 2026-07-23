@@ -170,6 +170,20 @@ def ask(req: SearchRequest):
                 _log_query("/ask", req, result,
                            int((time.perf_counter() - t0) * 1000))
                 return {**result, "answer": answer}
+            if result["route"] == "counter_direct":
+                # 確定カウンターの卒業クエリ（2026-07-19）も同様＝7/20 に漏れを発見して追補
+                answer = (f"検証終了済みの定型クエリのため、決定的ランキング"
+                          f" {len(result['cards'])} 件をそのまま返します"
+                          "（回答生成 LLM 不使用）。")
+                _log_query("/ask", req, result,
+                           int((time.perf_counter() - t0) * 1000))
+                return {**result, "answer": answer}
+            if result.get("scope_note"):
+                # 守備範囲外（相性/コンボ/ヴォーソス等）＝LLM に作文させず正直な定型文
+                # で答える（「自信満々に間違える」対策・2026-07-20）
+                _log_query("/ask", req, result,
+                           int((time.perf_counter() - t0) * 1000))
+                return {**result, "answer": result["scope_note"]}
             if not api_key:
                 raise HTTPException(status_code=400,
                                     detail="GOOGLE_API_KEY が未設定（回答生成に必要）")

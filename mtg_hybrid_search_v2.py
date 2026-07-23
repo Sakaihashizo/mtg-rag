@@ -29,6 +29,7 @@ from sentence_transformers import SentenceTransformer
 
 from db import make_db  # DB ドライバ切替層（psycopg2 / Aurora Data API・2026-07-12）
 import removal_direct   # 除去直行路（卒業レジストリ＝検証終了クエリ・2026-07-17）
+import counter_direct   # 確定カウンター直行路（卒業レジストリ・2026-07-19）
 # 役割判定（removal/counter）は構造化列 target_types / removal（enrich_removal.py 由来）
 # へ移行済み（P1: 正しさ＞点数）。旧 mtg_removal_rules / mtg_counter_rules の手書き
 # 文字列マッチはもう使わない。
@@ -1313,6 +1314,24 @@ class MTGHybridSearcherV2:
             rrf_score=0.0,
         ) for r in rows]
 
+    def _counter_direct(self, spec: dict, top_k: int) -> list[CardResult]:
+        """確定カウンター直行路（卒業レジストリ・2026-07-19 採用ゲート裁定）。
+        WHERE＝役割 SQL（target_types に spell）・並び＝レシピ T（確定段→採用率）。
+        意味検索・HyDE・RRF・reranker を使わない。詳細は counter_direct.py の正本参照。"""
+        rows = counter_direct.fetch_direct(self.db, spec, top_k,
+                                           cards_table=self.cfg['cards_table'])
+        return [CardResult(
+            card_name=r["card_name"],
+            type_line=r.get("type_line") or "",
+            oracle_text=r.get("oracle_text") or "",
+            japanese_name=r.get("japanese_name") or "",
+            japanese_oracle_text=r.get("japanese_oracle_text") or "",
+            mana_cost=r.get("mana_cost") or "",
+            rarity=r.get("rarity") or "",
+            vector_rank=None, en_text_rank=None, ja_text_rank=None,
+            rrf_score=0.0,
+        ) for r in rows]
+
     def _rrf_merge(
         self,
         v_rows: list[dict], en_rows: list[dict], ja_rows: list[dict],
@@ -1452,6 +1471,10 @@ class MTGHybridSearcherV2:
         # （直行の並びは決定的な上流信号＝意味の並べ替えで汚さない。kw_only/boost の
         #  分岐と同じ原則。search() 内の同じ門が SQL 直行まで面倒を見る）
         if removal_direct.removal_direct_gate(raw_query or query, format) is not None:
+            return self.search(raw_query or query, top_k=top_k, format=format,
+                               raw_query=raw_query)
+        # 確定カウンター直行路も同様に HyDE を重ねない（2026-07-19）
+        if counter_direct.counter_direct_gate(raw_query or query, format) is not None:
             return self.search(raw_query or query, top_k=top_k, format=format,
                                raw_query=raw_query)
         # 通常の検索結果を取得
@@ -1625,6 +1648,13 @@ class MTGHybridSearcherV2:
             print(f"  除去直行路（検証終了クエリ・レシピ={rd_spec['recipe']}・"
                   "意味検索スキップ）")
             return self._removal_direct(rd_spec, top_k)
+
+        # 確定カウンター直行路（卒業レジストリ完全一致のみ・2026-07-19）: 同型の
+        # 検証終了クエリ。レシピ T（確定段→採用率）で SQL 直行。
+        cd_spec = counter_direct.counter_direct_gate(gate_q, format)
+        if cd_spec is not None:
+            print("  確定カウンター直行路（検証終了クエリ・意味検索スキップ）")
+            return self._counter_direct(cd_spec, top_k)
 
         (en_kws, ja_kws, type_filter, tournament_boost,
          removal_mode, counter_mode, kw_abilities, neg_kw_abilities,

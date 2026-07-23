@@ -48,7 +48,19 @@ import psycopg2
 
 sys.path.insert(0, '/mnt/mtg_rag')
 from mtg_hybrid_search_v2 import MTGHybridSearcherV2, extract_keywords
-from removal_direct import is_graduated, removal_direct_gate
+from removal_direct import is_graduated as _removal_graduated, removal_direct_gate
+from counter_direct import is_graduated as _counter_graduated, counter_direct_gate
+
+
+def _is_direct(query, fmt=None):
+    """検証終了の直行クエリ（除去 or カウンター）＝ルーターキャッシュ免除。"""
+    return (removal_direct_gate(query, fmt) is not None
+            or counter_direct_gate(query, fmt) is not None)
+
+
+def is_graduated(query, fmt=None):
+    """採点プール生成の除外判定（除去 or カウンターの卒業クエリ）。"""
+    return _removal_graduated(query, fmt) or _counter_graduated(query, fmt)
 
 from db_config import DB_CONFIG
 
@@ -198,7 +210,7 @@ def load_gt_labels(gt_path: str) -> dict:
 
 def collect_pool(conn, model_key: str = "SMALL_V2", top_k: int = TOP_K,
                  queries_json: str = QUERIES_JSON, router_cache: dict = None,
-                 gt_path: str = None):
+                 gt_path: str = None, include_graduated: bool = False):
     """
     全クエリに対してハイブリッド検索を実行し、
     候補カード一覧をCSVに出力する。human_grade は空欄。
@@ -210,15 +222,22 @@ def collect_pool(conn, model_key: str = "SMALL_V2", top_k: int = TOP_K,
     with open(queries_json, "r", encoding="utf-8") as f:
         queries = json.load(f)
 
-    # 卒業クエリ（検証終了・2026-07-17 採用ゲート裁定）は採点プールの生成対象から
+    # 卒業クエリ（検証終了・2026-07-17 採用ゲート裁定）は通常は採点プールの生成対象から
     # 外す＝新規採点労務ゼロ化。eval では床として測り続ける（run_eval 側は除外しない）。
-    # 卒業レジストリの正本は removal_direct.GRADUATED
-    graduated = [q for q in queries if is_graduated(q["query"], q.get("format"))]
-    if graduated:
-        for q in graduated:
-            print(f"  卒業（検証終了・プール生成対象外）: 「{q['query']}」")
-        queries = [q for q in queries
-                   if not is_graduated(q["query"], q.get("format"))]
+    # 卒業レジストリの正本は removal_direct.GRADUATED / counter_direct.GRADUATED。
+    # ただし include_graduated=True のときは含める（--include-graduated）: メタ変動
+    # （スクレイプ等で play-rate が動く）で卒業クエリの直行並びにも未採点が湧くため、
+    # 「検証終了は一度きりでなくメタ変動のたびに再検証」（2026-07-19 本人裁定「メタは
+    # 常に動く・常に検証」・design-premise-ledger 実例2）を実装で担保する。
+    if not include_graduated:
+        graduated = [q for q in queries if is_graduated(q["query"], q.get("format"))]
+        if graduated:
+            for q in graduated:
+                print(f"  卒業（検証終了・プール生成対象外）: 「{q['query']}」")
+            queries = [q for q in queries
+                       if not is_graduated(q["query"], q.get("format"))]
+    else:
+        print("  --include-graduated: 卒業クエリも再検証プールに含める（メタ変動後の補充）")
 
     gt_labels = load_gt_labels(gt_path) if gt_path else {}
     if gt_labels:
@@ -444,7 +463,7 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
     # searcher 内の門で SQL 直行になるため、Gemini ゼロ（キャッシュ再生成なし）で
     # 正準に組み入れられる。eval では床として測り続ける（回帰検知）
     direct_qs = [q for q in gt_by_query
-                 if removal_direct_gate(q, fmt_by_query.get(q)) is not None]
+                 if _is_direct(q, fmt_by_query.get(q))]
     if router_cache is not None:
         missing = [q for q in gt_by_query
                    if q not in entries and q not in direct_qs]
@@ -560,8 +579,8 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
     if router_cache is not None:
         config["router_meta"] = router_cache.get("meta", {})
     if direct_qs:
-        # 除去直行路で評価したクエリ（卒業レジストリ・ルーターキャッシュ不使用）
-        config["removal_direct_queries"] = direct_qs
+        # 直行路で評価したクエリ（除去/カウンターの卒業レジストリ・キャッシュ不使用）
+        config["direct_route_queries"] = direct_qs
     if partial_missing:
         config["partial_missing"] = partial_missing
 
@@ -654,6 +673,11 @@ def main():
                              "v2 = human_grade（0/1/2 絶対段階）方式。"
                              "旧 human_rank（10段階）ファイルは読めない（列名で遮断）")
     parser.add_argument("--queries_json", default=QUERIES_JSON)
+    parser.add_argument("--include-graduated", action="store_true",
+                        dest="include_graduated",
+                        help="--pool 時に卒業（検証終了）クエリも生成対象に含める。"
+                             "メタ変動（スクレイプ等）で卒業クエリに未採点が湧いた"
+                             "ときの補充用（2026-07-19 本人裁定「常に検証」）")
     parser.add_argument("--top_k",  type=int, default=TOP_K)
     parser.add_argument("--note",   default="", help="実行結果のメモ")
     parser.add_argument("--router-cache", default=None, dest="router_cache",
@@ -677,7 +701,7 @@ def main():
     if args.pool:
         collect_pool(conn, model_key=args.model, top_k=args.top_k,
                      queries_json=args.queries_json, router_cache=router_cache,
-                     gt_path=args.gt)
+                     gt_path=args.gt, include_graduated=args.include_graduated)
     elif args.run:
         arm_weights = None
         if args.weights:
