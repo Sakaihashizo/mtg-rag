@@ -19,7 +19,7 @@ from dataclasses import dataclass, field, asdict
 from typing import Optional
 from collections import defaultdict
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 from mtg_hybrid_search_v2 import MTGHybridSearcherV2
 
 # ─── 評価クエリ定義 ───────────────────────────────────────────

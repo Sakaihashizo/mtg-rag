@@ -29,7 +29,7 @@ import time
 import hashlib
 from datetime import datetime
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 from mtg_rag_agent import REWRITE_PROMPT, detect_format, FORMAT_KEYWORDS
 
 CACHE_PATH = "/mnt/mtg_rag/eval_router_cache.json"

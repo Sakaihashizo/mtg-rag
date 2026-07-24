@@ -10,7 +10,7 @@
 import json
 import sys
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 from mtg_rag_agent import _adjust_exclusive_bounds, _parse_router_json
 
 # type_filter 幻出ガード（2026-07-12・ナヒリ事故: クエリに型の語が無いのに

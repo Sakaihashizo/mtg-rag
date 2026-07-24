@@ -22,5 +22,5 @@ if curl -s -o /dev/null --max-time 2 http://127.0.0.1:8000; then
 fi
 
 echo "API サーバ起動 → http://localhost:8000 （Ctrl+C で停止）"
-exec /mnt/new_hdd/my_rag_env/bin/python -m uvicorn api_server:app \
+exec /mnt/new_hdd/my_rag_env/bin/python -m uvicorn --app-dir src api_server:app \
      --host 127.0.0.1 --port 8000

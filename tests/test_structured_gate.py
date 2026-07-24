@@ -11,7 +11,7 @@ structured_direct_gate()（＝LLM ルーターをスキップして SQL 直行�
 """
 import sys
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 from mtg_rag_agent import structured_direct_gate
 
 # (クエリ, ゲートが発動してよいか)

@@ -31,7 +31,7 @@ import time
 
 import psycopg2
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 from db_config import DB_CONFIG
 from scrape_wisdom_guild_full import (fetch_html, parse_oracle,
                                       parse_face_oracles, is_japanese,

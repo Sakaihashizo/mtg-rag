@@ -38,7 +38,7 @@ from datetime import datetime
 # 2026-07-11: Gemma が英語で回答したのを審査員が発見する羽目になった反省から）
 JA_RE = re.compile(r'[ぁ-んァ-ン一-龥]')
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 from mtg_rag_agent import SYSTEM_PROMPT, build_context, search_cards, MAX_TOKENS
 from mtg_hybrid_search_v2 import MTGHybridSearcherV2
 

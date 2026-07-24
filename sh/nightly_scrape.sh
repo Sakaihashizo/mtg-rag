@@ -60,11 +60,11 @@ for job in "$@"; do
   log "--- ジョブ開始: $job（詳細ログ: $(basename "$joblog")）"
   case $kind in
     mtgtop8)
-      timeout 6h "$PY" scrape_mtgtop8.py --format "$a" --meta "$b" --year 2026 \
+      timeout 6h "$PY" src/scrape_mtgtop8.py --format "$a" --meta "$b" --year 2026 \
         > "$joblog" 2>&1
       rc=$? ;;
     moxfield)
-      timeout 6h "$PY" scrape_moxfield.py --sample-by-bracket \
+      timeout 6h "$PY" src/scrape_moxfield.py --sample-by-bracket \
         --brackets "$a" --per-bracket "$b" --max-pages 300 \
         > "$joblog" 2>&1
       rc=$? ;;
@@ -80,10 +80,10 @@ for job in "$@"; do
 done
 
 log "=== 後処理（成否に関わらず必ず実行） ==="
-"$PY" fix_deck_links.py > /tmp/nightly_fix_${LANE}.out 2>&1
+"$PY" src/fix_deck_links.py > /tmp/nightly_fix_${LANE}.out 2>&1
 log "fix_deck_links rc=$? / $(tail -2 /tmp/nightly_fix_${LANE}.out | tr '\n' ' ')"
 
-flock "$RECOMPUTE_LOCK" "$PY" recompute_card_format_strength.py \
+flock "$RECOMPUTE_LOCK" "$PY" src/recompute_card_format_strength.py \
   > /tmp/nightly_recompute_${LANE}.out 2>&1
 log "recompute rc=$?（直列化ロック経由）"
 log "$(head -12 /tmp/nightly_recompute_${LANE}.out | tr '\n' ' | ')"

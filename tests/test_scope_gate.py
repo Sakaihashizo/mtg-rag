@@ -11,7 +11,7 @@ detect_out_of_scope()（＝相性/コンボ/ヴォーソス等の未対応クエ
 """
 import sys
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 from mtg_rag_agent import detect_out_of_scope
 
 # (クエリ, 期待 family / None)

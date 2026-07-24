@@ -14,7 +14,7 @@ removal_direct_gate()（＝卒業レジストリ完全一致で LLM ルーター
 """
 import sys
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 from removal_direct import removal_direct_gate
 
 # (クエリ, fmt 引数, 発動してよいか)

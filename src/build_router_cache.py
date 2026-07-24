@@ -27,7 +27,7 @@ import time
 import hashlib
 from datetime import datetime
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 from mtg_rag_agent import rewrite_query, detect_format, REWRITE_PROMPT, GEMINI_MODEL
 
 QUERIES_JSON     = sys.argv[1] if len(sys.argv) > 1 else "eval_queries.json"

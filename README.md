@@ -116,19 +116,19 @@ docker compose up -d               # PostgreSQL Primary/Standby
 pip install -r requirements.txt
 
 # データ取り込み（Scryfall 等の公式 API から各自取得）
-python sync_oracle_cards.py
-python extract_japanese.py
-python rebuild_embed_text.py --reembed
-python enrich_scryfall_meta.py
+python src/sync_oracle_cards.py
+python src/extract_japanese.py
+python src/rebuild_embed_text.py --reembed
+python src/enrich_scryfall_meta.py
 
 # 検索（CLI）
-python mtg_hybrid_search_v2.py "純粋に強いカウンター呪文"
+python src/mtg_hybrid_search_v2.py "純粋に強いカウンター呪文"
 
 # Web UI + API サーバ（http://localhost:8000）
-uvicorn api_server:app --host 127.0.0.1 --port 8000
+uvicorn --app-dir src api_server:app --host 127.0.0.1 --port 8000
 
 # LLM 連携（CLI）
-python mtg_rag_agent.py questions.txt
+python src/mtg_rag_agent.py questions.txt
 ```
 
 ---

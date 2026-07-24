@@ -21,7 +21,7 @@ from datetime import datetime
 
 import requests
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 from ollama_router_test import FABLE_PROMPT, MODEL, OLLAMA_URL
 
 STRUCTURED_KEYS = [

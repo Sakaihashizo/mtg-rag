@@ -7,7 +7,7 @@ test_removal_direct_gate と同じ非対称性（誤発動=有害・取り逃し
 """
 import sys
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 from counter_direct import counter_direct_gate
 
 # (クエリ, fmt 引数, 発動してよいか)

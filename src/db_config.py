@@ -30,7 +30,12 @@ def _load_dotenv(path: str = None) -> None:
     .env が無ければ何もしない（その場合は環境変数のみで動く）。
     """
     if path is None:
-        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+        # コードは src/ 配下・.env はリポジトリ直下（2026-07-24 の配置替えに追随。
+        # 旧配置=同階層もフォールバックで見る＝将来また動かしても静かに壊れない）
+        here = os.path.dirname(os.path.abspath(__file__))
+        path = os.path.join(os.path.dirname(here), ".env")
+        if not os.path.exists(path):
+            path = os.path.join(here, ".env")
     if not os.path.exists(path):
         return
     with open(path, "r", encoding="utf-8") as f:

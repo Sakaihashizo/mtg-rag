@@ -10,7 +10,7 @@
 """
 import sys
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 from db import (convert_params_for_data_api, decode_data_api_row,
                 PsycopgDriver)
 

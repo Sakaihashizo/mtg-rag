@@ -26,7 +26,7 @@ from datetime import datetime
 
 import requests
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 from mtg_rag_agent import REWRITE_PROMPT
 from bedrock_router_test import parse_and_validate, JA_RE
 

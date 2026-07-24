@@ -35,7 +35,6 @@ compare_bulk.py
 csv/eval_groundtruth.csv
 env.example
 fix_card_data.py
-fix_deck_links.py
 fix_ja_slots.py
 fix_layout.py
 ingest_marvel_en.py
@@ -71,3 +70,12 @@ removal_*pool* - *.csv
 *.preowner_sweep_bak_*
 counter_kakutei_pool_*.csv
 counter_direct_proto_*.py
+# 役目を終えた一回きり（2026-07-24 に追跡から退出・ローカル残置・履歴には残る）
+arm_diag_20260715.py
+backfill_tournament_names_20260718.py
+condition_vacuity_20260715.py
+counter_kakutei_pool_20260718.py
+fix_ja_face_dupes_20260715.py
+modern_removal_quality_audit_20260715.py
+removal_direct_proto_20260715.py
+removal_regrade_pool_20260717.py

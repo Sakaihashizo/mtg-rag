@@ -14,7 +14,7 @@ detect_color_identity() / detect_bracket()（＝固有色ハードゲートの�
 import json
 import sys
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 from mtg_hybrid_search_v2 import detect_color_identity, detect_bracket
 
 # (クエリ, 期待する色集合 or None, 期待するブラケット or None)

@@ -12,7 +12,7 @@ test_removal_direct_gate / test_counter_direct_gate と同じ非対称性
 """
 import sys
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 from mtg_hybrid_search_v2 import build_commander_index, detect_commander_identity
 
 

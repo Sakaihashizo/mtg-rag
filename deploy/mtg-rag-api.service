@@ -25,8 +25,8 @@ Description=MTG RAG API server (uvicorn + FastAPI)
 Type=simple
 WorkingDirectory=/mnt/mtg_rag
 Environment=ROUTER_BACKEND=ollama
-ExecStartPre=/bin/bash -c 'for i in $(seq 1 60); do [ -f /mnt/mtg_rag/api_server.py ] && (echo > /dev/tcp/127.0.0.1/5435) 2>/dev/null && exit 0; sleep 2; done; echo "[mtg-rag-api] deps not ready (mount/db)"; exit 1'
-ExecStart=/mnt/new_hdd/my_rag_env/bin/python -m uvicorn api_server:app --host 127.0.0.1 --port 8000
+ExecStartPre=/bin/bash -c 'for i in $(seq 1 60); do [ -f /mnt/mtg_rag/src/api_server.py ] && (echo > /dev/tcp/127.0.0.1/5435) 2>/dev/null && exit 0; sleep 2; done; echo "[mtg-rag-api] deps not ready (mount/db)"; exit 1'
+ExecStart=/mnt/new_hdd/my_rag_env/bin/python -m uvicorn --app-dir src api_server:app --host 127.0.0.1 --port 8000
 Restart=on-failure
 RestartSec=5
 

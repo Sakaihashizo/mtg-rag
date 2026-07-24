@@ -20,7 +20,7 @@ import sys
 
 import requests
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 from mtg_rag_agent import rewrite_query_ollama
 
 

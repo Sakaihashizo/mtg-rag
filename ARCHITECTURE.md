@@ -8,6 +8,30 @@
 
 ---
 
+## リポジトリ地図
+
+ルートは読者向けドキュメント、コードは `src/`（フラット配置）、ゲートの安全試験は `tests/` に置く。主要ファイルの役割:
+
+| 場所 | 役割 |
+| --- | --- |
+| `src/mtg_hybrid_search_v2.py` | 検索本体（4 腕ハイブリッド・決定的ゲート群・RRF 統合・直行路の発動点） |
+| `src/mtg_rag_agent.py` | LLM ルーター＋検証層＋検索呼び出し（CLI） |
+| `src/api_server.py`・`static/` | FastAPI サーバと Web UI（クエリ観測ログ `query_log` の記録元） |
+| `src/eval_framework.py` | 評価ハーネス（決定的・ルーターキャッシュ・候補プール生成と run） |
+| `src/removal_direct.py`・`src/counter_direct.py` | 検証終了直行路（卒業レジストリと並びレシピ） |
+| `src/role_quality.py` | 除去の機能品質（討てる幅・上限・テンポ）の部品 |
+| `src/enrich_*.py`・`src/add_face_types.py` | 構造化列の導出（除去 4 列・draw 列・表面キーワード・Scryfall メタ） |
+| `src/sync_*.py`・`src/import_*.py`・`src/scrape_*.py`・`src/backfill_*.py`・`src/extract_japanese.py`・`src/update_oracle.py`・`src/rebuild_embed_text.py` | データ取り込み・スクレイプ・日本語補填・embedding 再構築 |
+| `src/recompute_card_format_strength.py`・`src/fix_deck_links.py` | play-rate 再集計と card_id 名寄せ（夜間バッチの後処理） |
+| `src/db.py`・`src/db_config.py` | DB ドライバ切替層（psycopg2 ⇔ Aurora Data API）と接続設定 |
+| `src/ollama_router_test.py`・`src/bedrock_router_test.py`・`src/hammer_router.py` | ルーター調教ハーネス（調教済みプロンプトの正本を含む）と決定性試験 |
+| `src/*benchmark*.py`・`src/explain_analyze.py`・`src/bakeoff_explain.py` | HNSW・ハイブリッドのベンチマークと実行計画の検分 |
+| `tests/test_*.py`（10 本） | 決定的ゲートの非対称安全試験（誤発動ゼロを必須とする） |
+| `sh/` | API 起動・夜間バッチ（cron ドライバとスクレイプランナー） |
+| `deploy/` | systemd user unit |
+
+---
+
 ## ハイブリッド経路の詳細フロー
 
 ```mermaid

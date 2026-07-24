@@ -18,7 +18,7 @@
 import json
 import sys
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 import psycopg2
 
 from db_config import get_db_config

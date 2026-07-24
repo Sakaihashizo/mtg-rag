@@ -46,7 +46,7 @@ from datetime import datetime
 
 import psycopg2
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 from mtg_hybrid_search_v2 import MTGHybridSearcherV2, extract_keywords
 from removal_direct import is_graduated as _removal_graduated, removal_direct_gate
 from counter_direct import is_graduated as _counter_graduated, counter_direct_gate

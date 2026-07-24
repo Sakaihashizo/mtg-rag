@@ -19,7 +19,7 @@ import psycopg2
 import psycopg2.extras
 from sentence_transformers import SentenceTransformer
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 from mtg_hybrid_search_v2 import (
     get_db_config, MODEL_REGISTRY, REMOVAL_TSQUERY, expand_query
 )

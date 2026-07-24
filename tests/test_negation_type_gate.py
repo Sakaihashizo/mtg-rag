@@ -20,7 +20,7 @@ extract_keywords() の2拡張（本人の実地テスト「速攻を持たない
 import json
 import sys
 
-sys.path.insert(0, '/mnt/mtg_rag')
+sys.path.insert(0, '/mnt/mtg_rag/src')
 from mtg_hybrid_search_v2 import (extract_keywords, detect_pt_relation,
                                   detect_tribal, detect_name_search,
                                   detect_neg_type)
