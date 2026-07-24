@@ -143,6 +143,11 @@ def search_legal(searcher, conn, query, fmt, top_k: int, router_entry: dict = No
             removal_mode_override=bool(e.get("removal_mode")),
             counter_mode_override=bool(e.get("counter_mode")),
             type_filter_override=e.get("type_filter"),
+            # 決定的ゲート（統率者名・ドロー枚数・型否定等）はルーターの写しでなく
+            # 原文を見る（raw_query 併給の思想を eval キャッシュ経路にも適用・
+            # 2026-07-23）。実測の動機: 7B が錨クエリを「アトラクサ対策」へ書き換え
+            # ＝写し基準だと敵対判定が誤発動して統率者ゲートが不発になる。
+            raw_query=query,
             **(e.get("filters") or {}),
         )
         sq      = e.get("search_query") or query
