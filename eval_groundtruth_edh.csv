@@ -1,0 +1,271 @@
+﻿query,format,category,system_rank,card_name,japanese_name,type_line,japanese_oracle_text,oracle_text,human_grade,note
+アトラクサで使える単体除去,commander,edh_removal,1,Feed the Swarm,大群への給餌,Sorcery,対戦相手がコントロールしていてクリーチャーやエンチャントである１つを対象とする。それを破壊する。あなたは、そのパーマネントのマナ総量に等しい点数のライフを失う。,Destroy target creature or enchantment an opponent controls. You lose life equal to that permanent's mana value.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサで使える単体除去,commander,edh_removal,2,Eliminate,取り除き,Instant,マナ総量が３以下の、クリーチャー１体かプレインズウォーカー１体を対象とする。それを破壊する。,Destroy target creature or planeswalker with mana value 3 or less.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサで使える単体除去,commander,edh_removal,3,Orcish Bowmasters,オークの弓使い,Creature — Orc Archer,"瞬速
+オークの弓使いが戦場に出たとき、ならびに、対戦相手が自分の各ドロー・ステップ内で最初に引くカード以外のカード１枚を引くたび、クリーチャーやプレインズウォーカーやプレイヤーのうち１つを対象とする。オークの弓使いはそれに１点のダメージを与える。その後、オーク動員１を行う。","Flash
+When this creature enters and whenever an opponent draws a card except the first one they draw in each of their draw steps, this creature deals 1 damage to any target. Then amass Orcs 1.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサで使える単体除去,commander,edh_removal,4,Abrupt Decay,突然の衰微,Instant,"この呪文は打ち消されない。
+マナ総量が３以下であり土地でないパーマネント１つを対象とする。それを破壊する。","This spell can't be countered.
+Destroy target nonland permanent with mana value 3 or less.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサで使える単体除去,commander,edh_removal,5,Swords to Plowshares,剣を鍬に,Instant,クリーチャー１体を対象とする。それを追放する。それのコントローラーは、それのパワーに等しい点数のライフを得る。,Exile target creature. Its controller gains life equal to its power.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサで使える単体除去,commander,edh_removal,6,Localized Destruction,局所的破壊,Sorcery,"{E}を得る。その後、１個以上の{E}を支払ってもよい。
+そうしたなら、ターン終了時まで、あなたがコントロールしていてこれにより支払われた{E}の個数に等しいパワーを持つすべてのクリーチャーは破壊不能を得る。
+すべてのクリーチャーを破壊する。","You get {E} (an energy counter), then you may pay one or more {E}. If you do, each creature you control with power equal to the amount of {E} paid this way gains indestructible until end of turn.
+Destroy all creatures.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサで使える単体除去,commander,edh_removal,7,Path to Exile,流刑への道,Instant,クリーチャー１体を対象とする。それを追放する。それのコントローラーは「自分のライブラリーから基本土地・カード１枚を探し、タップ状態で戦場に出す。その後、ライブラリーを切り直す。」を選んでもよい。,"Exile target creature. Its controller may search their library for a basic land card, put that card onto the battlefield tapped, then shuffle.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサで使える単体除去,commander,edh_removal,8,Walking Ballista,歩行バリスタ,Artifact Creature — Construct,"このクリーチャーは＋１/＋１カウンターＸ個が置かれた状態で戦場に出る。
+{4}：このクリーチャーの上に＋１/＋１カウンター１個を置く。
+このクリーチャーの上から＋１/＋１カウンター１個を取り除く：１つを対象とする。これはそれに１点のダメージを与える。","This creature enters with X +1/+1 counters on it.
+{4}: Put a +1/+1 counter on this creature.
+Remove a +1/+1 counter from this creature: It deals 1 damage to any target.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサで使える単体除去,commander,edh_removal,9,Beast Within,内にいる獣,Instant,パーマネント１つを対象とする。それを破壊する。それのコントローラーは緑の３/３のビースト・クリーチャー・トークン１体を生成する。,Destroy target permanent. Its controller creates a 3/3 green Beast creature token.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサで使える単体除去,commander,edh_removal,10,"Eiganjo, Seat of the Empire",皇国の地、永岩城,Legendary Land,"{T}：{W}を加える。
+魂力 — {2}{W}, 皇国の地、永岩城を捨てる：攻撃クリーチャーやブロック・クリーチャーのうち１体を対象とする。これはそれに４点のダメージを与える。この能力を起動するためのコストは、あなたがコントロールしている伝説のクリーチャー１体につき{1}少なくなる。","{T}: Add {W}.
+Channel — {2}{W}, Discard this card: It deals 4 damage to target attacking or blocking creature. This ability costs {1} less to activate for each legendary creature you control.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+クレンコのデッキで使える単体除去,commander,edh_removal,1,"Toralf, God of Fury // Toralf's Hammer",怒りの神、トラルフ // トラルフの鎚,Legendary Creature — God // Legendary Artifact — Equipment,"トランプル
+対戦相手がコントロールしている、クリーチャー１体かプレインズウォーカー１体が戦闘ダメージでない余剰のダメージを受けるたび、そのパーマネント以外の、クリーチャー１体かプレインズウォーカー１体かプレイヤー１人を対象とする。怒りの神、トラルフはそれにその余剰に等しい点数のダメージを与える。
+装備品
+{1}{R} // 装備しているクリーチャーは「{1}{R}, {T}, トラルフの鎚をはずす：クリーチャー１体かプレインズウォーカー１体かプレイヤー１人を対象とする。トラルフの鎚はそれに３点のダメージを与える。トラルフの鎚をオーナーの手札に戻す。」を持つ。
+装備しているクリーチャーが伝説であるかぎり、それは＋３/＋０の修整を受ける。
+装備{1}{R}
+神
+{2}{R}{R}","Trample
+Whenever a creature or planeswalker an opponent controls is dealt excess noncombat damage, Toralf deals damage equal to the excess to any target other than that permanent. // Equipped creature has ""{1}{R}, {T}, Unattach Toralf's Hammer: It deals 3 damage to any target. Return Toralf's Hammer to its owner's hand.""
+Equipped creature gets +3/+0 as long as it's legendary.
+Equip {1}{R}",1,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+クレンコのデッキで使える単体除去,commander,edh_removal,2,Walking Ballista,歩行バリスタ,Artifact Creature — Construct,"このクリーチャーは＋１/＋１カウンターＸ個が置かれた状態で戦場に出る。
+{4}：このクリーチャーの上に＋１/＋１カウンター１個を置く。
+このクリーチャーの上から＋１/＋１カウンター１個を取り除く：１つを対象とする。これはそれに１点のダメージを与える。","This creature enters with X +1/+1 counters on it.
+{4}: Put a +1/+1 counter on this creature.
+Remove a +1/+1 counter from this creature: It deals 1 damage to any target.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+クレンコのデッキで使える単体除去,commander,edh_removal,3,Lightning Bolt,稲妻,Instant,１つを対象とする。稲妻はそれに３点のダメージを与える。,Lightning Bolt deals 3 damage to any target.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+クレンコのデッキで使える単体除去,commander,edh_removal,4,Smash to Dust,塵と化す,Sorcery,"以下から１つを選ぶ。
+・アーティファクト１つを対象とする。それを破壊する。
+・防衛を持つクリーチャー１体を対象とする。それを破壊する。
+・塵と化すは対戦相手がコントロールしている各クリーチャーにそれぞれ１点のダメージを与える。","Choose one —
+• Destroy target artifact.
+• Destroy target creature with defender.
+• Smash to Dust deals 1 damage to each creature your opponents control.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+クレンコのデッキで使える単体除去,commander,edh_removal,5,Red Elemental Blast,赤霊破,Instant,"以下から１つを選ぶ。
+• 青の呪文１つを対象とし、それを打ち消す。
+• 青のパーマネント１つを対象とし、それを破壊する。","Choose one —
+• Counter target blue spell.
+• Destroy target blue permanent.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+クレンコのデッキで使える単体除去,commander,edh_removal,6,Abrade,削剥,Instant,"以下から１つを選ぶ。
+・クリーチャー１体を対象とする。削剥はそれに３点のダメージを与える。
+・アーティファクト１つを対象とする。それを破壊する。","Choose one —
+• Abrade deals 3 damage to target creature.
+• Destroy target artifact.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+クレンコのデッキで使える単体除去,commander,edh_removal,7,Pyroblast,紅蓮破,Instant,"以下から１つを選ぶ。
+• 呪文１つを対象とする。それが青なら、それを打ち消す。
+• パーマネント１つを対象とする。それが青なら、それを破壊する。","Choose one —
+• Counter target spell if it's blue.
+• Destroy target permanent if it's blue.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+クレンコのデッキで使える単体除去,commander,edh_removal,8,Goblin Bombardment,ゴブリンの砲撃,Enchantment,クリーチャー１体を生け贄に捧げる：１つを対象とする。このエンチャントはそれに１点のダメージを与える。,Sacrifice a creature: This enchantment deals 1 damage to any target.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+クレンコのデッキで使える単体除去,commander,edh_removal,9,Torch the Tower,塔の点火,Instant,"協約（この呪文を唱えるに際し、アーティファクトやエンチャントやトークンのうち１つを生け贄に捧げてもよい。）
+クリーチャーやプレインズウォーカーのうち１体を対象とする。塔の点火はそれに２点のダメージを与える。この呪文が協約されていたなら、代わりに、これはそのパーマネントに３点のダメージを与え、あなたは占術１を行う。
+このターン、塔の点火からダメージを受けたパーマネントが死亡するなら、代わりにそれを追放する。","Bargain (You may sacrifice an artifact, enchantment, or token as you cast this spell.)
+Torch the Tower deals 2 damage to target creature or planeswalker. If this spell was bargained, instead it deals 3 damage to that permanent and you scry 1.
+If a permanent dealt damage by Torch the Tower would die this turn, exile it instead.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+クレンコのデッキで使える単体除去,commander,edh_removal,10,Grapeshot,ぶどう弾,Sorcery,"クリーチャーやプレインズウォーカーやプレイヤーのうち１つを対象とする。ぶどう弾はそれに１点のダメージを与える。
+ストーム（あなたがこの呪文を唱えたとき、これを、このターンにこれより前に唱えられた呪文の数と同じ回数コピーする。あなたはそれらのコピーの新しい対象を選んでもよい。）","Grapeshot deals 1 damage to any target.
+Storm (When you cast this spell, copy it for each spell cast before it this turn. You may choose new targets for the copies.)",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ラスリルで使える単体除去,commander,edh_removal,1,Eliminate,取り除き,Instant,マナ総量が３以下の、クリーチャー１体かプレインズウォーカー１体を対象とする。それを破壊する。,Destroy target creature or planeswalker with mana value 3 or less.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ラスリルで使える単体除去,commander,edh_removal,2,Feed the Swarm,大群への給餌,Sorcery,対戦相手がコントロールしていてクリーチャーやエンチャントである１つを対象とする。それを破壊する。あなたは、そのパーマネントのマナ総量に等しい点数のライフを失う。,Destroy target creature or enchantment an opponent controls. You lose life equal to that permanent's mana value.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ラスリルで使える単体除去,commander,edh_removal,3,Abrupt Decay,突然の衰微,Instant,"この呪文は打ち消されない。
+マナ総量が３以下であり土地でないパーマネント１つを対象とする。それを破壊する。","This spell can't be countered.
+Destroy target nonland permanent with mana value 3 or less.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ラスリルで使える単体除去,commander,edh_removal,4,Murder,殺害,Instant,クリーチャー１体を対象とする。それを破壊する。,Destroy target creature.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ラスリルで使える単体除去,commander,edh_removal,5,Orcish Bowmasters,オークの弓使い,Creature — Orc Archer,"瞬速
+オークの弓使いが戦場に出たとき、ならびに、対戦相手が自分の各ドロー・ステップ内で最初に引くカード以外のカード１枚を引くたび、クリーチャーやプレインズウォーカーやプレイヤーのうち１つを対象とする。オークの弓使いはそれに１点のダメージを与える。その後、オーク動員１を行う。","Flash
+When this creature enters and whenever an opponent draws a card except the first one they draw in each of their draw steps, this creature deals 1 damage to any target. Then amass Orcs 1.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ラスリルで使える単体除去,commander,edh_removal,6,Walking Ballista,歩行バリスタ,Artifact Creature — Construct,"このクリーチャーは＋１/＋１カウンターＸ個が置かれた状態で戦場に出る。
+{4}：このクリーチャーの上に＋１/＋１カウンター１個を置く。
+このクリーチャーの上から＋１/＋１カウンター１個を取り除く：１つを対象とする。これはそれに１点のダメージを与える。","This creature enters with X +1/+1 counters on it.
+{4}: Put a +1/+1 counter on this creature.
+Remove a +1/+1 counter from this creature: It deals 1 damage to any target.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ラスリルで使える単体除去,commander,edh_removal,7,"Grist, the Hunger Tide",飢餓の潮流、グリスト,Legendary Planeswalker — Grist,"飢餓の潮流、グリストが戦場に無いかぎり、これは他のタイプに加えて１/１の昆虫・クリーチャーである。
++1：黒緑の１/１の昆虫・クリーチャー・トークン１体を生成し、その後、カード１枚を切削する。これにより昆虫・カードが切削されたなら、飢餓の潮流、グリストの上に忠誠カウンター１個を置き、この手順を繰り返す。
+-2：クリーチャー１体を生け贄に捧げてもよい。そうしたとき、クリーチャーやプレインズウォーカーである１体を対象とする。それを破壊する。
+-5：各対戦相手はそれぞれ、あなたの墓地にあるクリーチャー・カードの枚数に等しい点数のライフを失う。","As long as Grist isn't on the battlefield, it's a 1/1 Insect creature in addition to its other types.
++1: Create a 1/1 black and green Insect creature token, then mill a card. If an Insect card was milled this way, put a loyalty counter on Grist and repeat this process.
+−2: You may sacrifice a creature. When you do, destroy target creature or planeswalker.
+−5: Each opponent loses life equal to the number of creature cards in your graveyard.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ラスリルで使える単体除去,commander,edh_removal,8,Deadly Rollick,致命的なはしゃぎ回り,Instant,"あなたが統率者をコントロールしているなら、この呪文をマナ・コストを支払うことなく唱えてもよい。
+クリーチャー１体を対象とする。それを追放する。","If you control a commander, you may cast this spell without paying its mana cost.
+Exile target creature.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ラスリルで使える単体除去,commander,edh_removal,9,Aetherflux Reservoir,霊気貯蔵器,Artifact,"あなたが呪文を唱えるたび、あなたは、このターンにあなたが唱えた呪文１つにつき１点のライフを得る。
+50点のライフを支払う：クリーチャーやプレインズウォーカーやプレイヤーのうち１つを対象とする。霊気貯蔵器はそれに50点のダメージを与える。","Whenever you cast a spell, you gain 1 life for each spell you've cast this turn.
+Pay 50 life: This artifact deals 50 damage to any target.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ラスリルで使える単体除去,commander,edh_removal,10,Mana Vault,魔力の櫃,Artifact,"魔力の櫃は、あなたのアンタップ・ステップにアンタップしない。
+あなたのアップキープの開始時に、あなたは{4}を支払ってもよい。そうしたなら、魔力の櫃をアンタップする。
+あなたのドロー・ステップの開始時に、魔力の櫃がタップ状態である場合、これはあなたに１点のダメージを与える。
+{T}：{C}{C}{C}を加える。","This artifact doesn't untap during your untap step.
+At the beginning of your upkeep, you may pay {4}. If you do, untap this artifact.
+At the beginning of your draw step, if this artifact is tapped, it deals 1 damage to you.
+{T}: Add {C}{C}{C}.",0,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+百合子のデッキで使えるドロー,commander,edh_draw,1,One with the Machine,機械と共に,Sorcery,あなたがコントロールしているアーティファクトのマナ総量の中の最大値に等しい枚数のカードを引く。,Draw cards equal to the greatest mana value among artifacts you control.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+百合子のデッキで使えるドロー,commander,edh_draw,2,Null Profusion,有り余る無,Enchantment,"あなたのドロー・ステップを飛ばす。
+あなたがカードをプレイするたび、カードを１枚引く。
+あなたの手札の最大枚数は２になる。","Skip your draw step.
+Whenever you play a card, draw a card.
+Your maximum hand size is two.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+百合子のデッキで使えるドロー,commander,edh_draw,3,Windfall,意外な授かり物,Sorcery,各プレイヤーはそれぞれ、自分の手札を捨て、その後、これによりプレイヤー１人が捨てたカードの枚数の中の最大値に等しい枚数のカードを引く。,"Each player discards their hand, then draws cards equal to the greatest number of cards a player discarded this way.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+百合子のデッキで使えるドロー,commander,edh_draw,4,Quantum Riddler,量子の謎かけ屋,Creature — Sphinx,飛行 このクリーチャーが戦場に出たとき、カード１枚を引く。 あなたの手札にあるカードが１枚以下であるかぎり、あなたが１枚以上のカードを引くなら、代わりにその枚数に１を足した枚数のカードを引く。 ワープ(１)(青),"Flying
+When this creature enters, draw a card.
+As long as you have one or fewer cards in hand, if you would draw one or more cards, you draw that many cards plus one instead.
+Warp {1}{U}",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+百合子のデッキで使えるドロー,commander,edh_draw,5,Words of Wisdom,金言,Instant,あなたはカードを２枚引き、その後他のプレイヤーはそれぞれカードを１枚引く。,"You draw two cards, then each other player draws a card.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+百合子のデッキで使えるドロー,commander,edh_draw,6,"Wan Shi Tong, Librarian",司書、ワン・シー・トン,Legendary Creature — Bird Spirit,"瞬速
+飛行、警戒
+これが戦場に出たとき、これの上に＋１/＋１カウンターＸ個を置く。その後、Ｘの端数を切り捨てた半分の枚数のカードを引く。
+対戦相手１人が自分のライブラリーを探すたび、これの上に＋１/＋１カウンター１個を置き、あなたはカード１枚を引く。","Flash
+Flying, vigilance
+When Wan Shi Tong enters, put X +1/+1 counters on him. Then draw half X cards, rounded down.
+Whenever an opponent searches their library, put a +1/+1 counter on Wan Shi Tong and draw a card.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+百合子のデッキで使えるドロー,commander,edh_draw,7,Well of Ideas,発想の井戸,Enchantment,"発想の井戸が戦場に出たとき、カードを２枚引く。
+他の各プレイヤーのドロー・ステップの開始時に、そのプレイヤーはカードを追加で１枚引く。
+あなたのドロー・ステップの開始時に、カードを追加で２枚引く。","When this enchantment enters, draw two cards.
+At the beginning of each other player's draw step, that player draws an additional card.
+At the beginning of your draw step, draw two additional cards.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+百合子のデッキで使えるドロー,commander,edh_draw,8,Commander's Sphere,統率者の宝球,Artifact,"{T}：あなたの統率者の固有色１色のマナ１点を加える。
+このアーティファクトを生け贄に捧げる：カード１枚を引く。","{T}: Add one mana of any color in your commander's color identity.
+Sacrifice this artifact: Draw a card.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+百合子のデッキで使えるドロー,commander,edh_draw,9,Borne Upon a Wind,風に運ばれて,Instant,"このターン、あなたは呪文を、それが瞬速を持つかのように唱えてもよい。
+カード１枚を引く。","You may cast spells this turn as though they had flash.
+Draw a card.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+百合子のデッキで使えるドロー,commander,edh_draw,10,Wiretapping,盗聴,Enchantment,"秘匿５
+あなたがあなたの各ドロー・ステップ中のあなたの１枚目のカードを引くたび、カード１枚を引く。その後、あなたの手札に９枚以上のカードがあるなら、あなたはその追放されているカード１枚をマナ・コストを支払うことなくプレイしてもよい。","Hideaway 5 (When this enchantment enters, look at the top five cards of your library, exile one face down, then put the rest on the bottom in a random order.)
+Whenever you draw your first card during each of your draw steps, draw a card. Then if you have nine or more cards in hand, you may play the exiled card without paying its mana cost.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+マルコムで使えるカウンター呪文,commander,edh_counter,1,Change the Equation,方程式の改変,Instant,"以下から１つを選ぶ。
+・マナ総量が２以下である呪文１つを対象とする。それを打ち消す。
+・マナ総量が６以下であり赤や緑である呪文１つを対象とする。それを打ち消す。","Choose one —
+• Counter target spell with mana value 2 or less.
+• Counter target red or green spell with mana value 6 or less.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+マルコムで使えるカウンター呪文,commander,edh_counter,2,Delay,遅延,Instant,呪文１つを対象とする。それを打ち消す。これによりそれが打ち消されたなら、それをオーナーの墓地に置く代わりに、それを時間カウンター３個が置かれた状態で追放する。それが待機を持っていないなら、それは待機を得る。（それのオーナーのアップキープの開始時に、そのカードの上から時間カウンター１個を取り除く。最後の１個が取り除かれたとき、そのプレイヤーはそれをマナ・コストを支払わずにプレイする。それがクリーチャーなら、それは速攻を持つ。）,"Counter target spell. If the spell is countered this way, exile it with three time counters on it instead of putting it into its owner's graveyard. If it doesn't have suspend, it gains suspend. (At the beginning of its owner's upkeep, they remove a time counter. When the last is removed, they may play it without paying its mana cost. If it's a creature, it has haste.)",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+マルコムで使えるカウンター呪文,commander,edh_counter,3,Counterspell,対抗呪文,Instant,呪文１つを対象とする。それを打ち消す。,Counter target spell.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+マルコムで使えるカウンター呪文,commander,edh_counter,4,Mana Drain,マナ吸収,Instant,呪文１つを対象とする。それを打ち消す。次のあなたのメイン・フェイズの開始時に、その呪文のマナ総量に等しい点数の{C}を加える。,"Counter target spell. At the beginning of your next main phase, add an amount of {C} equal to that spell's mana value.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+マルコムで使えるカウンター呪文,commander,edh_counter,5,Sublime Epiphany,崇高な天啓,Instant,"以下から１つ以上を選ぶ。
+・呪文１つを対象とする。それを打ち消す。
+・起動型か誘発型である能力１つを対象とする。それを打ち消す。
+・土地でないパーマネント１つを対象とする。それをオーナーの手札に戻す。
+・あなたがコントロールしているクリーチャー１体を対象とする。それのコピーであるトークン１体を生成する。
+・プレイヤー１人を対象とする。そのプレイヤーはカード１枚を引く。","Choose one or more —
+• Counter target spell.
+• Counter target activated or triggered ability.
+• Return target nonland permanent to its owner's hand.
+• Create a token that's a copy of target creature you control.
+• Target player draws a card.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+マルコムで使えるカウンター呪文,commander,edh_counter,6,Fierce Guardianship,激情の後見,Instant,"あなたが統率者をコントロールしているなら、この呪文をマナ・コストを支払うことなく唱えてもよい。
+クリーチャーでない呪文１つを対象とする。それを打ち消す。","If you control a commander, you may cast this spell without paying its mana cost.
+Counter target noncreature spell.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+マルコムで使えるカウンター呪文,commander,edh_counter,7,Thwart,妨害,Instant,あなたは、この呪文のマナ・コストを支払うのではなく、あなたがコントロールする島(Island)を３つ、オーナーの手札に戻すことを選んでもよい。 呪文１つを対象とし、それを打ち消す。,"You may return three Islands you control to their owner's hand rather than pay this spell's mana cost.
+Counter target spell.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+マルコムで使えるカウンター呪文,commander,edh_counter,8,Countermand,撤回命令,Instant,呪文１つを対象とし、それを打ち消す。それのコントローラーは自分のライブラリーの一番上から４枚のカードを自分の墓地に置く。,Counter target spell. Its controller mills four cards.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+マルコムで使えるカウンター呪文,commander,edh_counter,9,Force of Negation,否定の力,Instant,"あなたのターンでないなら、この呪文のマナ・コストを支払うのではなく、あなたの手札にある青のカード１枚を追放してもよい。
+クリーチャーでない呪文１つを対象とする。それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。","If it's not your turn, you may exile a blue card from your hand rather than pay this spell's mana cost.
+Counter target noncreature spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+マルコムで使えるカウンター呪文,commander,edh_counter,10,Reinterpret,再解釈,Instant,呪文１つを対象とする。それを打ち消す。あなたはあなたの手札からマナ総量がそれ以下の呪文１つをマナ・コストを支払うことなく唱えてもよい。,Counter target spell. You may cast a spell with equal or lesser mana value from your hand without paying its mana cost.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+キナンで使えるマナ加速,commander,edh_ramp,1,Mana Drain,マナ吸収,Instant,呪文１つを対象とする。それを打ち消す。次のあなたのメイン・フェイズの開始時に、その呪文のマナ総量に等しい点数の{C}を加える。,"Counter target spell. At the beginning of your next main phase, add an amount of {C} equal to that spell's mana value.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+キナンで使えるマナ加速,commander,edh_ramp,2,Chromatic Lantern,彩色の灯籠,Artifact,"あなたがコントロールしているすべての土地は「{T}：好きな色１色のマナ１点を加える。」を持つ。
+{T}：好きな色１色のマナ１点を加える。","Lands you control have ""{T}: Add one mana of any color.""
+{T}: Add one mana of any color.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+キナンで使えるマナ加速,commander,edh_ramp,3,"Nykthos, Shrine to Nyx",ニクスの祭殿、ニクソス,Legendary Land,"{T}：あなたのマナ・プールに{1}を加える。
+{2}, {T}：色を１つ選ぶ。あなたのマナ・プールに、あなたのその色への信心に等しい点数の、その色のマナを加える。（あなたの色への信心は、あなたがコントロールするパーマネントのマナ・コスト内に含まれるその色のマナ・シンボルの数である。）","{T}: Add {C}.
+{2}, {T}: Choose a color. Add an amount of mana of that color equal to your devotion to that color. (Your devotion to a color is the number of mana symbols of that color in the mana costs of permanents you control.)",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+キナンで使えるマナ加速,commander,edh_ramp,4,Arcane Signet,秘儀の印鑑,Artifact,{T}：あなたの統率者の固有色１色のマナ１点を加える。,{T}: Add one mana of any color in your commander's color identity.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+キナンで使えるマナ加速,commander,edh_ramp,5,Commander's Sphere,統率者の宝球,Artifact,"{T}：あなたの統率者の固有色１色のマナ１点を加える。
+このアーティファクトを生け贄に捧げる：カード１枚を引く。","{T}: Add one mana of any color in your commander's color identity.
+Sacrifice this artifact: Draw a card.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+キナンで使えるマナ加速,commander,edh_ramp,6,Fellwar Stone,友なる石,Artifact,{T}：対戦相手がコントロールしている土地が生み出すことのできる色１色のマナ１点を加える。,{T}: Add one mana of any color that a land an opponent controls could produce.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+キナンで使えるマナ加速,commander,edh_ramp,7,Patchwork Banner,継ぎ接ぎの旗,Artifact,"継ぎ接ぎの旗が戦場に出るに際し、クリーチャー・タイプ１つを選ぶ。
+あなたがコントロールしていてその選ばれたタイプであるすべてのクリーチャーは＋１/＋１の修整を受ける。
+{T}：好きな色１色のマナ１点を加える。","As this artifact enters, choose a creature type.
+Creatures you control of the chosen type get +1/+1.
+{T}: Add one mana of any color.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+キナンで使えるマナ加速,commander,edh_ramp,8,Mana Vault,魔力の櫃,Artifact,"魔力の櫃は、あなたのアンタップ・ステップにアンタップしない。
+あなたのアップキープの開始時に、あなたは{4}を支払ってもよい。そうしたなら、魔力の櫃をアンタップする。
+あなたのドロー・ステップの開始時に、魔力の櫃がタップ状態である場合、これはあなたに１点のダメージを与える。
+{T}：{C}{C}{C}を加える。","This artifact doesn't untap during your untap step.
+At the beginning of your upkeep, you may pay {4}. If you do, untap this artifact.
+At the beginning of your draw step, if this artifact is tapped, it deals 1 damage to you.
+{T}: Add {C}{C}{C}.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+キナンで使えるマナ加速,commander,edh_ramp,9,Sol Ring,太陽の指輪,Artifact,{T}：{CC}を加える。,{T}: Add {C}{C}.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+キナンで使えるマナ加速,commander,edh_ramp,10,Manalith,マナリス,Artifact,{T}：好きな色１色のマナ１点を加える。,{T}: Add one mana of any color.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+始祖ドラゴンで使えるマナ加速,commander,edh_ramp,1,Commander's Sphere,統率者の宝球,Artifact,"{T}：あなたの統率者の固有色１色のマナ１点を加える。
+このアーティファクトを生け贄に捧げる：カード１枚を引く。","{T}: Add one mana of any color in your commander's color identity.
+Sacrifice this artifact: Draw a card.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+始祖ドラゴンで使えるマナ加速,commander,edh_ramp,2,Arcane Signet,秘儀の印鑑,Artifact,{T}：あなたの統率者の固有色１色のマナ１点を加える。,{T}: Add one mana of any color in your commander's color identity.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+始祖ドラゴンで使えるマナ加速,commander,edh_ramp,3,Fellwar Stone,友なる石,Artifact,{T}：対戦相手がコントロールしている土地が生み出すことのできる色１色のマナ１点を加える。,{T}: Add one mana of any color that a land an opponent controls could produce.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+始祖ドラゴンで使えるマナ加速,commander,edh_ramp,4,Chromatic Lantern,彩色の灯籠,Artifact,"あなたがコントロールしているすべての土地は「{T}：好きな色１色のマナ１点を加える。」を持つ。
+{T}：好きな色１色のマナ１点を加える。","Lands you control have ""{T}: Add one mana of any color.""
+{T}: Add one mana of any color.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+始祖ドラゴンで使えるマナ加速,commander,edh_ramp,5,Sol Ring,太陽の指輪,Artifact,{T}：{CC}を加える。,{T}: Add {C}{C}.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+始祖ドラゴンで使えるマナ加速,commander,edh_ramp,6,Letter of Acceptance,合格通知,Artifact,"{T}：好きな色１色のマナ１点を加える。
+{2}, {T}, 合格通知を生け贄に捧げる：カード１枚を引く。","{T}: Add one mana of any color.
+{2}, {T}, Sacrifice this artifact: Draw a card.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+始祖ドラゴンで使えるマナ加速,commander,edh_ramp,7,Manalith,マナリス,Artifact,{T}：好きな色１色のマナ１点を加える。,{T}: Add one mana of any color.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+始祖ドラゴンで使えるマナ加速,commander,edh_ramp,8,Thought Vessel,思考の器,Artifact,"あなたの手札の上限はなくなる。
+{T}：{C}を加える。","You have no maximum hand size.
+{T}: Add {C}.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+始祖ドラゴンで使えるマナ加速,commander,edh_ramp,9,Mind Stone,精神石,Artifact,"{T}：{C}を加える。
+{1}, {T}, このアーティファクトを生け贄に捧げる：カード１枚を引く。","{T}: Add {C}.
+{1}, {T}, Sacrifice this artifact: Draw a card.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+始祖ドラゴンで使えるマナ加速,commander,edh_ramp,10,Network Terminal,ネットワーク端末,Artifact,"{T}：好きな色１色のマナ１点を加える。
+{1}, {T}, あなたがコントロールしていてアンタップ状態でありこれでないアーティファクト１つをタップする：カード１枚を引き、その後カード１枚を捨てる。","{T}: Add one mana of any color.
+{1}, {T}, Tap another untapped artifact you control: Draw a card, then discard a card.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ブラケット2で使えるマナ加速,commander,edh_bracket,1,Arcane Signet,秘儀の印鑑,Artifact,{T}：あなたの統率者の固有色１色のマナ１点を加える。,{T}: Add one mana of any color in your commander's color identity.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ブラケット2で使えるマナ加速,commander,edh_bracket,2,Mana Drain,マナ吸収,Instant,呪文１つを対象とする。それを打ち消す。次のあなたのメイン・フェイズの開始時に、その呪文のマナ総量に等しい点数の{C}を加える。,"Counter target spell. At the beginning of your next main phase, add an amount of {C} equal to that spell's mana value.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ブラケット2で使えるマナ加速,commander,edh_bracket,3,Commander's Sphere,統率者の宝球,Artifact,"{T}：あなたの統率者の固有色１色のマナ１点を加える。
+このアーティファクトを生け贄に捧げる：カード１枚を引く。","{T}: Add one mana of any color in your commander's color identity.
+Sacrifice this artifact: Draw a card.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ブラケット2で使えるマナ加速,commander,edh_bracket,4,Sol Ring,太陽の指輪,Artifact,{T}：{CC}を加える。,{T}: Add {C}{C}.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ブラケット2で使えるマナ加速,commander,edh_bracket,5,Mana Sculpt,マナ成形,Instant,呪文１つを対象とする。それを打ち消す。あなたがウィザードをコントロールしているなら、次のあなたのメイン・フェイズの開始時に、その呪文を唱えるために支払われたマナに等しい点数の{C}を加える。,"Counter target spell. If you control a Wizard, add an amount of {C} equal to the amount of mana spent to cast that spell at the beginning of your next main phase.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ブラケット2で使えるマナ加速,commander,edh_bracket,6,Fellwar Stone,友なる石,Artifact,{T}：対戦相手がコントロールしている土地が生み出すことのできる色１色のマナ１点を加える。,{T}: Add one mana of any color that a land an opponent controls could produce.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ブラケット2で使えるマナ加速,commander,edh_bracket,7,Thought Vessel,思考の器,Artifact,"あなたの手札の上限はなくなる。
+{T}：{C}を加える。","You have no maximum hand size.
+{T}: Add {C}.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ブラケット2で使えるマナ加速,commander,edh_bracket,8,"Rosheen, Roaring Prophet",咆哮する予言者、ロシーン,Legendary Creature — Giant Shaman,"咆哮する予言者、ロシーンが戦場に出たとき、カード６枚を切削する。あなたはその中からマナ・コストに{X}を含むカード１枚をあなたの手札に加えてもよい。
+{T}：あなたの手札にありマナ・コストに{X}を含む望む枚数のカードを公開する。これにより公開されたカード１枚につき{C}{C}を加える。このマナは{X}を含むコストにしか支払えない。","When Rosheen enters, mill six cards. You may put a card with {X} in its mana cost from among them into your hand.
+{T}: Reveal any number of cards with {X} in their mana cost in your hand. Add {C}{C} for each card revealed this way. Spend this mana only on costs that contain {X}.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ブラケット2で使えるマナ加速,commander,edh_bracket,9,Mind Stone,精神石,Artifact,"{T}：{C}を加える。
+{1}, {T}, このアーティファクトを生け贄に捧げる：カード１枚を引く。","{T}: Add {C}.
+{1}, {T}, Sacrifice this artifact: Draw a card.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ブラケット2で使えるマナ加速,commander,edh_bracket,10,Birds of Paradise,極楽鳥,Creature — Bird,"飛行
+{T}：好きな色１色のマナ１点を加える。","Flying
+{T}: Add one mana of any color.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+統率者戦で強いカード,commander,edh_meta,1,Sol Ring,太陽の指輪,Artifact,{T}：{CC}を加える。,{T}: Add {C}{C}.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+統率者戦で強いカード,commander,edh_meta,2,Arcane Signet,秘儀の印鑑,Artifact,{T}：あなたの統率者の固有色１色のマナ１点を加える。,{T}: Add one mana of any color in your commander's color identity.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+統率者戦で強いカード,commander,edh_meta,3,Chrome Mox,金属モックス,Artifact,"刻印 ― 金属モックスが戦場に出たとき、あなたはあなたの手札からアーティファクトでも土地でもないカード１枚を追放してもよい。
+{T}：その追放されているカードの色１色のマナ１点を加える。","Imprint — When this artifact enters, you may exile a nonartifact, nonland card from your hand.
+{T}: Add one mana of any of the exiled card's colors.",1,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+統率者戦で強いカード,commander,edh_meta,4,Lotus Petal,水蓮の花びら,Artifact,"(Ｔ),水蓮の花びらを生け贄に捧げる：好きな色１色のマナ１点を加える。","{T}, Sacrifice this artifact: Add one mana of any color.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+統率者戦で強いカード,commander,edh_meta,5,Mox Diamond,モックス・ダイアモンド,Artifact,モックス・ダイアモンドが戦場に出るなら、あなたは代わりに土地カードを１枚捨ててもよい。そうしたなら、モックス・ダイアモンドは戦場に出る。そうでないなら、それをオーナーの墓地に置く。 (Ｔ)：好きな色１色のマナ１点を加える。,"If this artifact would enter, you may discard a land card instead. If you do, put this artifact onto the battlefield. If you don't, put it into its owner's graveyard.
+{T}: Add one mana of any color.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+統率者戦で強いカード,commander,edh_meta,6,Fellwar Stone,友なる石,Artifact,{T}：対戦相手がコントロールしている土地が生み出すことのできる色１色のマナ１点を加える。,{T}: Add one mana of any color that a land an opponent controls could produce.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+統率者戦で強いカード,commander,edh_meta,7,Mana Vault,魔力の櫃,Artifact,"魔力の櫃は、あなたのアンタップ・ステップにアンタップしない。
+あなたのアップキープの開始時に、あなたは{4}を支払ってもよい。そうしたなら、魔力の櫃をアンタップする。
+あなたのドロー・ステップの開始時に、魔力の櫃がタップ状態である場合、これはあなたに１点のダメージを与える。
+{T}：{C}{C}{C}を加える。","This artifact doesn't untap during your untap step.
+At the beginning of your upkeep, you may pay {4}. If you do, untap this artifact.
+At the beginning of your draw step, if this artifact is tapped, it deals 1 damage to you.
+{T}: Add {C}{C}{C}.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+統率者戦で強いカード,commander,edh_meta,8,Swords to Plowshares,剣を鍬に,Instant,クリーチャー１体を対象とする。それを追放する。それのコントローラーは、それのパワーに等しい点数のライフを得る。,Exile target creature. Its controller gains life equal to its power.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+統率者戦で強いカード,commander,edh_meta,9,Demonic Tutor,悪魔の教示者,Sorcery,あなたのライブラリーからカード１枚を探し、あなたの手札に加える。その後、ライブラリーを切り直す。,"Search your library for a card, put that card into your hand, then shuffle.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+統率者戦で強いカード,commander,edh_meta,10,Birds of Paradise,極楽鳥,Creature — Bird,"飛行
+{T}：好きな色１色のマナ１点を加える。","Flying
+{T}: Add one mana of any color.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサを使ったデッキで相手のウラモグに対応できるカード,commander,edh_anchor,1,Swords to Plowshares,剣を鍬に,Instant,クリーチャー１体を対象とする。それを追放する。それのコントローラーは、それのパワーに等しい点数のライフを得る。,Exile target creature. Its controller gains life equal to its power.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサを使ったデッキで相手のウラモグに対応できるカード,commander,edh_anchor,2,Path to Exile,流刑への道,Instant,クリーチャー１体を対象とする。それを追放する。それのコントローラーは「自分のライブラリーから基本土地・カード１枚を探し、タップ状態で戦場に出す。その後、ライブラリーを切り直す。」を選んでもよい。,"Exile target creature. Its controller may search their library for a basic land card, put that card onto the battlefield tapped, then shuffle.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサを使ったデッキで相手のウラモグに対応できるカード,commander,edh_anchor,3,Orcish Bowmasters,オークの弓使い,Creature — Orc Archer,"瞬速
+オークの弓使いが戦場に出たとき、ならびに、対戦相手が自分の各ドロー・ステップ内で最初に引くカード以外のカード１枚を引くたび、クリーチャーやプレインズウォーカーやプレイヤーのうち１つを対象とする。オークの弓使いはそれに１点のダメージを与える。その後、オーク動員１を行う。","Flash
+When this creature enters and whenever an opponent draws a card except the first one they draw in each of their draw steps, this creature deals 1 damage to any target. Then amass Orcs 1.",0,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサを使ったデッキで相手のウラモグに対応できるカード,commander,edh_anchor,4,Beast Within,内にいる獣,Instant,パーマネント１つを対象とする。それを破壊する。それのコントローラーは緑の３/３のビースト・クリーチャー・トークン１体を生成する。,Destroy target permanent. Its controller creates a 3/3 green Beast creature token.,0,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサを使ったデッキで相手のウラモグに対応できるカード,commander,edh_anchor,5,Assassin's Trophy,暗殺者の戦利品,Instant,対戦相手がコントロールしているパーマネント１つを対象とする。それを破壊する。それのコントローラーは「自分のライブラリーから基本土地・カード１枚を探し、戦場に出す。その後、ライブラリーを切り直す。」を選んでもよい。,"Destroy target permanent an opponent controls. Its controller may search their library for a basic land card, put it onto the battlefield, then shuffle.",0,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサを使ったデッキで相手のウラモグに対応できるカード,commander,edh_anchor,6,Deadly Rollick,致命的なはしゃぎ回り,Instant,"あなたが統率者をコントロールしているなら、この呪文をマナ・コストを支払うことなく唱えてもよい。
+クリーチャー１体を対象とする。それを追放する。","If you control a commander, you may cast this spell without paying its mana cost.
+Exile target creature.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサを使ったデッキで相手のウラモグに対応できるカード,commander,edh_anchor,7,Get Lost,失せろ,Instant,"クリーチャーやエンチャントやプレインズウォーカーである１つを対象とする。それを破壊する。それのコントローラーは地図・トークン２つを生成する。（それは「{1}, {T}, このアーティファクトを生け贄に捧げる：あなたがコントロールしているクリーチャー１体を対象とする。それは探検を行う。起動はソーサリーとしてのみ行う。」を持つアーティファクトである。）","Destroy target creature, enchantment, or planeswalker. Its controller creates two Map tokens. (They're artifacts with ""{1}, {T}, Sacrifice this token: Target creature you control explores. Activate only as a sorcery."")",0,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサを使ったデッキで相手のウラモグに対応できるカード,commander,edh_anchor,8,Generous Gift,過大な贈り物,Instant,パーマネント１つを対象とする。それを破壊する。それのコントローラーは緑の３/３の象・クリーチャー・トークン１体を生成する。,Destroy target permanent. Its controller creates a 3/3 green Elephant creature token.,0,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサを使ったデッキで相手のウラモグに対応できるカード,commander,edh_anchor,9,Feed the Swarm,大群への給餌,Sorcery,対戦相手がコントロールしていてクリーチャーやエンチャントである１つを対象とする。それを破壊する。あなたは、そのパーマネントのマナ総量に等しい点数のライフを失う。,Destroy target creature or enchantment an opponent controls. You lose life equal to that permanent's mana value.,0,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサを使ったデッキで相手のウラモグに対応できるカード,commander,edh_anchor,10,Anguished Unmaking,苦渋の破棄,Instant,土地でないパーマネント１つを対象とする。それを追放する。あなたは３点のライフを失う。,Exile target nonland permanent. You lose 3 life.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
