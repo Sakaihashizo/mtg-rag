@@ -108,6 +108,31 @@
     border-radius: 12px;
     padding: 1rem 1.1rem;
   }
+  /* カード画像サムネイル（2026-07-26）: Scryfall CDN 直リンク。
+     float 右置き＝既存のテキストレイアウトを崩さない。読み込み失敗時は
+     onerror で自身を消す＝画像なしの従来表示に自然に戻る */
+  .card .thumb {
+    float: right;
+    width: 146px;
+    border-radius: 7px;
+    margin: 0 0 .6rem .9rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,.35);
+  }
+  .card::after { content: ""; display: block; clear: both; }
+  /* 表記言語トグル（2026-07-27）: データは常に日英両方 API から来ている——
+     切替は表示だけの話なので再検索不要・フロント完結 */
+  #lang {
+    background: var(--panel);
+    color: var(--text-dim);
+    border: 1px solid var(--panel-edge);
+    /* 固定幅（min-width だと「EN」⇔「日」で伸縮し、隣の検索ボタンが動いて
+       連打中の誤クリックを生む＝2026-07-27 本人指摘） */
+    width: 3.2rem;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  #lang.on { color: var(--text); border-color: var(--accent, #7aa2f7); }
+  @media (max-width: 560px) { .card .thumb { width: 104px; } }
   .card .head {
     display: flex;
     justify-content: space-between;
@@ -194,6 +219,7 @@
     <option value="pauper">パウパー</option>
   </select>
   <button id="go">検索</button>
+  <button id="lang" type="button" title="カード表記の言語切替（検索は日英どちらでも可）">EN</button>
 </div>
 
 <div class="status" id="status"></div>
@@ -202,11 +228,30 @@
 <footer>ローカル開発ビルド — ルーター: 7B (Ollama) / DB: PostgreSQL+pgvector</footer>
 
 <script>
+// API の接続先（2026-07-28）: ローカル開発は同一オリジン（uvicorn:8000）・
+// CloudFront 配信時は API Gateway へ（別オリジン・CORS は API 側で許可済み）
+const API_BASE = location.hostname.endsWith("cloudfront.net")
+  ? "https://agq13n3owe.execute-api.ap-northeast-1.amazonaws.com" : "";
 const $q = document.getElementById("q");
 const $go = document.getElementById("go");
 const $fmt = document.getElementById("format");
 const $status = document.getElementById("status");
 const $results = document.getElementById("results");
+const $lang = document.getElementById("lang");
+// カード表記: "ja"（既定・日本語主）/ "en"（英語主）。localStorage で記憶
+let cardLang = localStorage.getItem("cardLang") || "ja";
+let lastCards = null;   // 直近の結果（言語切替時に再描画するため・再検索しない）
+function paintLangBtn() {
+  $lang.textContent = cardLang === "ja" ? "EN" : "日";
+  $lang.classList.toggle("on", cardLang === "en");
+}
+paintLangBtn();
+$lang.addEventListener("click", () => {
+  cardLang = cardLang === "ja" ? "en" : "ja";
+  localStorage.setItem("cardLang", cardLang);
+  paintLangBtn();
+  if (lastCards) $results.innerHTML = lastCards.map(cardHtml).join("");
+});
 
 const RARITY_COLOR = {
   mythic: "#e05e26", rare: "#c9a54c", uncommon: "#a9bcc4", common: "#5a5e66",
@@ -235,17 +280,32 @@ function esc(s) {
 
 function cardHtml(c) {
   const rarity = RARITY_COLOR[(c.rarity || "").toLowerCase()] || "var(--panel-edge)";
-  const ja = c.japanese_name ? esc(c.japanese_name) : esc(c.card_name);
-  const en = c.japanese_name ? `<span class="en">${esc(c.card_name)}</span>` : "";
+  // 表記言語（cardLang）で主従を入れ替える。en モードは英名・英文を主にし、
+  // 日本語は副表示（データはどちらのモードでも既に手元にある＝再検索しない）
+  const jaMode = cardLang !== "en";
+  const primary = jaMode
+    ? (c.japanese_name ? esc(c.japanese_name) : esc(c.card_name))
+    : esc(c.card_name);
+  const secondary = jaMode
+    ? (c.japanese_name ? `<span class="en">${esc(c.card_name)}</span>` : "")
+    : (c.japanese_name ? `<span class="en">${esc(c.japanese_name)}</span>` : "");
+  const ja = primary;
+  const en = secondary;
   const pt = (c.power != null && c.toughness != null)
     ? `<span class="pt">${esc(String(c.power))}/${esc(String(c.toughness))}</span>` : "";
-  const oracleJa = c.japanese_oracle_text
+  const oracleJa = (jaMode && c.japanese_oracle_text)
     ? `<div class="oracle">${esc(c.japanese_oracle_text)}</div>` : "";
-  const oracleEn = c.oracle_text
-    ? `<div class="oracle en">${esc(c.oracle_text)}</div>` : "";
+  const oracleEn = (!jaMode || !c.japanese_oracle_text) && c.oracle_text
+    ? `<div class="oracle${jaMode ? " en" : ""}">${esc(c.oracle_text)}</div>` : "";
   const arch = (c.archetypes && c.archetypes.length)
     ? `<div class="archetypes">${c.archetypes.map(a => `<span>${esc(a)}</span>`).join("")}</div>` : "";
+  // 表記言語に合わせて画像も切替（日本語印刷が無いカードは英語画像のまま）
+  const imgUrl = (jaMode && c.image_url_ja) ? c.image_url_ja : c.image_url;
+  const img = imgUrl
+    ? `<img class="thumb" src="${esc(imgUrl)}" alt="${esc(c.card_name)}"
+            loading="lazy" onerror="this.remove()">` : "";
   return `<div class="card" style="--rarity:${rarity}">
+    ${img}
     <div class="head">
       <div class="names">${ja}${en}</div>
       <div class="mana">${manaHtml(c.mana_cost)}</div>
@@ -263,7 +323,7 @@ async function search() {
   $status.textContent = "検索中…（ルーター解析が入る場合は十数秒かかります）";
   const t0 = performance.now();
   try {
-    const resp = await fetch("/search", {
+    const resp = await fetch(API_BASE + "/search", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -284,6 +344,7 @@ async function search() {
       `<span class="route-badge route-${esc(data.route)}">${esc(routeLabel)}${esc(backend)}</span>` +
       `${data.cards.length}件 · ${ms}ms` +
       (data.detected_format ? ` · フォーマット: ${esc(data.detected_format)}` : "");
+    lastCards = data.cards;
     $results.innerHTML = data.cards.length
       ? data.cards.map(cardHtml).join("")
       : `<div class="empty">該当するカードが見つかりませんでした。</div>`;
