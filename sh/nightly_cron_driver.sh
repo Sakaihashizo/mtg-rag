@@ -32,7 +32,11 @@ END_HOUR="${NIGHTLY_END_HOUR:-10}"
 INTERVAL="${NIGHTLY_INTERVAL:-600}"
 MAX_PASSES="${NIGHTLY_MAX_PASSES:-0}"
 JOBS_TOP8="${NIGHTLY_JOBS_TOP8-mtgtop8:ST:341 mtgtop8:PI:340 mtgtop8:MO:339 mtgtop8:LE:338 mtgtop8:VI:337 mtgtop8:PAU:342}"
-JOBS_MOX="${NIGHTLY_JOBS_MOX-moxfield:2,3,4,5:300}"
+# per-bracket 上限（2026-07-26 本人 GO「上限を増やしておこう」で 300→1000）:
+# 300 は Moxfield の在庫切れでなく自分で決めたバケット上限だった（bracket 2〜5 が
+# 揃って 300 で頭打ち＝満杯で早期打ち切り）。天井は Moxfield 側の totalResults=10000
+# キャップの方（bracket 1 の 31 件はそちらの本物の枯れ）。
+JOBS_MOX="${NIGHTLY_JOBS_MOX-moxfield:2,3,4,5:1000}"
 
 mkdir -p "$LOGDIR"
 DLOG=$LOGDIR/driver.log
