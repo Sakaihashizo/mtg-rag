@@ -425,6 +425,7 @@ def rerank_results(query, results):
 def run_eval(conn, gt_path: str, model_key: str, note: str = "",
              router_cache: dict = None, allow_partial: bool = False,
              top_k: int = TOP_K, rerank: bool = False,
+             rerank_scope: str = "default",
              arm_weights: dict = None):
     """
     編集済みGT CSVを読んで指標を計算し、eval_runs に保存する。
@@ -517,8 +518,19 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
         _, _, _, tb_d, rm_d, cm_d, _, _, kw_only = extract_keywords(query)
         structured_q = kw_only and not (tb_d or rm_d or cm_d)
         # 除去直行路も rerank スキップ（並びは検証済みレシピ＝上流信号・同じ原則）
-        if rerank and not boost_q and not structured_q and not direct_q:
-            legal = rerank_results(query, legal)
+        #
+        # rerank_scope（2026-07-26 新設）: 上の除外三点セットが既定（"default"）。
+        # "boost-only" は boost だけ除外し、構造化直行・除去/カウンター直行にも
+        # reranker を通す＝本人指示の実験用（「NDCG が変わらなくてもラインナップを
+        # 見たい」）。既定を変えていないので id=32 の裁定は据え置き。
+        reranked = False
+        if rerank:
+            if rerank_scope == "boost-only":
+                reranked = not boost_q
+            else:
+                reranked = not boost_q and not structured_q and not direct_q
+            if reranked:
+                legal = rerank_results(query, legal)
         system_results = [(r.card_name, i + 1) for i, r in enumerate(legal)]
         m = compute_metrics(system_results, gt)
         # 未採点除外（judged-only）の併記（2026-07-15 本人指示）: 正準指標は
@@ -535,6 +547,13 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
         m["unlabeled_10"] = (sum(1 for name in top10 if name not in gt)
                              / max(len(top10), 1))
         m["query"] = query
+        # ラインナップの保存（2026-07-26 新設・本人要望「ラインナップの比較が
+        # できるようになってほしい」）: 指標だけでは「NDCG は動かないが顔ぶれは
+        # 変わった」を検出できない。grade は GT 未収録なら null（＝未採点）。
+        # 読み出しは src/compare_runs.py。
+        m["top10_lineup"] = [{"rank": r, "card": nm, "grade": gt.get(nm)}
+                             for nm, r in system_results[:10]]
+        m["reranked"] = reranked
         all_metrics.append(m)
         unl = (f"  未ラベル={m['unlabeled_10']:.0%}"
                f" NDCGj={m['ndcg_10_judged']:.2f}"
@@ -569,6 +588,9 @@ def run_eval(conn, gt_path: str, model_key: str, note: str = "",
         # 検索経路。searcher 直呼びとルーター経由の数値は条件が違うので比較しない
         "route": "router" if router_cache is not None else "searcher",
         "rerank": rerank,
+        # rerank の適用範囲。"default"=boost/構造化直行/除去カウンター直行を除外
+        # （id=32 の裁定）／"boost-only"=boost だけ除外（2026-07-26 の実験）
+        "rerank_scope": rerank_scope if rerank else None,
         # 腕の重み（RRF 実験の条件を焼き込む。無指定=全腕 1.0 の現行）
         "arm_weights": arm_weights or {"vec": 1.0, "en": 1.0, "ja": 1.0},
         "avg_unlabeled_10": avg_unlabeled,
@@ -694,6 +716,11 @@ def main():
     parser.add_argument("--rerank", action="store_true",
                         help="検索結果の top_k を cross-encoder(bge-reranker-v2-m3)で"
                              "並べ替える（候補集合は不変＝coverage bias なし）")
+    parser.add_argument("--rerank-scope", default="default", dest="rerank_scope",
+                        choices=["default", "boost-only"],
+                        help="rerank の適用範囲。default=boost/構造化直行/除去・"
+                             "カウンター直行を除外（id=32 の裁定・既定）／"
+                             "boost-only=boost だけ除外（直行路にも通す実験用）")
     parser.add_argument("--weights", default=None,
                         help="RRF 腕の重み（RRF 骨格の問い直し実験・2026-07-12）。"
                              "形式 'vec=1,en=0,ja=0'。0 で腕の寄与を消す。省略=全腕 1.0")
@@ -716,7 +743,8 @@ def main():
                 arm_weights[k.strip()] = float(v)
         run_eval(conn, gt_path=args.gt, model_key=args.model, note=args.note,
                  router_cache=router_cache, allow_partial=args.partial,
-                 top_k=args.top_k, rerank=args.rerank, arm_weights=arm_weights)
+                 top_k=args.top_k, rerank=args.rerank,
+                 rerank_scope=args.rerank_scope, arm_weights=arm_weights)
     elif args.show:
         show_runs(conn)
     else:
