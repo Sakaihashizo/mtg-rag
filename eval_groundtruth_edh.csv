@@ -166,7 +166,7 @@ Counter target spell.",2,2026-07-24 本人採点（EDH 初回便・現行規約=
 クリーチャーでない呪文１つを対象とする。それを打ち消す。これによりその呪文が打ち消されたなら、それをオーナーの墓地に置く代わりに追放する。","If it's not your turn, you may exile a blue card from your hand rather than pay this spell's mana cost.
 Counter target noncreature spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
 マルコムで使えるカウンター呪文,commander,edh_counter,10,Reinterpret,再解釈,Instant,呪文１つを対象とする。それを打ち消す。あなたはあなたの手札からマナ総量がそれ以下の呪文１つをマナ・コストを支払うことなく唱えてもよい。,Counter target spell. You may cast a spell with equal or lesser mana value from your hand without paying its mana cost.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
-キナンで使えるマナ加速,commander,edh_ramp,1,Mana Drain,マナ吸収,Instant,呪文１つを対象とする。それを打ち消す。次のあなたのメイン・フェイズの開始時に、その呪文のマナ総量に等しい点数の{C}を加える。,"Counter target spell. At the beginning of your next main phase, add an amount of {C} equal to that spell's mana value.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+キナンで使えるマナ加速,commander,edh_ramp,1,Mana Drain,マナ吸収,Instant,呪文１つを対象とする。それを打ち消す。次のあなたのメイン・フェイズの開始時に、その呪文のマナ総量に等しい点数の{C}を加える。,"Counter target spell. At the beginning of your next main phase, add an amount of {C} equal to that spell's mana value.",1,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離） | 2026-07-26 本人裁定「マナ吸収は1にしてしまおう」=マナ加速文脈は付随マナ(§11実例の決着)・カウンター文脈の2は不変
 キナンで使えるマナ加速,commander,edh_ramp,2,Chromatic Lantern,彩色の灯籠,Artifact,"あなたがコントロールしているすべての土地は「{T}：好きな色１色のマナ１点を加える。」を持つ。
 {T}：好きな色１色のマナ１点を加える。","Lands you control have ""{T}: Add one mana of any color.""
 {T}: Add one mana of any color.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
@@ -215,7 +215,7 @@ Sacrifice this artifact: Draw a card.",2,2026-07-24 本人採点（EDH 初回便
 {1}, {T}, あなたがコントロールしていてアンタップ状態でありこれでないアーティファクト１つをタップする：カード１枚を引き、その後カード１枚を捨てる。","{T}: Add one mana of any color.
 {1}, {T}, Tap another untapped artifact you control: Draw a card, then discard a card.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
 ブラケット2で使えるマナ加速,commander,edh_bracket,1,Arcane Signet,秘儀の印鑑,Artifact,{T}：あなたの統率者の固有色１色のマナ１点を加える。,{T}: Add one mana of any color in your commander's color identity.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
-ブラケット2で使えるマナ加速,commander,edh_bracket,2,Mana Drain,マナ吸収,Instant,呪文１つを対象とする。それを打ち消す。次のあなたのメイン・フェイズの開始時に、その呪文のマナ総量に等しい点数の{C}を加える。,"Counter target spell. At the beginning of your next main phase, add an amount of {C} equal to that spell's mana value.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+ブラケット2で使えるマナ加速,commander,edh_bracket,2,Mana Drain,マナ吸収,Instant,呪文１つを対象とする。それを打ち消す。次のあなたのメイン・フェイズの開始時に、その呪文のマナ総量に等しい点数の{C}を加える。,"Counter target spell. At the beginning of your next main phase, add an amount of {C} equal to that spell's mana value.",1,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離） | 2026-07-26 本人裁定「マナ吸収は1にしてしまおう」=マナ加速文脈は付随マナ(§11実例の決着)・カウンター文脈の2は不変
 ブラケット2で使えるマナ加速,commander,edh_bracket,3,Commander's Sphere,統率者の宝球,Artifact,"{T}：あなたの統率者の固有色１色のマナ１点を加える。
 このアーティファクトを生け贄に捧げる：カード１枚を引く。","{T}: Add one mana of any color in your commander's color identity.
 Sacrifice this artifact: Draw a card.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
@@ -269,3 +269,31 @@ Exile target creature.",2,2026-07-24 本人採点（EDH 初回便・現行規約
 アトラクサを使ったデッキで相手のウラモグに対応できるカード,commander,edh_anchor,8,Generous Gift,過大な贈り物,Instant,パーマネント１つを対象とする。それを破壊する。それのコントローラーは緑の３/３の象・クリーチャー・トークン１体を生成する。,Destroy target permanent. Its controller creates a 3/3 green Elephant creature token.,0,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
 アトラクサを使ったデッキで相手のウラモグに対応できるカード,commander,edh_anchor,9,Feed the Swarm,大群への給餌,Sorcery,対戦相手がコントロールしていてクリーチャーやエンチャントである１つを対象とする。それを破壊する。あなたは、そのパーマネントのマナ総量に等しい点数のライフを失う。,Destroy target creature or enchantment an opponent controls. You lose life equal to that permanent's mana value.,0,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
 アトラクサを使ったデッキで相手のウラモグに対応できるカード,commander,edh_anchor,10,Anguished Unmaking,苦渋の破棄,Instant,土地でないパーマネント１つを対象とする。それを追放する。あなたは３点のライフを失う。,Exile target nonland permanent. You lose 3 life.,2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+アトラクサで使える単体除去,,,,Aetherflux Reservoir,霊気貯蔵器,Artifact,"あなたが呪文を唱えるたび、あなたは、このターンにあなたが唱えた呪文１つにつき１点のライフを得る。
+50点のライフを支払う：クリーチャーやプレインズウォーカーやプレイヤーのうち１つを対象とする。霊気貯蔵器はそれに50点のダメージを与える。","Whenever you cast a spell, you gain 1 life for each spell you've cast this turn.
+Pay 50 life: This artifact deals 50 damage to any target.",1,2026-07-28 本人口頭採点（edhrec_rank 6/19版更新の湧き分）。霊気貯蔵器=1は本人裁定「除去呪文として出てきたら違う」＝マナ吸収と同型の本業/付随線（本業=ライフゲイン勝利エンジン・50点砲は付随）。列側の写しはデプロイ後（§11実例2の決着）
+クレンコのデッキで使える単体除去,,,,Aetherflux Reservoir,霊気貯蔵器,Artifact,"あなたが呪文を唱えるたび、あなたは、このターンにあなたが唱えた呪文１つにつき１点のライフを得る。
+50点のライフを支払う：クリーチャーやプレインズウォーカーやプレイヤーのうち１つを対象とする。霊気貯蔵器はそれに50点のダメージを与える。","Whenever you cast a spell, you gain 1 life for each spell you've cast this turn.
+Pay 50 life: This artifact deals 50 damage to any target.",1,2026-07-28 本人口頭採点（edhrec_rank 6/19版更新の湧き分）。霊気貯蔵器=1は本人裁定「除去呪文として出てきたら違う」＝マナ吸収と同型の本業/付随線（本業=ライフゲイン勝利エンジン・50点砲は付随）。列側の写しはデプロイ後（§11実例2の決着）
+キナンで使えるマナ加速,,,,Birds of Paradise,極楽鳥,Creature — Bird,"飛行
+{T}：好きな色１色のマナ１点を加える。","Flying
+{T}: Add one mana of any color.",2,2026-07-28 本人口頭採点（edhrec_rank 6/19版更新の湧き分）。霊気貯蔵器=1は本人裁定「除去呪文として出てきたら違う」＝マナ吸収と同型の本業/付随線（本業=ライフゲイン勝利エンジン・50点砲は付随）。列側の写しはデプロイ後（§11実例2の決着）
+キナンで使えるマナ加速,,,,Decanter of Endless Water,デカンター・オヴ・エンドレス・ウォーター,Artifact,"あなたの手札の上限はなくなる。
+{T}：好きな色１色のマナ１点を加える。","You have no maximum hand size.
+{T}: Add one mana of any color.",2,2026-07-28 本人口頭採点（edhrec_rank 6/19版更新の湧き分）。霊気貯蔵器=1は本人裁定「除去呪文として出てきたら違う」＝マナ吸収と同型の本業/付随線（本業=ライフゲイン勝利エンジン・50点砲は付随）。列側の写しはデプロイ後（§11実例2の決着）
+キナンで使えるマナ加速,,,,Kami of Whispered Hopes,囁かれる希望の神,Creature — Spirit,"あなたがコントロールしているパーマネント１つの上に１個以上の＋１/＋１カウンターが置かれるなら、代わりにそのパーマネントの上にその個数に１を足した個数の＋１/＋１カウンターを置く。
+{T}：好きな色１色のマナＸ点を加える。Ｘは、このクリーチャーのパワーに等しい。","If one or more +1/+1 counters would be put on a permanent you control, that many plus one +1/+1 counters are put on that permanent instead.
+{T}: Add X mana of any one color, where X is this creature's power.",2,2026-07-28 本人口頭採点（edhrec_rank 6/19版更新の湧き分）。霊気貯蔵器=1は本人裁定「除去呪文として出てきたら違う」＝マナ吸収と同型の本業/付随線（本業=ライフゲイン勝利エンジン・50点砲は付随）。列側の写しはデプロイ後（§11実例2の決着）
+始祖ドラゴンで使えるマナ加速,,,,Patchwork Banner,継ぎ接ぎの旗,Artifact,"継ぎ接ぎの旗が戦場に出るに際し、クリーチャー・タイプ１つを選ぶ。
+あなたがコントロールしていてその選ばれたタイプであるすべてのクリーチャーは＋１/＋１の修整を受ける。
+{T}：好きな色１色のマナ１点を加える。","As this artifact enters, choose a creature type.
+Creatures you control of the chosen type get +1/+1.
+{T}: Add one mana of any color.",2,2026-07-28 本人口頭採点（edhrec_rank 6/19版更新の湧き分）。霊気貯蔵器=1は本人裁定「除去呪文として出てきたら違う」＝マナ吸収と同型の本業/付随線（本業=ライフゲイン勝利エンジン・50点砲は付随）。列側の写しはデプロイ後（§11実例2の決着）
+始祖ドラゴンで使えるマナ加速,,,,Chrome Mox,金属モックス,Artifact,"刻印 ― 金属モックスが戦場に出たとき、あなたはあなたの手札からアーティファクトでも土地でもないカード１枚を追放してもよい。
+{T}：その追放されているカードの色１色のマナ１点を加える。","Imprint — When this artifact enters, you may exile a nonartifact, nonland card from your hand.
+{T}: Add one mana of any of the exiled card's colors.",2,2026-07-28 本人口頭採点（edhrec_rank 6/19版更新の湧き分）。霊気貯蔵器=1は本人裁定「除去呪文として出てきたら違う」＝マナ吸収と同型の本業/付随線（本業=ライフゲイン勝利エンジン・50点砲は付随）。列側の写しはデプロイ後（§11実例2の決着）
+ブラケット2で使えるマナ加速,,,,Delighted Halfling,喜ぶハーフリング,Creature — Halfling Citizen,"{T}：{C}を加える。
+{T}：好きな色１色のマナ１点を加える。このマナは、伝説の呪文を唱えるためにのみ支払えて、その呪文は打ち消されない。","{T}: Add {C}.
+{T}: Add one mana of any color. Spend this mana only to cast a legendary spell, and that spell can't be countered.",2,2026-07-28 本人口頭採点（edhrec_rank 6/19版更新の湧き分）。霊気貯蔵器=1は本人裁定「除去呪文として出てきたら違う」＝マナ吸収と同型の本業/付随線（本業=ライフゲイン勝利エンジン・50点砲は付随）。列側の写しはデプロイ後（§11実例2の決着）
+ブラケット2で使えるマナ加速,,,,Sage of the Unknowable,不可知の賢者,Creature — Human Wizard,{T}：{C}を加える。このマナは、無色の呪文を唱えるか能力を起動するためにしか支払えない。,{T}: Add {C}. Spend this mana only to cast a colorless spell or to activate an ability.,2,2026-07-28 本人口頭採点（edhrec_rank 6/19版更新の湧き分）。霊気貯蔵器=1は本人裁定「除去呪文として出てきたら違う」＝マナ吸収と同型の本業/付随線（本業=ライフゲイン勝利エンジン・50点砲は付随）。列側の写しはデプロイ後（§11実例2の決着）
+統率者戦で強いカード,,,,Rhystic Study,リスティックの研究,Enchantment,対戦相手１人が呪文１つを唱えるたび、そのプレイヤーが{1}を支払わないかぎり、あなたはカード１枚を引いてもよい。,"Whenever an opponent casts a spell, you may draw a card unless that player pays {1}.",2,2026-07-28 本人口頭採点（edhrec_rank 6/19版更新の湧き分）。霊気貯蔵器=1は本人裁定「除去呪文として出てきたら違う」＝マナ吸収と同型の本業/付随線（本業=ライフゲイン勝利エンジン・50点砲は付随）。列側の写しはデプロイ後（§11実例2の決着）

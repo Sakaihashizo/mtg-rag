@@ -1343,7 +1343,7 @@ Search your library for a Forest card, reveal that card, put it into your hand, 
 {T}: Add one mana of any color. Spend this mana only to cast a legendary spell, and that spell can't be countered.",2,
 1マナのマナクリーチャー,,ramp,8,Jaspera Sentinel,ヤスペラの歩哨,Creature — Elf Rogue,"到達
 {T}, あなたがコントロールしていてアンタップ状態であるクリーチャー１体をタップする：好きな色１色のマナ１点を加える。","Reach
-{T}, Tap an untapped creature you control: Add one mana of any color.",1,
+{T}, Tap an untapped creature you control: Add one mana of any color.",2,2026-07-26 本人裁定: Loam Dryad 2 と機能同一(クリーチャー1体タップ)=同一grade・R2'条件不問の線
 1マナのマナクリーチャー,,ramp,9,Citanul Stalwart,シタヌールの重鎮,Creature — Elf Druid Soldier,"{T}, アーティファクトやクリーチャーのうちあなたがコントロールしていてアンタップ状態である１つをタップする：好きな色１色のマナ１点を加える。","{T}, Tap an untapped artifact or creature you control: Add one mana of any color.",2,
 1マナのマナクリーチャー,,ramp,10,Honored Hierarch,名誉ある教主,Creature — Human Druid,高名１（このクリーチャーがプレイヤー１人に戦闘ダメージを与えたとき、これが高名でない場合、これの上に＋１/＋１カウンターを１個置く。これは高名になる。）名誉ある教主が高名であるかぎり、これは警戒と「{T}：あなたのマナ・プールに、好きな色１色のマナ１点を加える。」を持つ。,"Renown 1 (When this creature deals combat damage to a player, if it isn't renowned, put a +1/+1 counter on it and it becomes renowned.)
 As long as this creature is renowned, it has vigilance and ""{T}: Add one mana of any color.""",1,
@@ -4980,3 +4980,55 @@ During your turn, as long as Kaito has one or more loyalty counters on him, he's
 +1: You get an emblem with ""Ninjas you control get +1/+1.""
 0: Surveil 2. Then draw a card for each opponent who lost life this turn.
 −2: Tap target creature. Put two stun counters on it.",1,2026-07-23 口頭採点（R14補足b: 一回あたりN未満のPWエンジン=1・日英同点）
+マナ加速できるカード,,ramp,1,Springleaf Drum,バネ葉の太鼓,Artifact,"{T}, あなたがコントロールしていてアンタップ状態であるクリーチャー１体をタップする：好きな色１色のマナ１点を加える。","{T}, Tap an untapped creature you control: Add one mana of any color.",2,2026-07-26 本人採点（マナ便18枚）
+マナ加速できるカード,,ramp,3,Lotus Petal,水蓮の花びら,Artifact,"(Ｔ),水蓮の花びらを生け贄に捧げる：好きな色１色のマナ１点を加える。","{T}, Sacrifice this artifact: Add one mana of any color.",2,2026-07-26 本人採点（マナ便18枚）
+マナ加速できるカード,,ramp,4,Mana Sculpt,マナ成形,Instant,呪文１つを対象とする。それを打ち消す。あなたがウィザードをコントロールしているなら、次のあなたのメイン・フェイズの開始時に、その呪文を唱えるために支払われたマナに等しい点数の{C}を加える。,"Counter target spell. If you control a Wizard, add an amount of {C} equal to the amount of mana spent to cast that spell at the beginning of your next main phase.",1,2026-07-26 本人採点（マナ便18枚）
+マナ加速できるカード,,ramp,5,Noble Hierarch,貴族の教主,Creature — Human Druid,"賛美（あなたがコントロールしているクリーチャーが単独で攻撃するたび、ターン終了時まで、そのクリーチャーは＋１/＋１の修整を受ける。）
+{T}：{G}か{W}か{U}を加える。","Exalted (Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.)
+{T}: Add {G}, {W}, or {U}.",2,2026-07-26 本人採点（マナ便18枚）
+マナ加速できるカード,,ramp,6,Birchlore Rangers,樺の知識のレインジャー,Creature — Elf Druid Ranger,あなたがコントロールするアンタップ状態のエルフ(Elf)を２体タップする：好きな色のマナ１点を加える。 変異(緑)（あなたはこのカードを、(３)で2/2クリーチャーとして裏向きに唱えてもよい。これの変異コストで、これをいつでも表向きにしてもよい。）,"Tap two untapped Elves you control: Add one mana of any color.
+Morph {G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",2,2026-07-26 本人採点（マナ便18枚）
+マナ加速できるカード,,ramp,7,Badgermole Cub,アナグマモグラの仔,Creature — Badger Mole,"このクリーチャーが戦場に出たとき、土の技１を行う。（あなたがコントロールしている土地１つを対象とする。それは速攻を持つ０/０のクリーチャーになり、土地でもある。それの上に＋１/＋１カウンター１個を置く。それが死亡したか追放されたとき、それをタップ状態で戦場に戻す。）
+あなたがマナを引き出す目的でクリーチャー１体をタップするたび、追加で{G}を加える。","When this creature enters, earthbend 1. (Target land you control becomes a 0/0 creature with haste that's still a land. Put a +1/+1 counter on it. When it dies or is exiled, return it to the battlefield tapped.)
+Whenever you tap a creature for mana, add an additional {G}.",2,2026-07-26 本人採点（マナ便18枚）
+マナ加速できるカード,,ramp,8,Llanowar Elves,ラノワールのエルフ,Creature — Elf Druid,{T}：{G}を加える。,{T}: Add {G}.,2,2026-07-26 本人採点（マナ便18枚）
+マナ加速できるカード,,ramp,9,Mox Opal,オパールのモックス,Legendary Artifact,金属術 ― {T}：好きな色１色のマナ１点を加える。この能力は、あなたが３つ以上のアーティファクトをコントロールしているときにのみ起動できる。,Metalcraft — {T}: Add one mana of any color. Activate only if you control three or more artifacts.,2,2026-07-26 本人採点（マナ便18枚）
+マナ加速できるカード,,ramp,10,Dark Ritual,暗黒の儀式,Instant,{BBB}を加える。,Add {B}{B}{B}.,2,2026-07-26 本人採点（マナ便18枚）
+パイオニアのマナ加速,pioneer,ramp,2,Herd Heirloom,群れの家宝,Artifact,"{T}：好きな色１色のマナ１点を加える。このマナは、クリーチャー・呪文を唱えるためにしか支払えない。
+{T}：あなたがコントロールしていてパワーが４以上であるクリーチャー１体を対象とする。ターン終了時まで、それはトランプルと「このクリーチャーがプレイヤー１人に戦闘ダメージを与えるたび、カード１枚を引く。」を得る。","{T}: Add one mana of any color. Spend this mana only to cast a creature spell.
+{T}: Until end of turn, target creature you control with power 4 or greater gains trample and ""Whenever this creature deals combat damage to a player, draw a card.""",2,2026-07-26 本人採点（マナ便18枚）
+パイオニアのマナ加速,pioneer,ramp,4,Ancient Cornucopia,古のヤギ角,Artifact,"あなたが有色の呪文１つを唱えるたび、その呪文の色１色につき１点のライフを得てもよい。これは毎ターン１回しか行えない。
+{T}：好きな色１色のマナ１点を加える。","Whenever you cast a spell that's one or more colors, you may gain 1 life for each of that spell's colors. Do this only once each turn.
+{T}: Add one mana of any color.",2,2026-07-26 本人採点（マナ便18枚）
+パイオニアのマナ加速,pioneer,ramp,5,The Great Henge,グレートヘンジ,Legendary Artifact,"この呪文を唱えるためのコストは{X}少なくなる。Ｘは、あなたがコントロールしているクリーチャーのパワーの中の最大値に等しい。
+{T}：{GG}を加える。２点のライフを得る。
+あなたがコントロールしていてトークンでないクリーチャー１体が戦場に出るたび、それの上に＋１/＋１カウンター１個を置き、カード１枚を引く。","This spell costs {X} less to cast, where X is the greatest power among creatures you control.
+{T}: Add {G}{G}. You gain 2 life.
+Whenever a nontoken creature you control enters, put a +1/+1 counter on it and draw a card.",2,2026-07-26 本人採点（マナ便18枚）
+パイオニアのマナ加速,pioneer,ramp,6,Badgermole Cub,アナグマモグラの仔,Creature — Badger Mole,"このクリーチャーが戦場に出たとき、土の技１を行う。（あなたがコントロールしている土地１つを対象とする。それは速攻を持つ０/０のクリーチャーになり、土地でもある。それの上に＋１/＋１カウンター１個を置く。それが死亡したか追放されたとき、それをタップ状態で戦場に戻す。）
+あなたがマナを引き出す目的でクリーチャー１体をタップするたび、追加で{G}を加える。","When this creature enters, earthbend 1. (Target land you control becomes a 0/0 creature with haste that's still a land. Put a +1/+1 counter on it. When it dies or is exiled, return it to the battlefield tapped.)
+Whenever you tap a creature for mana, add an additional {G}.",2,2026-07-26 本人採点（マナ便18枚）
+パイオニアのマナ加速,pioneer,ramp,7,Prosperous Innkeeper,裕福な亭主,Creature — Halfling Citizen,"裕福な亭主が戦場に出たとき、宝物・トークン１つを生成する。（それは「{T}, このアーティファクトを生け贄に捧げる：好きな色１色のマナ１点を加える。」を持つアーティファクトである。）
+あなたがコントロールしていてこれでないクリーチャー１体が戦場に出るたび、１点のライフを得る。","When this creature enters, create a Treasure token. (It's an artifact with ""{T}, Sacrifice this token: Add one mana of any color."")
+Whenever another creature you control enters, you gain 1 life.",2,2026-07-26 本人採点（マナ便18枚）
+パイオニアのマナ加速,pioneer,ramp,8,Outcaster Trailblazer,荒野無頼団の先駆者,Creature — Human Druid,"荒野無頼団の先駆者が戦場に出たとき、好きな色１色のマナ１点を加える。
+パワーが４以上でありこれでないクリーチャー１体があなたのコントロール下で戦場に出るたび、カード１枚を引く。
+計画{2}{G}（{2}{G}を支払ってあなたの手札にあるこのカードを追放してもよい。後のターンに、これをソーサリーとしてマナ・コストを支払うことなく唱えてもよい。計画はソーサリーとしてのみ行う。）","When this creature enters, add one mana of any color.
+Whenever another creature you control with power 4 or greater enters, draw a card.
+Plot {2}{G} (You may pay {2}{G} and exile this card from your hand. Cast it as a sorcery on a later turn without paying its mana cost. Plot only as a sorcery.)",2,2026-07-26 本人採点（マナ便18枚）
+パイオニアのマナ加速,pioneer,ramp,9,"Ugin, Eye of the Storms",嵐の目、ウギン,Legendary Planeswalker — Ugin,"あなたがこの呪文を唱えたとき、１色以上の色を持つパーマネント最大１つを対象とする。それを追放する。
+あなたが無色の呪文１つを唱えるたび、１色以上の色を持つパーマネント最大１つを対象とする。それを追放する。
++2：３点のライフを得て、カード１枚を引く。
+0：{C}{C}{C}を加える。
+-11：あなたのライブラリーから望む枚数の土地でない無色のカードを探し、追放する。その後、ライブラリーを切り直す。ターン終了時まで、あなたはそれらのカードをマナ・コストを支払うことなく唱えてもよい。","When you cast this spell, exile up to one target permanent that's one or more colors.
+Whenever you cast a colorless spell, exile up to one target permanent that's one or more colors.
++2: You gain 3 life and draw a card.
+0: Add {C}{C}{C}.
+−11: Search your library for any number of colorless nonland cards, exile them, then shuffle. Until end of turn, you may cast those cards without paying their mana costs.",2,2026-07-26 本人採点（マナ便18枚）
+パイオニアのマナ加速,pioneer,ramp,10,Spider Manifestation,蜘蛛の顕現,Creature — Spider Avatar,"到達
+{T}：{R}か{G}を加える。
+あなたがマナ総量が４以上である呪文１つを唱えるたび、このクリーチャーをアンタップする。","Reach
+{T}: Add {R} or {G}.
+Whenever you cast a spell with mana value 4 or greater, untap this creature.",2,2026-07-26 本人採点（マナ便18枚）
+1マナのマナクリーチャー,,ramp,7,Wild Cantor,野生の朗詠者,Creature — Human Druid,野生の朗詠者を生け贄に捧げる：好きな色１色のマナ１点を加える。,"({R/G} can be paid with either {R} or {G}.)
+Sacrifice this creature: Add one mana of any color.",2,2026-07-26 本人採点（マナ便18枚）
