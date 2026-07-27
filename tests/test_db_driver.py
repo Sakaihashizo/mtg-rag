@@ -39,15 +39,24 @@ sql, params = convert_params_for_data_api(
 check("convert.noparams.sql", sql, "SELECT 1 WHERE x LIKE '%%Creature%%'")
 check("convert.noparams.params", params, [])
 
-# 型タグ: bool は int の子クラス＝先に判定されること・None・float・list
-_, params = convert_params_for_data_api(
+# 型タグ: bool は int の子クラス＝先に判定されること・None・float
+# list は 2026-07-28 実測（ValidationException: Array parameters are not
+# supported）を受けて仕様変更: パラメータでなく SQL 側へ ARRAY リテラル展開
+sql5, params = convert_params_for_data_api(
     "%s %s %s %s %s", (True, 3, 2.5, None, ["a", "b"]))
 check("tag.bool",  params[0]["value"], {"booleanValue": True})
 check("tag.int",   params[1]["value"], {"longValue": 3})
 check("tag.float", params[2]["value"], {"doubleValue": 2.5})
 check("tag.null",  params[3]["value"], {"isNull": True})
-check("tag.list",  params[4]["value"],
-      {"arrayValue": {"stringValues": ["a", "b"]}})
+check("tag.list.inline", sql5, ":p0 :p1 :p2 :p3 ARRAY['a', 'b']")
+check("tag.list.count", len(params), 4)
+
+# 配列リテラルのエスケープ（' → ''）と空配列・数値・NULL 混在
+sql6, p6 = convert_params_for_data_api("x = ANY(%s)", (["O'Brien", 1, None],))
+check("array.escape", sql6, "x = ANY(ARRAY['O''Brien', 1, NULL])")
+check("array.noparam", p6, [])
+sql7, _ = convert_params_for_data_api("y = ANY(%s)", ([],))
+check("array.empty", sql7, "y = ANY(ARRAY[]::text[])")
 
 # 行デコード: 型タグ → 素の値・isNull → None
 row = decode_data_api_row([

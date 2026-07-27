@@ -37,10 +37,35 @@ def convert_params_for_data_api(sql: str, params) -> tuple[str, list[dict]]:
         return sql, []
     out_params: list[dict] = []
     for i, v in enumerate(params):
+        if isinstance(v, (list, tuple)):
+            # Data API は配列パラメータ非対応（2026-07-28 実測:
+            # ValidationException: Array parameters are not supported）
+            # ＝予告どおり SQL 側へ ARRAY[...] リテラルとして展開する。
+            # 値はエスケープ（' → ''）するので注入は成立しない
+            sql = sql.replace("%s", _sql_array_literal(v), 1)
+            continue
         name = f"p{i}"
         sql = sql.replace("%s", f":{name}", 1)
         out_params.append({"name": name, "value": _type_tag(v)})
     return sql, out_params
+
+
+def _sql_array_literal(v) -> str:
+    """list/tuple → PostgreSQL の ARRAY[...] リテラル（ANY(%s) 用・エスケープ付き）。
+    空配列は型が決まらないので text[] にキャストする（用途上ほぼ来ないが安全側）。"""
+    if not v:
+        return "ARRAY[]::text[]"
+    parts = []
+    for x in v:
+        if x is None:
+            parts.append("NULL")
+        elif isinstance(x, bool):
+            parts.append("TRUE" if x else "FALSE")
+        elif isinstance(x, (int, float)):
+            parts.append(str(x))
+        else:
+            parts.append("'" + str(x).replace("'", "''") + "'")
+    return "ARRAY[" + ", ".join(parts) + "]"
 
 
 def _type_tag(v: Any) -> dict:
@@ -132,7 +157,11 @@ class DataApiDriver:
         self.client = boto3.client("rds-data")
         self.resource_arn = os.environ["AURORA_CLUSTER_ARN"]
         self.secret_arn = os.environ["AURORA_SECRET_ARN"]
-        self.database = os.environ.get("DB_NAME", "rag_dev")
+        # AURORA_DB_NAME を優先（2026-07-28: VM から Data API 評価を回すとき
+        # DB_NAME はローカル psycopg2 側でも読まれ名前空間が衝突するため分離。
+        # Lambda は DB_NAME だけでも動く後方互換）
+        self.database = (os.environ.get("AURORA_DB_NAME")
+                         or os.environ.get("DB_NAME", "rag_dev"))
 
     def _execute(self, sql: str, params=None, with_meta: bool = False) -> dict:
         sql2, params2 = convert_params_for_data_api(sql, params)
@@ -145,15 +174,48 @@ class DataApiDriver:
             includeResultMetadata=with_meta,
         )
 
+    @staticmethod
+    def _decode_rows(resp) -> list[tuple]:
+        """行のデコード＋psycopg2 互換の型合わせ（2026-07-28・検収⑧の実測で追加）。
+        Data API は psycopg2 が自動でやってくれる 2 つをやらない:
+          - jsonb/json 列 → 文字列のまま返す（psycopg2 は dict/list に）
+            実害: role_quality が removal jsonb の entry.get() で AttributeError
+          - 配列列 → arrayValue の入れ子 dict で返す（psycopg2 は list に）
+        列メタの typeName を見て両方を psycopg2 と同じ顔に直す。"""
+        import json as _json
+        meta = resp.get("columnMetadata", [])
+        json_cols = {i for i, m in enumerate(meta)
+                     if (m.get("typeName") or "").lower() in ("json", "jsonb")}
+        rows = []
+        for rec in resp.get("records", []):
+            row = []
+            for i, field in enumerate(rec):
+                if field.get("isNull"):
+                    row.append(None)
+                    continue
+                if "arrayValue" in field:
+                    av = field["arrayValue"]
+                    # stringValues/longValues/doubleValues/booleanValues のどれか
+                    row.append(next(iter(av.values())) if av else [])
+                    continue
+                v = next(iter(field.values()))
+                if i in json_cols and isinstance(v, str):
+                    try:
+                        v = _json.loads(v)
+                    except Exception:
+                        pass   # 壊れた json は文字列のまま（握って続行）
+                row.append(v)
+            rows.append(tuple(row))
+        return rows
+
     def query(self, sql: str, params=None) -> list[tuple]:
-        resp = self._execute(sql, params)
-        return [decode_data_api_row(r) for r in resp.get("records", [])]
+        resp = self._execute(sql, params, with_meta=True)
+        return self._decode_rows(resp)
 
     def query_dicts(self, sql: str, params=None) -> list[dict]:
         resp = self._execute(sql, params, with_meta=True)
         cols = [m["name"] for m in resp.get("columnMetadata", [])]
-        return [dict(zip(cols, decode_data_api_row(r)))
-                for r in resp.get("records", [])]
+        return [dict(zip(cols, r)) for r in self._decode_rows(resp)]
 
     def execute(self, sql: str, params=None) -> None:
         self._execute(sql, params)   # Data API は1文ごと自動 commit
