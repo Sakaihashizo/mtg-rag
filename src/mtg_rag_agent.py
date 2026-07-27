@@ -402,6 +402,57 @@ def rewrite_query_ollama(query: str, raise_on_error: bool = False, timeout: int 
             raise
         return query, "", "", False, False, False, None, detect_format(query), {}
 
+_BEDROCK_CLIENT = None
+
+
+def _get_bedrock_client(region: str):
+    """boto3 クライアントは使い回す（生成に 100ms 級かかるため・Lambda の
+    温まったコンテナでは特に効く）。遅延 import＝他バックエンドでは boto3 不要。"""
+    global _BEDROCK_CLIENT
+    if _BEDROCK_CLIENT is None:
+        import boto3
+        _BEDROCK_CLIENT = boto3.client("bedrock-runtime", region_name=region)
+    return _BEDROCK_CLIENT
+
+
+def rewrite_query_nova(query: str, raise_on_error: bool = False,
+                       model_id: str = None):
+    """本番ルーター（Amazon Bedrock / Nova Micro）。#19 の役割分担
+    「本番=Nova Micro・$0.000131/クエリ」の実戦配備（2026-07-26 配線）。
+
+    プロンプト（NOVA_PROMPT＝調教版 v1.5）と生成条件は試験ハーネス
+    bedrock_router_test.py と単一ソース共有＝調教資産のドリフト防止
+    （ollama 側が ollama_router_test.py と共有しているのと同じ作法）。
+    temperature=0.0 は 2026-07-09「凍結の儀」で決定性を実証した条件。
+    検証層は _parse_router_json で Gemini / 7B と共通。
+
+    **課金経路**: 呼ぶたびに料金が発生する（実測 $0.000131/クエリ）。
+    疎通確認や実験で叩くときは bedrock_router_test.py の `--go` 鍵を通すこと。
+    """
+    try:
+        # 遅延 import（bedrock_router_test は本モジュールを import しているため循環回避）
+        from bedrock_router_test import NOVA_PROMPT
+        region = os.environ.get("AWS_DEFAULT_REGION", "us-east-1")
+        model = model_id or os.environ.get("NOVA_MODEL_ID",
+                                           "us.amazon.nova-micro-v1:0")
+        client = _get_bedrock_client(region)
+        resp = client.converse(
+            modelId=model,
+            messages=[{"role": "user",
+                       "content": [{"text": NOVA_PROMPT.replace("<<QUERY>>",
+                                                                query)}]}],
+            inferenceConfig={"maxTokens": 512, "temperature": 0.0},
+        )
+        text = resp["output"]["message"]["content"][0]["text"]
+        return _parse_router_json(text, query)
+    except Exception:
+        if raise_on_error:
+            raise
+        # 落ちても検索は続く（ルーター無しのハイブリッド経路へ）。
+        # ただし静かに劣化するので、稼働機では /health?deep=true で見えるようにしてある
+        return query, "", "", False, False, False, None, detect_format(query), {}
+
+
 def get_archetypes(card_name: str, db) -> list[str]:
     """カードが使われているアーキタイプ TOP5 を取得する。
     db は db.py のドライバ（2026-07-12 移行。旧 conn 渡しは rollback 漏れで
@@ -564,14 +615,21 @@ def run_search(searcher, question, fmt=None, top_k=5, api_key=None,
     elif not use_rewrite:
         route = "no_rewrite"
 
-    # ルーターのバックエンド切替（環境変数・既定=gemini）:
-    #   gemini = 本番プロンプト REWRITE_PROMPT（要 api_key・無料枠クォータ消費）
-    #   ollama = ローカル 7B 調教版 FABLE_PROMPT（$0・要 Windows ホストの Ollama 起動）
+    # ルーターのバックエンド切替（環境変数・既定=gemini）。#19（2026-07-09）の
+    # 三層の役割分担をそのまま環境変数で選ぶ:
+    #   gemini = 評価用。本番プロンプト REWRITE_PROMPT（要 api_key・無料枠を消費）
+    #   ollama = 開発用。ローカル 7B 調教版 FABLE_PROMPT（$0・接続先は OLLAMA_URL）
+    #   nova   = **本番**。Bedrock / Nova Micro 調教版 NOVA_PROMPT v1.5
+    #            （$0.000131/クエリ＝課金経路・2026-07-26 配線）
     backend = os.environ.get("ROUTER_BACKEND", "gemini").lower()
     if use_rewrite:
         if backend == "ollama":
             (search_query, hyde_text, ja_hyde_text, tournament_boost, removal_mode,
              counter_mode, type_filter, router_format, filters) = rewrite_query_ollama(
+                question)
+        elif backend == "nova":
+            (search_query, hyde_text, ja_hyde_text, tournament_boost, removal_mode,
+             counter_mode, type_filter, router_format, filters) = rewrite_query_nova(
                 question)
         else:
             if not api_key:

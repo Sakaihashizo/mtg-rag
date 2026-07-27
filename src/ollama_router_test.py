@@ -30,7 +30,13 @@ sys.path.insert(0, '/mnt/mtg_rag/src')
 from mtg_rag_agent import REWRITE_PROMPT
 from bedrock_router_test import parse_and_validate, JA_RE
 
-OLLAMA_URL = "http://10.0.2.2:11434/api/chat"
+# 接続先は環境変数で上書き可能（2026-07-26 疎通事故の教訓）。
+# 旧既定 10.0.2.2（VirtualBox NAT のホスト別名）は、VirtualBox/ollama いずれかの
+# 更新以降ホストへ届かなくなった（TCP は accept されるが HTTP が 0 バイト＝
+# NAT エンジンの見せかけ accept）。ホストの実 LAN IP なら届く。
+# LAN IP は DHCP で変わりうる＝変わったら .env の OLLAMA_URL 一行で直す。
+OLLAMA_URL = os.environ.get("OLLAMA_URL",
+                            "http://192.168.3.158:11434/api/chat")
 MODEL = "qwen2.5:7b-instruct-q4_K_M"
 CACHE_PATH = "/mnt/mtg_rag/eval_router_cache.json"
 OUT_DIR = "/mnt/mtg_rag/docs/me"
