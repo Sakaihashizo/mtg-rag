@@ -1,0 +1,12 @@
+# 実値の雛形。これを terraform.tfvars にコピーして使う
+# （terraform.tfvars は .gitignore 済み＝アカウント固有の値を push しない）
+
+# region  = "ap-northeast-1"   # 既定は東京
+# project = "mtg-rag"
+
+# 段階1（Aurora・ECR・フロントまで）は空のまま
+# 段階2（イメージ push 後）にタグを入れて apply
+# lambda_image_tag = "v1"
+
+# 作業する日は余韻を長めに（Aurora は auto-pause までの時間も課金される）
+# aurora_auto_pause_seconds = 3600

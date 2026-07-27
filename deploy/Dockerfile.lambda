@@ -1,0 +1,54 @@
+# MTG RAG — AWS Lambda（コンテナイメージ形式）用イメージ
+#
+# なぜコンテナ形式か（2026-07-26）:
+#   通常の Lambda（zip）は展開後 250MB が上限。このシステムは PyTorch（約 1.2GB）と
+#   埋め込みモデル（約 470MB）を積むため最初から桁が合わない。コンテナ形式は
+#   上限 10GB なのでこちらを使う。新技術の導入ではなく、入れ物の制約への対処。
+#
+# ビルド（リポジトリ直下から）:
+#   docker build -f deploy/Dockerfile.lambda -t mtg-rag-lambda .
+# ローカル実行（AWS 不要・公式ベースイメージ同梱の模擬装置を使う）:
+#   docker run --rm -p 9000:8080 --env-file deploy/lambda.env mtg-rag-lambda
+#   curl -s -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d @deploy/test_event.json
+#
+# 注意: ルート直下の Dockerfile は「ローカル開発用の PostgreSQL」であって別物。
+
+FROM public.ecr.aws/lambda/python:3.12
+
+# ── 依存 ───────────────────────────────────────────────────────────
+# PyTorch は CPU 版を明示指定する。既定のまま入れると GPU 用の CUDA ライブラリが
+# 付いてきて数 GB 無駄になる（Lambda に GPU は無い）。
+COPY requirements.txt ${LAMBDA_TASK_ROOT}/
+RUN python -m pip install --no-cache-dir --upgrade pip && \
+    python -m pip install --no-cache-dir \
+        --index-url https://download.pytorch.org/whl/cpu torch && \
+    python -m pip install --no-cache-dir -r ${LAMBDA_TASK_ROOT}/requirements.txt && \
+    python -m pip install --no-cache-dir mangum boto3
+
+# ── 埋め込みモデルをイメージに焼く ─────────────────────────────────
+# 実行時にダウンロードさせない。毎回のコールドスタートで数百 MB 取りに行くのは論外。
+ENV MODEL_CACHE_DIR=/opt/models \
+    HF_HOME=/opt/models \
+    HF_HUB_OFFLINE=1 \
+    TRANSFORMERS_OFFLINE=1
+# 掃除も Python で行う（Lambda のベースイメージは最小構成で find が無い）。
+# 同じ重みが複数形式で入る（safetensors / pytorch_model.bin / onnx）ので、
+# 実際に読む safetensors だけ残す。
+RUN HF_HUB_OFFLINE=0 TRANSFORMERS_OFFLINE=0 python -c "\
+from sentence_transformers import SentenceTransformer; \
+SentenceTransformer('intfloat/multilingual-e5-small', cache_folder='/opt/models')" && \
+    python -c "\
+import pathlib; \
+root = pathlib.Path('/opt/models'); \
+victims = [p for p in root.rglob('*') if p.is_file() and \
+           (p.suffix == '.onnx' or p.name == 'pytorch_model.bin' or p.suffix == '.onnx_data')]; \
+[p.unlink() for p in victims]; \
+print('removed', len(victims), 'duplicate weight files')"
+
+# ── アプリ本体 ─────────────────────────────────────────────────────
+COPY src/ ${LAMBDA_TASK_ROOT}/src/
+COPY deploy/lambda_handler.py ${LAMBDA_TASK_ROOT}/
+
+# uvicorn は Lambda では使わない（Mangum が ASGI を直接叩く）が、requirements 共通化の
+# ため入っている。静的ファイルは本番では S3+CloudFront が配る設計（C 案の図）。
+CMD ["lambda_handler.handler"]
