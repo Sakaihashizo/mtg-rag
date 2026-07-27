@@ -77,7 +77,7 @@ PK = `id`、UNIQUE = `card_name`。
 | face_cmcs | integer[] | 各面の「実際に撃てるマナ総量」集合（分割/X 呪文対応） |
 | face_types | text[] | 手札から直接唱えられる各面の type_line 集合（face_cmcs と同一の mana_cost 非空面規則・型否定ゲートの判定列・2026-07-13） |
 | has_x | boolean | X 呪文識別（列保持のみ・自動フィルタには未使用） |
-| is_mana_boost | boolean | マナ加速（マナクリーチャー/ランプ）の構造化判定。oracle 解析「出すマナ − 払うマナ − 土地補正 > 0」で導出し、マナフィルターを排除。**検索フィルタで使用中** |
+| is_mana_boost | boolean | マナ加速の構造化判定（2026-07-26 再定義＝R15）: 本業のマナ産出（起動型/呪文/常在/自身ETB/倍化）かつ net-mana 正のみ TRUE。誘発のおまけ・報酬（死亡時宝物・唱えるたび等）は FALSE 側。**検索ハードフィルタ＋マナ直行路の発動条件で使用中** |
 | target_types | text[] | oracle の「target 〜」句から導出した正規化対象型（creature / player / any / artifact / permanent / spell / planeswalker / land / enchantment ＋ creature_spell 等の修飾トークン。条件付き打ち消しは `spell_conditional` トークンで識別＝516 枚）。**カウンター判定（spell を対象に取るか・条件付きか）と強度腕の役割ゲートで使用中** |
 | target | jsonb | 対象のフル句と修飾語（例 "nonblack creature"）。条件付き除去（R2 型）の判定・分析用 |
 | removal_types | text[] | 除去のメカ種別（damage / destroy / exile / minus / sacrifice / bounce / tuck）。**強度腕の役割ゲートと、機構明示クエリ（「追放する除去」等）の機構ゲート（候補生成の WHERE）で使用中**（役割ゲートは恒久除去のみ通す・bounce は除外） |
@@ -109,10 +109,10 @@ PK = `id`、UNIQUE = `card_name`。
 | `target_types` / `target` / `removal_types` / `removal` | `enrich_removal.py` | 対象句の正規化と除去メカ種別。対象リストの列挙・割り振りダメージ構文・追加コストの条件化・墓地/ライブラリ操作の領域ガード・キッカー等のモード分解（`extra_cost`）まで対応（2026-07-15〜17 の精密化） |
 | `floor_cmc` | `enrich_removal.py` | コスト軽減の床値＝版図/親和/探査/想起/ピッチのベストケース実効コスト |
 | `front_keywords` | `enrich_front_keywords.py` | 表面（front face）のキーワード能力のみを保持 |
-| `is_mana_boost` | enrich 系（2026-06-24 導入） | net-mana 定義「出すマナ − 払うマナ − 土地補正 > 0」でマナ加速とマナフィルターを区別 |
+| `is_mana_boost` | `enrich_mana.py`（2026-07-26 新設＝失われた 6/24 導出の復元・再定義） | 二段の門: 文脈（本業か付随か＝R15・誘発報酬は数えない・倍化/自身ETBは数える）× 量（net-mana「出すマナ − 払うマナ − 土地補正 > 0」＝6/24 定義不変）。旧値の「Add {U} or {B} の or 合算」バグ（二色土地が True）も再導出で一掃 |
 | `draw_count` / `draw_x` | `enrich_draw.py` | 命令文の「Draw N card(s)」だけを数える（誘発の条件文・置換文は除外＝採点規約 R14 の検索側の写し・2026-07-23） |
 
-充填数（全 31,635 行中）: `target_types` 10,503 / `target` 9,784 / `removal_types`・`removal` 各 5,343 / `floor_cmc` 345 / `is_mana_boost` 2,419 / `front_keywords` 31,323（以上 2026-07-17 実測）・`draw_count` 2,888 / `draw_x` 430（2026-07-23 実測）。
+充填数（全 31,635 行中）: `target_types` 10,503 / `target` 9,784 / `removal_types`・`removal` 各 5,343 / `floor_cmc` 345 / `is_mana_boost` 2,366＝TRUE 1,041＋FALSE 1,325（2026-07-26 R15 再導出） / `front_keywords` 31,323（以上 2026-07-17 実測）・`draw_count` 2,888 / `draw_x` 430（2026-07-23 実測）。
 
 ---
 
