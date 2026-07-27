@@ -336,6 +336,130 @@ _PT_TGT_RE = re.compile(r'タフネス\s*(?:の方)?が?\s*パワーより\s*(?:
 # 届かない層 → 決定的辞書で SQL 直結（キーワード23語・type 語と同じ型）。
 # 【第1弾=訳語の曖昧性と一般語衝突が無い安全系のみ】。多義系（人間/壁/英雄/悪魔/猿等）
 # は本人レビュー待ちの第2弾（human-in-the-loop・語彙学習 v1 の運用）。
+# 日本語セット名 → セットコード集合（2026-07-27 セット検索・本人裁定 2 点:
+# 「set_codes を配列で持つ」「エルドレインは王権∨森の OR＝細かく指定しない方が悪い」）。
+# 検出は原文（gate_q）への部分一致・最長キー優先。曖昧な短縮呼称（「エルドレイン」等）は
+# 該当しうる全セットへ広く展開する（システムが勝手に一つへ絞らない）。
+# 辞書は手動の主要セットから開始＝部族辞書と同じ人間レビュー昇格方式。
+# コードの実在は test_set_gate.py が DB と突き合わせて検証する。
+SET_WORDS_JA = {
+    # 近年スタンダード（新しい順）
+    "久遠の終端":            ["eoe"],
+    "FINAL FANTASY":         ["fin"],
+    "ファイナルファンタジー": ["fin"],
+    "タルキール：龍嵐録":     ["tdm"],
+    "タルキール:龍嵐録":      ["tdm"],
+    "龍嵐録":                ["tdm"],
+    "霊気走破":              ["dft"],
+    "ファウンデーションズ":   ["fdn"],
+    "ダスクモーン":          ["dsk"],
+    "ブルームバロウ":        ["blb"],
+    "サンダー・ジャンクション": ["otj"],
+    "サンダージャンクション": ["otj"],
+    "カルロフ邸殺人事件":     ["mkm"],
+    "カルロフ邸":            ["mkm"],
+    "イクサラン：失われし洞窟": ["lci"],
+    "イクサラン:失われし洞窟": ["lci"],
+    "失われし洞窟":          ["lci"],
+    "エルドレインの森":      ["woe"],
+    "機械兵団の進軍":        ["mom"],
+    "ファイレクシア：完全なる統一": ["one"],
+    "ファイレクシア:完全なる統一": ["one"],
+    "完全なる統一":          ["one"],
+    "兄弟戦争":              ["bro"],
+    "団結のドミナリア":      ["dmu"],
+    "ニューカペナの街角":    ["snc"],
+    "ニューカペナ":          ["snc"],
+    "神河：輝ける世界":      ["neo"],
+    "神河:輝ける世界":       ["neo"],
+    "輝ける世界":            ["neo"],
+    "真紅の契り":            ["vow"],
+    "真夜中の狩り":          ["mid"],
+    "ストリクスヘイヴン":    ["stx"],
+    "カルドハイム":          ["khm"],
+    "ゼンディカーの夜明け":  ["znr"],
+    "イコリア":              ["iko"],
+    "エルドレインの王権":    ["eld"],
+    "灯争大戦":              ["war"],
+    "ラヴニカの献身":        ["rna"],
+    "ラヴニカのギルド":      ["grn"],
+    "ドミナリア・リマスター": ["dmr"],
+    "ラヴニカ・リマスター":  ["rvr"],
+    "イニストラード・リマスター": ["inr"],
+    # 特殊セット・場外セット
+    "モダンホライゾン3":     ["mh3"],
+    "モダンホライゾン2":     ["mh2"],
+    "モダンホライゾン":      ["mh1", "mh2", "mh3"],
+    "指輪物語":              ["ltr"],
+    "ウォーハンマー":        ["40k"],
+    "アサシンクリード":      ["acr"],
+    "フォールアウト":        ["pip"],
+    "ジャンプスタート":      ["jmp"],
+    # 短縮・ブロック呼称（広く OR＝細かく指定しない方が悪い・本人裁定）
+    "エルドレイン":          ["eld", "woe"],
+    "イクサラン":            ["xln", "rix", "lci"],
+    "ドミナリア":            ["dom", "dmu", "dmr"],
+    "神河":                  ["chk", "bok", "sok", "neo"],
+    "イニストラード":        ["isd", "dka", "avr", "soi", "emn", "mid", "vow", "dbl", "inr"],
+    "ゼンディカー":          ["zen", "wwk", "roe", "bfz", "ogw", "znr"],
+    # 「ラヴニカ」は次元（舞台）を指す語として解釈（2026-07-28 本人裁定「ラヴニカと
+    # 言ったときに灯争大戦が丸ごと射程に入ってほしい」）＝ラヴニカが舞台のセットを
+    # 全部含める: 初代3・回帰3・ギルド2・灯争大戦・リマスター
+    # ＋カルロフ邸(mkm)・Clue Edition(clu) も舞台がラヴニカ（2026-07-28 本人 GO
+    # 「その辺も含めて。最近は次元の名前がエキスパンションに入らないのが多い」）
+    "ラヴニカ":              ["rav", "gpt", "dis", "rtr", "gtc", "dgm", "grn", "rna",
+                              "war", "rvr", "mkm", "clu"],
+    # ローウィン＝シャドウムーアは同一次元の表裏だが、プレイヤーの語感では
+    # ブロック単位で呼び分けるため区別して登録（2026-07-28 本人の問いから）
+    "ローウィン":            ["lrw", "mor"],
+    "モーニングタイド":      ["mor"],
+    "シャドウムーア":        ["shm", "eve"],
+    "イーヴンタイド":        ["eve"],
+    "テーロス":              ["ths", "bng", "jou", "thb"],
+    "タルキール":            ["ktk", "frf", "dtk", "tdm"],
+    "アモンケット":          ["akh", "hou"],
+    "カラデシュ":            ["kld", "aer"],
+    "ミラディン":            ["mrd", "dst", "5dn", "som", "mbs", "nph"],
+    # 旧セット単体（大会・統率者で言及頻度が高いもの）
+    "タルキール覇王譚":      ["ktk"],
+    "タルキール龍紀伝":      ["dtk"],
+    "運命再編":              ["frf"],
+    "破滅の刻":              ["hou"],
+    "霊気紛争":              ["aer"],
+    "戦乱のゼンディカー":    ["bfz"],
+    "エルドラージ覚醒":      ["roe"],
+    "異界月":                ["emn"],
+    "イニストラードを覆う影": ["soi"],
+}
+_SET_KEYS_BY_LEN = sorted(SET_WORDS_JA.keys(), key=len, reverse=True)
+
+
+def detect_set_ja(query: str):
+    """日本語セット名の決定的検出（原文への部分一致・最長キー優先）。
+    複数のセット名が同居したら和集合（「エルドレインとイコリアの…」）。
+    ヒットが無ければ None。返り値はコードの昇順リスト。"""
+    if not query:
+        return None
+    codes: set = set()
+    consumed = query
+    for key in _SET_KEYS_BY_LEN:
+        if key in consumed:
+            codes.update(SET_WORDS_JA[key])
+            # 最長一致を勝たせる: 拾ったキーは潰して短いキーの重複検出を防ぐ
+            # （「エルドレインの王権」→ eld のみ・「エルドレイン」の [eld,woe] を足さない）
+            consumed = consumed.replace(key, "◇")
+    return sorted(codes) if codes else None
+
+
+def set_filter_sql(codes) -> str:
+    """収録セットのハードフィルタ。set_codes は「一度でも収録された全セット」の配列
+    （enrich_printings.py・代表印刷 set_code の再録上書き問題への答え）。"""
+    if not codes:
+        return ""
+    arr = ", ".join("'" + c.replace("'", "") + "'" for c in codes)
+    return f" AND c.set_codes && ARRAY[{arr}]::text[]"
+
+
 SUBTYPE_WORDS_JA = {
     # カタカナ系（公式訳が一意・衝突なし）
     "ゴブリン": "Goblin",   "エルフ": "Elf",         "ゾンビ": "Zombie",
@@ -628,6 +752,45 @@ def has_fuzzy_semantic(query: str) -> bool:
         if terms.get("en") or terms.get("ja"):
             return True  # 構造化に落ちない意味語が在る
     return False
+
+
+def mana_direct_gate(query: str, mana_producer: bool) -> bool:
+    """マナ加速クエリの構造化オンリー直行路ゲート（2026-07-26 新設）。
+
+    正解集合が `is_mana_boost=TRUE ∧ cmc/type/format の WHERE` で完全に定義できる
+    なら意味検索を通さず SQL 直行（並び＝play-rate 降順）。除去 0.33→直行路と同型。
+
+    由来: 本人の指摘「構造的に判別できる定義と 1 マナと構造化のど真ん中を合わせた
+    だけなのに、なぜ的中率が低いんだ？」（2026-07-26）。診断の結果、門
+    （is_mana_boost）は正しく効いていたが、直行路の発動条件が edh_intent を
+    要求していたためハイブリッドに落ち、絞り込み後の並びが意味の近さだけ＝
+    品質信号ゼロだった（「1マナのマナクリーチャー」で Birds of Paradise・
+    Llanowar Elves が top-10 圏外・NDCG 0.703）。
+
+    ゲートの失敗の向き（既存ゲート試験と同じ非対称）:
+      誤発動 = 意味の残余を落として間違った集合を返す ＝ 有害（ゼロを必須とする）
+      取り逃し = ハイブリッドに落ちるだけ ＝ 無害（遅く・正しく）
+
+    境界（既知の残余リスク・edh_direct と同じ露出）: mana_producer はルーター
+    （LLM）の出力なので、土地サーチ系（「ランプ」「土地加速」＝ net-mana 定義と
+    一致しない）に誤って True が立つと直行してしまう。辞書側では両語を意図的に
+    mana_struct に tag していない＝ has_fuzzy_semantic が fuzzy と判定して門前払い
+    する二重の守りになっている。
+    """
+    if not mana_producer:
+        return False
+    if has_fuzzy_semantic(query):
+        return False
+    # 局所ガード（2026-07-26・試験が捕まえた穴の応急処置）: QUERY_EXPAND に
+    # 見出しが無いために has_fuzzy_semantic が素通りさせる意味語を、この門でだけ
+    # 塞ぐ。「コンボ」は辞書に "無限コンボ" しか無く「コンボパーツ」等が拾えない。
+    # 本筋の直しは辞書側に見出しを足すことだが、QUERY_EXPAND への追加は FTS の
+    # 展開語まで変えて「コンボに使えるカード」(NDCG 0.606) の挙動を動かすため、
+    # 別便の実験として分離する（ここでは直行路の安全だけ確保する）。
+    lowered = query.lower()
+    if "コンボ" in query or "combo" in lowered:
+        return False
+    return True
 
 
 def format_filter_sql(fmt: Optional[str]) -> str:
@@ -1067,8 +1230,14 @@ class MTGHybridSearcherV2:
         self.weight_vector = 1.0  # ベクトル検索の重み
         self.weight_en_fts = 1.0  # 英語FTSの重み
         self.weight_ja_fts = 1.0  # 日本語FTSの重み
+        # モデルの置き場所は環境変数で差し替え可能（2026-07-26・Lambda コンテナ化）。
+        # 既定はローカル VM の実パス＝ここまでの挙動と同一。コンテナでは
+        # MODEL_CACHE_DIR=/opt/models（イメージに焼いたモデル）を渡す＝実行時に
+        # ダウンロードさせない（コールドスタートで数百 MB 取りに行かせない）
         self.model      = SentenceTransformer(
-            cfg["model_name"], cache_folder="/mnt/new_hdd/hf_cache"
+            cfg["model_name"],
+            cache_folder=os.environ.get("MODEL_CACHE_DIR",
+                                        "/mnt/new_hdd/hf_cache"),
         )
         # DB アクセスはドライバ切替層（db.py）経由＝ローカル psycopg2 / 本番 Data API を
         # DB_BACKEND 環境変数で切替（2026-07-12 移行・旧 self.conn 直書きは全廃）
@@ -1670,7 +1839,18 @@ class MTGHybridSearcherV2:
 
         # HyDE ベクトル検索（hyde_text を embedding してベクトル検索）
         fmt_sql  = format_filter_sql(format)
-        type_sql = type_filter_sql(type_filter_override)
+        # 型は override が無ければ原文の末尾ルールで補完（2026-07-27・search() 本体と対）。
+        # override だけを見ると、ルーターが型を落としたとき本体は補完で守られるのに
+        # HyDE 単独ヒットだけ型なしで再流入する（Mage Hunters' Onslaught＝ソーサリーが
+        # 「灯争大戦のプレインズウォーカー」に混入した実測＝R13 欠け〔7/21〕と同じ穴の型）
+        _hyde_type = type_filter_override
+        if _hyde_type is None:
+            _stripped = (raw_query or query).strip().rstrip('?？。！!、．.　 ')
+            for _jp, _en in TYPE_WORDS_JA.items():
+                if _stripped.endswith(_jp):
+                    _hyde_type = _en
+                    break
+        type_sql = type_filter_sql(_hyde_type)
         attr_sql = attr_filter_sql(cmc_min, cmc_max,
                                    power_min, power_max,
                                    toughness_min, toughness_max,
@@ -1705,6 +1885,8 @@ class MTGHybridSearcherV2:
         attr_sql += tribal_filter_sql(detect_tribal(gate_q))
         attr_sql += name_contains_sql(detect_name_search(gate_q))
         attr_sql += neg_type_filter_sql(detect_neg_type(gate_q))
+        # 収録セットゲートも HyDE 腕に（search() 本体と対・2026-07-27 同日配線）
+        attr_sql += set_filter_sql(detect_set_ja(gate_q))
         # ドロー枚数ゲートも HyDE 腕に（search() 本体と対・単独ヒット再流入防止・R14）
         attr_sql += draw_filter_sql(detect_draw_min(gate_q))
         # EDH 固有色・ブラケットゲートも HyDE 腕に（search() 本体と対）。
@@ -1851,6 +2033,19 @@ class MTGHybridSearcherV2:
          removal_mode, counter_mode, kw_abilities, neg_kw_abilities,
          kw_only) = extract_keywords(query)
 
+        # 型肯定の末尾ルールを原文（gate_q）でも補完する（2026-07-27・故障②の修理）:
+        # extract_keywords は書き換え後クエリしか見ないため、ルーターが search_query を
+        # 壊すと型が落ちる（「灯争大戦のプレインズウォーカー」→ 7B が
+        # 「灯争大战的 planeswalker」へ簡体字化けさせ日本語末尾ルールが不発だった実測）。
+        # P/T・部族・カード名・型否定は 7/13 に raw_query 化済み＝肯定だけ漏れていた
+        if type_filter is None and not type_filter_override and gate_q != query:
+            _stripped = gate_q.strip().rstrip('?？。！!、．.　 ')
+            for _jp, _en in TYPE_WORDS_JA.items():
+                if _stripped.endswith(_jp):
+                    type_filter = _en
+                    print(f"  type_filter: {_en}（原文の末尾ルールで補完）")
+                    break
+
         # override フラグが True の場合は強制的に有効化
         tournament_boost = tournament_boost or tournament_boost_override
         removal_mode     = removal_mode     or removal_mode_override
@@ -1892,6 +2087,12 @@ class MTGHybridSearcherV2:
         attr_sql += tribal_filter_sql(tribal)
         if tribal:
             print(f"  部族ゲート: {tribal}（type_line 単語境界照合）")
+        # 収録セットゲート（2026-07-27・決定的辞書・原文を見る・全腕+直行路に掛かる）。
+        # set_codes は全印刷の集合＝再録カードも初出セットで拾える
+        set_codes_hit = detect_set_ja(gate_q)
+        attr_sql += set_filter_sql(set_codes_hit)
+        if set_codes_hit:
+            print(f"  セットゲート: {set_codes_hit}（収録セット・全印刷）")
         # カード名部分一致（「カード名に X とつく」・決定的検出・全腕+直行路に掛かる）
         name_term = detect_name_search(gate_q)
         attr_sql += name_contains_sql(name_term)
@@ -1965,7 +2166,45 @@ class MTGHybridSearcherV2:
         name_direct = name_term is not None and not has_fuzzy_semantic(query)
         # 型の否定クエリも同様（face_types の NOT で完全定義・並びは play-rate/edhrec）
         neg_type_direct = neg_type is not None and not has_fuzzy_semantic(query)
-        if not (tournament_boost or removal_mode or counter_mode) and (kw_only or edh_direct or pt_direct or tribal_direct or name_direct or neg_type_direct):
+        # マナ加速クエリは EDH 意図が無くても構造化で完全定義される
+        # （is_mana_boost ∧ cmc/type/format の WHERE）。2026-07-26 追加。
+        # 由来: 本人の指摘「構造化のど真ん中を合わせただけなのになぜ的中率が低い」
+        # →診断で、門（is_mana_boost=TRUE）は正しく効いていたのに直行路が
+        # edh_intent を要求していたため意味検索へ落ち、絞り込み後の並びに品質信号が
+        # 無かったと判明（「1マナのマナクリーチャー」で極楽鳥・ラノワールのエルフが
+        # top-10 圏外・NDCG 0.703）。除去 0.33→直行路と同型の処方……を試したが
+        # **実測で棄却（2026-07-26・id=113）**。配線は切ってある（下記 False）。
+        #
+        # 棄却の根拠（id=111 対照 → id=113・同一 DB/同一キャッシュ・変更はコードのみ）:
+        #   看板 0.929 → 0.873。per-query: 1マナのマナクリーチャー 0.703→0.502
+        #   （judged でも 0.52）・マナ加速できるカード 0.937→0.176・パイオニアの
+        #   マナ加速 0.948→0.220。
+        # 機序（数字より重要）: **is_mana_boost の偽陽性を play-rate 順が増幅する**。
+        #   「死亡時に宝物」「生け贄で一回マナ」型（Greedy Freebooter・Shambling
+        #   Ghast・Wild Cantor）は、マナ目的でなく生け贄の種や色調整として構築で
+        #   実際によく使われる＝採用率が高い → 並べ替えると優先的に浮上する。
+        #   ＝R14 の「誘発条件文の中の行為は本業と数えない」の**マナ版が未実装**で
+        #   あることが露呈した（PHASE2 §11 の横展開候補・除去の Bowmasters と同型）。
+        # 併存する交絡: 未ラベル 80〜90%（GT がハイブリッドの出力だけで作られている
+        #   ＝7/23 ドロー直行プロトと同じ被覆の崖）。数字はその分不当に低いが、
+        #   顔ぶれに明らかな偽陽性が居るため「採点すれば戻る」とは言い切れない。
+        # 再挑戦の条件: 先に is_mana_boost へ「付随・一回きりは本業と数えない」を
+        #   実装し（列仕事）、その上で採点便を回してから再測定する。順序は
+        #   「列 → 並べ方」であって逆ではない（この便の教訓）。
+        # ゲート関数と試験（tests/test_mana_direct_gate.py・25 件全緑・誤発動ゼロ）は
+        # 正しく動いているので残す＝再挑戦時に再発明しない。
+        # 2026-07-26 夕: 再挑戦の条件（列の偽陽性除去）を enrich_mana.py 新設で
+        # 満たしたため True に復帰。列は「本業か付随か」線（本人裁定①倍化=本業・
+        # ②繰り返し誘発=おまけ・③他者依存報酬=おまけ）＋net-mana 定義（6/24）で
+        # 再導出済み（錨+境界 41 枚全一致・差分 963 行）。上の棄却記録は
+        # 「列を直す前に並べ方だけ直すと害」の教訓として残す。
+        MANA_DIRECT_ENABLED = True
+        mana_direct = MANA_DIRECT_ENABLED and mana_direct_gate(query, mana_producer)
+        # 収録セットクエリも意味の残余が無ければ直行（「灯争大戦のプレインズウォーカー」
+        # ＝ set_codes && ∧ 型 で正解集合が完全定義・並びは採用率順・2026-07-27）。
+        # fuzzy 判定は原文（gate_q）＝セット検出と同じ土俵で行う
+        set_direct = set_codes_hit is not None and not has_fuzzy_semantic(gate_q)
+        if not (tournament_boost or removal_mode or counter_mode) and (kw_only or edh_direct or pt_direct or tribal_direct or name_direct or neg_type_direct or mana_direct or set_direct):
             print("  構造化オンリー直行路（意味検索スキップ・"
                   + ("EDH＝edhrec順" if edh_intent else "play-rate順") + "）")
             return self._structured_search(top_k, fmt_sql, type_sql, attr_sql,
