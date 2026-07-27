@@ -17,11 +17,19 @@ docs/
 eval_pool_*.csv
 # バックアップ・一時ファイル（マージ作業の中間生成物・再生成可能）
 *.bak
+# 日付サフィックス付きの退避（*.bak では末尾一致しないため別途。2026-07-26 に
+# .env.bak_20260726（AWS 鍵と DB パスワードを含む）がすり抜けていたのを発見）
+.env.bak*
+*.bak_*
 *.tmp
 *.premerge_bak
 *.rank_backup
 # Wisdom Guild の HTML スクレイプキャッシュ（再取得可能・サイズ大）
 wg_cache/
+# CLAUDE.md は Claude Code のプロジェクト設定（呼称・課金規律等の内輪情報を含む）
+# ＝リポジトリは公開ポートフォリオなので push しない
+CLAUDE.md
+
 # 旧 Chat(Sonnet) 日報。docs/ai に役割を引き継いだため不要・push しない
 Chat_log/
 
@@ -79,3 +87,24 @@ fix_ja_face_dupes_20260715.py
 modern_removal_quality_audit_20260715.py
 removal_direct_proto_20260715.py
 removal_regrade_pool_20260717.py
+
+# Terraform（2026-07-26）: 作業ディレクトリと state は push しない。
+#   .terraform/      プロバイダのバイナリ（数百 MB）
+#   *.tfstate*       **実インフラの現状＝機微情報を含む**（DB エンドポイント等）
+#   *.tfvars         実値（アカウント ID 等）。*.tfvars.example は追跡する
+infra/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+
+# Aurora 搬入用の一時 CSV・DDL（2026-07-28・搬入後に消してよい）
+migration/
+
+# 本人と共用する道具の置き場（2026-07-28）。バイナリと内輪用スクリプトは追跡しない。
+#   bin/terraform            112MB の実行ファイル（GitHub の 100MB 上限にも当たる）
+#   bin/fable_chat_mirror.py 相談役サブエージェントの会話ミラー＝内輪の道具
+# bin/dbq のような公開して困らない小道具は追跡を続ける
+bin/terraform
+bin/fable_chat_mirror.py
