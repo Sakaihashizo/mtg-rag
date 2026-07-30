@@ -149,8 +149,9 @@ class PsycopgDriver:
 
 class DataApiDriver:
     """AWS 本番（Aurora Serverless v2 + RDS Data API）用。
-    ★全体が未検証（実物の Aurora がまだ無い）＝デプロイ日に必ず実測検証:
-      配列パラメータ / vector 型の ::vector キャスト / 1 MiB 上限 / resume 時リトライ。"""
+    2026-07-28 のデプロイ実測で検証済み: 配列パラメータ（非対応と判明→SQL 側
+    ARRAY リテラル展開へ仕様変更）/ jsonb・配列列のデコード（_decode_rows）。
+    resume 時リトライは 2026-07-31 実装（_execute・下記）。1 MiB 上限は呼び出し側の責務。"""
 
     def __init__(self):
         import boto3  # 遅延 import（psycopg2 モードでは boto3 不要）
@@ -163,16 +164,46 @@ class DataApiDriver:
         self.database = (os.environ.get("AURORA_DB_NAME")
                          or os.environ.get("DB_NAME", "rag_dev"))
 
+    # auto-pause（min 0 ACU）で眠った Aurora への一発目は DatabaseResumingException 等で
+    # 弾かれる。目覚めは約 15 秒＝ドライバで待って再送すれば利用者にはエラーでなく
+    # 「遅い一発目」になる。待ち上限は Lambda timeout 60 秒の内側かつ復帰実測 15 秒の
+    # 余裕枠として 45 秒（API GW の統合タイムアウト約 30 秒を超えた分はゲートウェイ側で
+    # 504 になるが、その裏でこのリトライが Aurora を起こし切るので次の一手は必ず通る）
+    RESUME_RETRY_SECONDS = float(os.environ.get("AURORA_RESUME_RETRY_SECONDS", "45"))
+    RESUME_RETRY_INTERVAL = 2.0
+
+    @staticmethod
+    def _is_resuming_error(exc) -> bool:
+        """「Aurora が目覚め中」を意味する例外だけ True（それ以外は再送しない＝
+        SQL エラー等を黙って連打しない）。判定は boto3 の ClientError 構造から
+        エラーコードと本文の両面で拾う（コードは Data API 世代で揺れがあるため）。"""
+        resp = getattr(exc, "response", None)
+        if not isinstance(resp, dict):
+            return False
+        code = (resp.get("Error") or {}).get("Code", "")
+        msg = (resp.get("Error") or {}).get("Message", "") or str(exc)
+        if code in ("DatabaseResumingException", "DatabaseUnavailableException"):
+            return True
+        return "resum" in msg.lower()   # "is resuming" / "resumable" 系の本文
+
     def _execute(self, sql: str, params=None, with_meta: bool = False) -> dict:
+        import time
         sql2, params2 = convert_params_for_data_api(sql, params)
-        return self.client.execute_statement(
-            resourceArn=self.resource_arn,
-            secretArn=self.secret_arn,
-            database=self.database,
-            sql=sql2,
-            parameters=params2,
-            includeResultMetadata=with_meta,
-        )
+        deadline = time.monotonic() + self.RESUME_RETRY_SECONDS
+        while True:
+            try:
+                return self.client.execute_statement(
+                    resourceArn=self.resource_arn,
+                    secretArn=self.secret_arn,
+                    database=self.database,
+                    sql=sql2,
+                    parameters=params2,
+                    includeResultMetadata=with_meta,
+                )
+            except Exception as e:
+                if not self._is_resuming_error(e) or time.monotonic() >= deadline:
+                    raise
+                time.sleep(self.RESUME_RETRY_INTERVAL)
 
     @staticmethod
     def _decode_rows(resp) -> list[tuple]:

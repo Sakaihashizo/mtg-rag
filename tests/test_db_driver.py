@@ -89,6 +89,103 @@ check("pg.alive_after_error", db.query("SELECT 1"), [(1,)])
 
 db.close()
 
+# ─── C) resume リトライの純ユニット（2026-07-31・boto3 不要） ─────────────
+# auto-pause で眠った Aurora への一発目が利用者にエラー直撃していた件の再発防止。
+# __new__ で __init__（boto3/環境変数）を飛ばし、偽クライアントを注入して検証する。
+
+from db import DataApiDriver
+
+
+class _FakeResumingError(Exception):
+    def __init__(self, code="DatabaseResumingException", msg="is resuming"):
+        super().__init__(msg)
+        self.response = {"Error": {"Code": code, "Message": msg}}
+
+
+def _make_driver(client):
+    d = DataApiDriver.__new__(DataApiDriver)
+    d.client = client
+    d.resource_arn = "arn:test"
+    d.secret_arn = "arn:secret"
+    d.database = "testdb"
+    d.RESUME_RETRY_SECONDS = 10.0
+    d.RESUME_RETRY_INTERVAL = 0.0   # 試験は待たない
+    return d
+
+
+class _WakesOnThirdCall:
+    """2 回 resuming で弾いて 3 回目に応える＝目覚めの再現"""
+    def __init__(self):
+        self.calls = 0
+
+    def execute_statement(self, **kw):
+        self.calls += 1
+        if self.calls < 3:
+            raise _FakeResumingError()
+        return {"records": []}
+
+
+fake = _WakesOnThirdCall()
+drv = _make_driver(fake)
+check("resume.query", drv.query("SELECT 1"), [])
+check("resume.calls", fake.calls, 3)
+
+# 判定器: 目覚め系だけ True（コード二種と本文 "resum"）・SQL エラー等は False
+check("resume.detect.code",
+      DataApiDriver._is_resuming_error(_FakeResumingError()), True)
+check("resume.detect.unavailable",
+      DataApiDriver._is_resuming_error(
+          _FakeResumingError("DatabaseUnavailableException", "not ready")), True)
+check("resume.detect.badrequest_msg",
+      DataApiDriver._is_resuming_error(
+          _FakeResumingError("BadRequestException",
+                             "Aurora DB instance is resuming after being auto-paused")), True)
+check("resume.detect.sql_error",
+      DataApiDriver._is_resuming_error(
+          _FakeResumingError("BadRequestException", "syntax error at or near")), False)
+check("resume.detect.plain", DataApiDriver._is_resuming_error(ValueError("x")), False)
+
+
+class _AlwaysSqlError:
+    """SQL エラーは再送してはいけない（黙って連打しない）＝1 回で即 raise"""
+    def __init__(self):
+        self.calls = 0
+
+    def execute_statement(self, **kw):
+        self.calls += 1
+        raise _FakeResumingError("BadRequestException", "column does not exist")
+
+
+fake2 = _AlwaysSqlError()
+drv2 = _make_driver(fake2)
+try:
+    drv2.query("SELECT no_such_col")
+    failures.append("resume.sql_error: 期待した例外が出ていない")
+except Exception:
+    pass
+check("resume.sql_error.calls", fake2.calls, 1)
+
+
+class _NeverWakes:
+    """期限切れ: 目覚めないまま RESUME_RETRY_SECONDS を使い切ったら raise"""
+    def __init__(self):
+        self.calls = 0
+
+    def execute_statement(self, **kw):
+        self.calls += 1
+        raise _FakeResumingError()
+
+
+fake3 = _NeverWakes()
+drv3 = _make_driver(fake3)
+drv3.RESUME_RETRY_SECONDS = 0.0   # 即期限切れ＝初回失敗をそのまま raise
+try:
+    drv3.query("SELECT 1")
+    failures.append("resume.deadline: 期待した例外が出ていない")
+except Exception:
+    pass
+check("resume.deadline.calls", fake3.calls, 1)
+
 # ─── 結果 ────────────────────────────────────────────────────
 
 if failures:
