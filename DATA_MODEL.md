@@ -23,8 +23,8 @@ MTG RAG System の PostgreSQL スキーマの詳細。README の「データモ�
 |---|---:|---|
 | `mtg_cards_v2` | 31,635 | カード本体（全件検索対象・Marvel 653 は 2026-07-13 に日本語補填＋embedding 付与） |
 | `mtg_embeddings_small_v2` | 31,635 | multilingual-e5-small の埋め込み（384 次元・**現行唯一の embedding**） |
-| `deck_list` | 17,270 | デッキ（MTGTop8 構築 6 フォーマット 12,348 ＋ Duel Commander 959 ＋ Moxfield 多人数 Commander 1,232 ＋ precon 2,731・source 列で系統分離・夜間バッチで毎日成長） |
-| `deck_cards` | 694,547 | デッキ収録カード明細（card_id 解決 99.96%・未解決 303 行は次元カード等の正当な NULL） |
+| `deck_list` | 21,573 | デッキ（MTGTop8 構築 6 フォーマット 13,837 ＋ Duel Commander 959 ＋ Moxfield 多人数 Commander 4,046 ＋ precon 2,731・source 列で系統分離・夜間バッチで毎日成長。件数は 2026-07-31 実測） |
+| `deck_cards` | 1,000,773 | デッキ収録カード明細（card_id 解決 99.95%・未解決 544 行は次元カード等の正当な NULL。2026-07-31 実測） |
 | `card_format_strength` | 6,257 | カード×**構築**フォーマット別 play-rate 事前集計（導出テーブル・構築 6 フォーマット） |
 | `edh_card_strength` | 15,377 | カード×EDH 系（Duel Commander / 多人数 Commander）play-rate 事前集計（**構築と物理分離**・2026-07-14 分離・07-22 多人数追加） |
 | `format_deck_counts` | 8 | play-rate の分母表（フォーマット別総デッキ数・recompute が更新） |
@@ -97,7 +97,7 @@ PK = `id`、UNIQUE = `card_name`。
 
 ### 導出列（enrich スクリプトによる事前計算）
 
-`is_mana_boost`・`target_types`・`target`・`removal_types`・`removal`・`front_keywords`・`floor_cmc`・`draw_count`・`draw_x` は、oracle テキスト等から事前計算する**導出列**。共通の運用:
+`is_mana_boost`・`target_types`・`target`・`removal_types`・`removal`・`front_keywords`・`floor_cmc`・`draw_count`・`draw_x`・`tutor`・`dig`・`set_codes`・`image_url`・`image_url_ja` は、oracle テキストや全印刷履歴等から事前計算する**導出列**。共通の運用:
 
 - **不在は NULL**（番兵値は使わない）。例外は `front_keywords` のみ——「能力なし」を空配列で表現し、不在の NULL と区別する
 - 再実行は値が変わる行だけ更新する冪等設計（何度走っても結果が同じ・物理チャーンを避ける）
@@ -111,8 +111,12 @@ PK = `id`、UNIQUE = `card_name`。
 | `front_keywords` | `enrich_front_keywords.py` | 表面（front face）のキーワード能力のみを保持 |
 | `is_mana_boost` | `enrich_mana.py`（2026-07-26 新設＝失われた 6/24 導出の復元・再定義） | 二段の門: 文脈（本業か付随か＝R15・誘発報酬は数えない・倍化/自身ETBは数える）× 量（net-mana「出すマナ − 払うマナ − 土地補正 > 0」＝6/24 定義不変）。旧値の「Add {U} or {B} の or 合算」バグ（二色土地が True）も再導出で一掃 |
 | `draw_count` / `draw_x` | `enrich_draw.py` | 命令文の「Draw N card(s)」だけを数える（誘発の条件文・置換文は除外＝採点規約 R14 の検索側の写し・2026-07-23） |
+| `tutor`（jsonb） | `enrich_tutor.py`（2026-07-31 新設） | ライブラリ**全域**に条件でアクセスするサーチの効果配列。効果ごとに {拾える型・枚数・行き先・在り処（呪文/起動/誘発）} を一つのオブジェクトに束ねる（removal 列で踏んだ「効果と対象が別集計で結びつかない」問題の再発防止設計） |
+| `dig`（jsonb） | `enrich_tutor.py`（同上） | **上から N 枚**という位置に縛られる掘削の効果配列。{見る枚数・取る枚数・拾える型・取り先・残りの行き先・切削経由か・在り処}。占術（rest=top）・諜報（rest=graveyard）・「切削してから拾う」型まで同じ器で表現し、族が増えるたび列を増やさない。境界は「位置を知っているか」＝引くだけのカード（渦まく知識型）は NULL |
+| `set_codes`（text[]・GIN） | `enrich_printings.py`（2026-07-28） | 一度でも収録された全セット（digital 除外）。単一の代表印刷では再録のたび元セットが上書きされ「強いカードほどセット検索から消える」偽陰性が起きるため配列で保持 |
+| `image_url` / `image_url_ja` | `enrich_scryfall_meta.py` / `enrich_printings.py` | Scryfall CDN への URL 参照のみ（画像バイトは保持しない）。ja は最新の日本語印刷 |
 
-充填数（全 31,635 行中）: `target_types` 10,503 / `target` 9,784 / `removal_types`・`removal` 各 5,343 / `floor_cmc` 345 / `is_mana_boost` 2,366＝TRUE 1,041＋FALSE 1,325（2026-07-26 R15 再導出） / `front_keywords` 31,323（以上 2026-07-17 実測）・`draw_count` 2,888 / `draw_x` 430（2026-07-23 実測）。
+充填数（全 31,635 行中）: `target_types` 10,503 / `target` 9,784 / `removal_types`・`removal` 各 5,343 / `floor_cmc` 345 / `is_mana_boost` 2,366＝TRUE 1,041＋FALSE 1,325（2026-07-26 R15 再導出） / `front_keywords` 31,323（以上 2026-07-17 実測）・`draw_count` 2,888 / `draw_x` 430（2026-07-23 実測）・`tutor` 818 / `dig` 987（2026-07-31 実測）・`set_codes` 31,006 / `image_url_ja` 29,656＝93.7%（2026-07-28 実測）。
 
 ---
 
@@ -157,15 +161,15 @@ PK = `id`、UNIQUE = `deck_name`。
 
 ### 紐付けの実態（正直な記載）
 
-| 指標 | 実測値（2026-07-24） |
+| 指標 | 実測値（2026-07-31） |
 |---|---|
-| `card_id`（FK）が埋まっている行 | **99.96%**（694,244 / 694,547） |
+| `card_id`（FK）が埋まっている行 | **99.95%**（1,000,229 / 1,000,773） |
 | ├ board=main | 99.97%（581,247 / 581,446） |
 | ├ board=side | 99.94%（110,262 / 110,323） |
 | └ board=commander | 98.45%（2,735 / 2,778） |
 | 未解決 303 行 | Planechase 次元カード等、検索対象コアの対象外（正当な未解決を NULL で表現）。board=commander の未解決 43 行は Moxfield 由来の Unfinity アトラクション（`[]` 付き生名・銀枠＝コア外）で同種 |
 
-`card_id` は取り込み時ではなく後段の名前解決ステップで埋める設計。当初はスクレイプ由来の名前ゆれ（`[]` 接頭辞・分割カードの旧区切り ` / `・両面カードの表面名が DB の `A // B` 形式と不一致）で 51.8% に留まっていたが、正規化マッチで **99.96%** へ解決した（生の `card_name` 完全一致率 89.7% より解決率が高いのは正規化を挟むため）。検索・共起は `card_name` 基準で動くため `card_id` は検索の読み取りパス外だが、**フォーマット別 play-rate 集計（`card_format_strength`）は `card_id` 基準で行う**ため、この解決率は大会データ由来のランキング信号の品質に直結する。
+`card_id` は取り込み時ではなく後段の名前解決ステップで埋める設計。当初はスクレイプ由来の名前ゆれ（`[]` 接頭辞・分割カードの旧区切り ` / `・両面カードの表面名が DB の `A // B` 形式と不一致）で 51.8% に留まっていたが、正規化マッチで **99.96%** へ解決した（修理時点。以後デッキの日次増加に伴い現在は 99.95%。生の `card_name` 完全一致率 89.7% より解決率が高いのは正規化を挟むため）。検索・共起は `card_name` 基準で動くため `card_id` は検索の読み取りパス外だが、**フォーマット別 play-rate 集計（`card_format_strength`）は `card_id` 基準で行う**ため、この解決率は大会データ由来のランキング信号の品質に直結する。
 
 ---
 
@@ -183,7 +187,7 @@ PK = `id`、UNIQUE = `deck_name`。
 
 ## edh_card_strength
 
-EDH 系の play-rate 事前集計。スキーマは `card_format_strength` と同一（card_id / format_name / play_decks）で、`format_name` = `Duel Commander`（MTGTop8 大会 1v1・959 デッキ）と `Commander`（Moxfield 多人数・1,232 デッキ）の 2 値。**構築テーブルと分ける理由**: EDH は母数が小さく、混ぜると「どこかの環境で一線級なら強い」の横断 MAX を少数デッキの率が支配してしまう（2026-07-14 実測 id=65〜70）。検索側は format='commander'/'duel' のとき本表を参照（2026-07-22 に多人数 Commander の実データへ切替済み・それ以前は Duel の近似）。
+EDH 系の play-rate 事前集計。スキーマは `card_format_strength` と同一（card_id / format_name / play_decks）で、`format_name` = `Duel Commander`（MTGTop8 大会 1v1・959 デッキ）と `Commander`（Moxfield 多人数・4,046 デッキ）の 2 値。**構築テーブルと分ける理由**: EDH は母数が小さく、混ぜると「どこかの環境で一線級なら強い」の横断 MAX を少数デッキの率が支配してしまう（2026-07-14 実測 id=65〜70）。検索側は format='commander'/'duel' のとき本表を参照（2026-07-22 に多人数 Commander の実データへ切替済み・それ以前は Duel の近似）。
 
 ## format_deck_counts
 
@@ -203,9 +207,13 @@ play-rate の分母表（`format_name` / `total_decks`・現在 8 フォーマ�
 
 ---
 
-## edh_card_cooccurrence
+## edh_card_cooccurrence（旧版・参照非推奨）
 
-EDH 系のカード共起（513,411 行・スキーマは `card_cooccurrence` と同一）。**分離の理由（設計判断）**: 共起の意味論が構築と EDH で別物——構築は同一アーキタイプの複製デッキで co_count が水増しされやすいのに対し、EDH は 100 枚シングルトンで各デッキがほぼ独立に構築されるため、高い co_count がより強いシナジー信号になる。混ぜると信号の較正が壊れる。検索への配線は未実装（統率者シナジー適合の改善候補として温存）。
+EDH 系のカード共起の初期版（513,411 行）。二つの欠陥が実測で判明したため残置のまま参照しない: (1) 統率者（board='commander'）との対を持たない (2) card_name ベースの集計で名寄せ割れを含む。後継は下記 v2。
+
+## edh_card_cooccurrence_v2
+
+EDH デッキのカードペア共起の作り直し（2,178,557 行・2026-07-30 新設）。`(card_id_a, card_id_b, source, deck_count)`——card_id 結合（名寄せ免疫）・**統率者の行を対に含める**（統率者条件付きの採用が一本の表で引ける）・供給元別に集計して混ぜない（多人数 Commander と 1v1 Duel Commander は禁止リストからして別世界——Sol Ring は Duel Commander で禁止、が混合を戒める実例）・同居 2 デッキ以上のみ保存・全再集計 72 秒の冪等ビルド（`build_edh_cooccurrence.py`）。**分離の理由（設計判断）**: 共起の意味論が構築と EDH で別物——構築は同一アーキタイプの複製デッキで co_count が水増しされやすいのに対し、EDH は 100 枚シングルトンで各デッキがほぼ独立に構築されるため、高い deck_count がより強いシナジー信号になる。検索への配線は未実装（統率者シナジー適合の改善候補として温存）。
 
 ---
 
