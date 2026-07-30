@@ -476,10 +476,12 @@ def get_archetypes(card_name: str, db) -> list[str]:
 
 
 def search_cards(searcher, query, top_k, fmt,
-                 tournament_boost=False, removal_mode=False,
-                 counter_mode=False, type_filter_override=None,
+                 tournament_boost=False, type_filter_override=None,
                  hyde_text="", ja_hyde_text="", filters=None, router_format=None,
                  raw_query=None):
+    # removal_mode / counter_mode 引数は 2026-07-30 退役（本人裁定「mode はどこにも
+    # 要らない」）。除去/カウンター意図は searcher 側の決定的辞書だけが立てる。
+    # ルーターはまだ bit を吐くが（プロンプト契約の掃除は後日）、ここで捨てられる。
     filters = filters or {}
     # フォーマット決定の優先順位: 明示引数 > ルーター抽出 > クエリ内キーワード検出。
     # キーワード検出はフォールバック（rewrite はフォーマット語を search_query から
@@ -501,8 +503,6 @@ def search_cards(searcher, query, top_k, fmt,
             top_k=top_k,
             format=fmt,
             tournament_boost_override=tournament_boost,
-            removal_mode_override=removal_mode,
-            counter_mode_override=counter_mode,
             type_filter_override=type_filter_override,
             raw_query=raw_query,
             **filters,
@@ -511,8 +511,6 @@ def search_cards(searcher, query, top_k, fmt,
         results = searcher.search(
             query, top_k=top_k, format=fmt,
             tournament_boost_override=tournament_boost,
-            removal_mode_override=removal_mode,
-            counter_mode_override=counter_mode,
             type_filter_override=type_filter_override,
             raw_query=raw_query,
             **filters,
@@ -643,8 +641,6 @@ def run_search(searcher, question, fmt=None, top_k=5, api_key=None,
     cards, detected_fmt = search_cards(
         searcher, search_query, top_k, fmt,
         tournament_boost=tournament_boost,
-        removal_mode=removal_mode,
-        counter_mode=counter_mode,
         type_filter_override=type_filter,
         hyde_text=hyde_text,
         ja_hyde_text=ja_hyde_text,

@@ -140,8 +140,8 @@ def search_legal(searcher, conn, query, fmt, top_k: int, router_entry: dict = No
         kwargs = dict(
             top_k=fetch_k, format=fmt,
             tournament_boost_override=bool(e.get("tournament_boost")),
-            removal_mode_override=bool(e.get("removal_mode")),
-            counter_mode_override=bool(e.get("counter_mode")),
+            # removal_mode / counter_mode はキャッシュに残っていても読まない
+            # （2026-07-30 mode 退役・除去/カウンター意図は searcher の決定的辞書のみ）
             type_filter_override=e.get("type_filter"),
             # 決定的ゲート（統率者名・ドロー枚数・型否定等）はルーターの写しでなく
             # 原文を見る（raw_query 併給の思想を eval キャッシュ経路にも適用・

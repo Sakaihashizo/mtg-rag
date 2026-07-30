@@ -44,6 +44,17 @@ from db_config import (
     get_db_config,
 )
 
+# ablation（切除実験）用スイッチ・2026-07-30。**既定 False＝本番挙動は完全に不変**。
+# 用途: 腕を 1 本ずつ外して「その腕が実際に何点ぶん働いているか」を測る（足す側の
+# A/B〔門の ON/OFF・id=98/99〕の逆向き）。動機は panel 第二戦の縮小派の自白
+# 「ベクトル腕を単独で走らせた実測が存在しない＝決着は腕を殺して看板が何点落ちるか」。
+#   ABLATE_VECTOR=1 → クエリ埋め込みのベクトル腕を外す（_embed も呼ばない）
+#   ABLATE_HYDE=1   → HyDE 腕（理想カード文の埋め込み）を外す
+#   両方 1          → 埋め込みを一度も使わない＝FTS＋構造化列だけの世界
+# 環境変数で渡すのは、呼び出し側の署名を汚さず eval 走行だけで切り替えるため。
+ABLATE_VECTOR = os.environ.get("ABLATE_VECTOR") == "1"
+ABLATE_HYDE   = os.environ.get("ABLATE_HYDE") == "1"
+
 MODEL_REGISTRY = {
     "SMALL_V2": {
         "model_name": "intfloat/multilingual-e5-small",
@@ -129,6 +140,31 @@ QUERY_EXPAND = {
                               "呪文１つを対象とし、それを打ち消す",
                               "ないかぎり、それを打ち消す"],
                        "counter_mode": True},
+    # 英語定型キー（mode 退役 2026-07-30 で発覚した非対称の是正）: カウンター族の
+    # キーは日本語 4 本だけで、英語クエリの意図はルーターの bit だけが立てていた
+    # （bit 退役で「counter target spell」の護法減点が消え Artifact Blast[0] が流入
+    # した実測）。draw 族の英語キー（2026-07-23）と同じ是正。旗だけ＝FTS 展開は
+    # 足さない（bit が担っていた仕事の忠実な移植・展開の追加は別便で測ってから）
+    # 2026-07-30 の初版は「bit の仕事の忠実な移植」として旗だけにしたが、ablation で
+    # 埋め込みを外すと FTS 腕が空＝返却ゼロになると判明（id=143「counter target spell」
+    # 1.000→0.000）。日本語キーと同じ展開語を与える（英語クエリだけ FTS が動かない
+    # 非対称の是正＝draw 族 7/23・flying と同型の三例目）
+    "counter target spell": {"en": "counter target spell",
+                       "ja": ["呪文１つを対象とする。それを打ち消す",
+                              "呪文１つを対象とし、それを打ち消す",
+                              "ないかぎり、それを打ち消す"],
+                       "counter_mode": True},
+    "counterspell":         {"en": "counter target spell",
+                       "ja": ["呪文１つを対象とする。それを打ち消す",
+                              "呪文１つを対象とし、それを打ち消す",
+                              "ないかぎり、それを打ち消す"],
+                       "counter_mode": True},
+    # 「〜に対応できる/対処できる」＝除去意図の語彙（mode 退役で発覚した取り逃し是正）:
+    # 錨クエリ「相手のウラモグに対応できるカード」は除去の字が無く、ルーターの bit
+    # だけが除去門を立てていた。語彙として決定的に立てる。「対策」は入れない
+    # （「墓地対策」＝ヘイトカードの意味が混ざる＝誤発動側・非対称試験で固定）
+    "に対応できる": {"removal_mode": True},
+    "に対処できる": {"removal_mode": True},
     # ドロー系
     "カードを引く":    {"en": "draw cards",             "ja": ["カードを引く"]},
     "手札補充":        {"en": "draw cards",             "ja": ["カードを引く"]},
@@ -197,6 +233,14 @@ QUERY_EXPAND = {
     "警戒":            {"en": "vigilance",     "ja": ["警戒"], "keyword": "Vigilance"},
     # 飛行（単体キーワード → type_filter なし）
     "飛行":            {"en": "flying",        "ja": ["飛行"], "keyword": "Flying"},
+    # 英語キー（2026-07-30・ablation で発覚）: 英語クエリは辞書に載らない限り FTS 腕が
+    # 空で、埋め込みが落ちると返却ゼロだった（id=143「flying creature」0.936→0.000）。
+    # **keyword フィールドは意図的に持たせない**——test_structured_gate が
+    # ("flying creature", False)＝「辞書は沈黙してルーターに譲る」を裁定として縫って
+    # おり、keyword を付けると構造化オンリー直行路が発火して誤発動になる（実測で捕獲）。
+    # ここで足すのは FTS 展開語だけ＝腕を空にしない目的に限定する。英語クエリに
+    # keyword 門を開くかは別の裁定（本人待ち）。
+    "flying":          {"en": "flying",        "ja": ["飛行"]},
     # ─ 生得キーワード第2弾（2026-07-11 本人裁定「キーワードは全部入れていい」・
     #   常盤木＋廃止済み戦闘/回避系23語。訳語は japanese_oracle_text との照合で
     #   全 94〜100% 一致を機械検証済み。廃止語も勝手に現行語へ正規化しない＝
@@ -257,6 +301,31 @@ QUERY_EXPAND = {
     "軽い":    {"en": "", "ja": [], "tournament_boost": True},
     "効率":    {"en": "", "ja": [], "tournament_boost": True},
 }
+
+# 生得キーワードの英語キーを日本語エントリから自動生成する（2026-07-31・本人指示
+# 「flying だけじゃなく他のキーワード能力も日本語と同じのを足して」）。
+# 動機: 英語クエリは辞書に載らない限り FTS 腕が空になる（ablation で実測=id=143 の
+# 「flying creature」0.936→0.000）。draw 族 7/23・counter/flying 7/30 と同じ非対称の
+# 一括是正。日本語キー側を足せば英語キーも自動で付く＝二重管理を作らない。
+#
+# **keyword フィールドは意図的に写さない**: 付けると構造化オンリー直行路が英語クエリで
+# 発火し、test_structured_gate が縫っている ("flying creature", False)＝「辞書は沈黙して
+# ルーターに譲る」の裁定を破る（実測で捕獲済み）。ここで足すのは FTS 展開語だけ。
+# 英語クエリに keyword 門を開くかは別の裁定（本人待ち）。
+#
+# 既知の弱点（部分一致ゆえ・FTS 展開のみなので実害は腕の雑音に限定）: "flash" は
+# "flashback"、"ward" は "toward/warden"、"reach" は "reaches" 等に部分一致しうる。
+# 最長一致の勝ち抜き規則は「両方が辞書キーのとき」しか効かないため、実クエリで
+# 害が観測されたら個別に除外リストへ落とす（人間レビュー昇格方式の逆向き運用）。
+_KW_EN_KEYS = {}
+for _jp, _v in list(QUERY_EXPAND.items()):
+    if not _v.get("keyword"):
+        continue
+    _en_key = (_v.get("en") or "").strip().lower()
+    if not _en_key or _en_key in QUERY_EXPAND or _en_key in _KW_EN_KEYS:
+        continue
+    _KW_EN_KEYS[_en_key] = {"en": _v["en"], "ja": list(_v.get("ja") or [])}
+QUERY_EXPAND.update(_KW_EN_KEYS)
 
 
 # 日本語のカードタイプ語 → type_line フィルタ（2026-07-11・本人の実地テストが発見した
@@ -477,6 +546,10 @@ SUBTYPE_WORDS_JA = {
     "スケルトン": "Skeleton", "リス": "Squirrel",     "カエル": "Frog",
     "コウモリ": "Bat",      "トカゲ": "Lizard",       "ホラー": "Horror",
     "ネズミ": "Rat",        "ウサギ": "Rabbit",       "ブラッシュワグ": "Brushwagg",
+    "ローグ": "Rogue",
+    # ならず者=Rogue（2026-07-29 本人報告「ならず者で部族がほぼ出なかった」＝辞書の欠け。
+    # 暗殺者・忍者は居るのに Rogue だけ不在だった）
+    "ならず者": "Rogue",
     # 漢字複合系（部族以外の読みがまず来ない）
     "吸血鬼": "Vampire",    "恐竜": "Dinosaur",       "海賊": "Pirate",
     "騎士": "Knight",       "忍者": "Ninja",          "侍": "Samurai",
@@ -727,6 +800,20 @@ def extract_keywords(query: str) -> tuple[list[str], list[str], Optional[str], b
             kw_abilities, neg_kw_abilities, kw_only)
 
 
+def detect_intent_modes(query: str) -> tuple[bool, bool]:
+    """除去/カウンター意図だけを QUERY_EXPAND から決定的に検出する軽量版。
+    用途は原文（gate_q）での補完（2026-07-30・mode 退役の対）: ルーターが写しを
+    壊すと extract_keywords（書き換え後を見る）の検出が不発になるため
+    （実測: 7B が錨ウラモグを「アトラクサ対策」へ書き換え＝「対応できる」が消えた）。
+    型肯定の原文補完（2026-07-27）と同じ様式。戻り値 (removal_mode, counter_mode)。"""
+    if not query:
+        return False, False
+    matched = [jp for jp in QUERY_EXPAND if jp in query]
+    rm = any(QUERY_EXPAND[k].get("removal_mode") for k in matched)
+    cm = any(QUERY_EXPAND[k].get("counter_mode") for k in matched)
+    return rm, cm
+
+
 def expand_query(query: str) -> str:
     en_kws, _, _, _, _, _, _, _, _ = extract_keywords(query)
     if en_kws:
@@ -791,6 +878,54 @@ def mana_direct_gate(query: str, mana_producer: bool) -> bool:
     if "コンボ" in query or "combo" in lowered:
         return False
     return True
+
+
+def dig_draw_gate(query: str) -> bool:
+    """「ドローしながらフィルタリング」クエリの構造化オンリー直行路ゲート（2026-07-31）。
+
+    正解集合が `dig IS NOT NULL ∧ draw_count >= 1` で完全に定義できる＝
+    **入れ替えてから引く**（本人裁定の原文「例外って思案とか定業くらいのもんなんだよな、
+    入れ替えてから引いてる」）。並びは play-rate 降順で、実測の顔ぶれは
+    思案 1,995 デッキ / 定業 827 / 選択 650 / 考慮 438 / 師範の占い独楽 366。
+
+    列の線（同日制定・enrich_tutor.py と grading_conventions の対応節）:
+      dig  = 上から N 枚という**位置**に縛られる掘削（占術・諜報・切削して拾う型を含む）
+      draw = 「Draw N」の行為（R14）
+      **引くだけ（渦まく知識 = Ancestral Recall の下位互換）は dig=NULL**＝本人裁定。
+      ルーティング（捨てて引く・鏡割りの寓話 II 章）も dig でない＝この門は拾わない。
+
+    ゲートの失敗の向き（既存ゲート試験と同じ非対称）:
+      誤発動 = 意味の残余を落として間違った集合を返す ＝ 有害（ゼロを必須とする）
+      取り逃し = ハイブリッドに落ちるだけ ＝ 無害（遅く・正しく）
+
+    発動条件は**両方の語が原文に在ること**に限定する（片方だけの「カードを引く
+    カード」「占術できるカード」は既存の族の担当＝この門は沈黙する）。
+    """
+    if not query:
+        return False
+    q = query.lower()
+    dig_words = ('フィルタリング', 'フィルター', '掘れる', '掘る', 'filtering', 'filter')
+    draw_words = ('ドロー', '引く', '引ける', '引き', 'draw')
+    if not any(w in query or w in q for w in dig_words):
+        return False
+    if not any(w in query or w in q for w in draw_words):
+        return False
+    # 意味の残余の見方（既存門と同じ二重の守りだが、掛け方が違う）: この門を起こす語
+    # （ドロー等）自体が QUERY_EXPAND に載っていて fuzzy と数えられるため、素の
+    # has_fuzzy_semantic(query) は必ず True になり門が永久に不発になる（実測）。
+    # **この門が説明できる語を落とした残りに** fuzzy が在るかを見る＝「意味の残余が
+    # 構造化フラグだけか」という EDH 直行路の判定と同じ思想の、語を引いた版。
+    residue = query
+    for w in dig_words + draw_words + ('できる', 'カード', 'しながら', 'ながら', 'と', 'や', 'する'):
+        residue = residue.replace(w, '')
+    if has_fuzzy_semantic(residue):
+        return False
+    return True
+
+
+def dig_draw_filter_sql() -> str:
+    """dig ∧ draw の共通集合フィルタ（本人裁定「共通集合とってもらわなきゃね」）。"""
+    return " AND c.dig IS NOT NULL AND c.draw_count >= 1"
 
 
 def format_filter_sql(fmt: Optional[str]) -> str:
@@ -1794,8 +1929,6 @@ class MTGHybridSearcherV2:
         top_k: int = 10,
         format: Optional[str] = None,
         tournament_boost_override: bool = False,
-        removal_mode_override: bool = False,
-        counter_mode_override: bool = False,
         type_filter_override: Optional[str] = None,
         cmc_min=None, cmc_max=None,
         power_min=None, power_max=None,
@@ -1827,8 +1960,6 @@ class MTGHybridSearcherV2:
         normal_results = self.search(
             query, top_k=top_k * 2, format=format,
             tournament_boost_override=tournament_boost_override,
-            removal_mode_override=removal_mode_override,
-            counter_mode_override=counter_mode_override,
             type_filter_override=type_filter_override,
             cmc_min=cmc_min, cmc_max=cmc_max,
             power_min=power_min, power_max=power_max,
@@ -1836,6 +1967,16 @@ class MTGHybridSearcherV2:
             mana_producer=mana_producer,
             raw_query=raw_query,
         )
+        if ABLATE_HYDE:
+            # 切除実験（既定オフ）: HyDE 腕を重ねずに素の検索結果で返す
+            return normal_results[:top_k]
+        if getattr(self, "_last_route_direct", False) == 'dig_draw':
+            # 構造化オンリー直行路が発火した＝並びは決定的な上流信号（play-rate /
+            # edhrec 順）。removal/counter 直行路・kw_only・boost と同じ扱いで
+            # HyDE を重ねない（2026-07-31・実測: 「ドローしながらフィルタリング
+            # できるカード」で HyDE マージが思案 1,576 デッキを 4 位へ押し下げ、
+            # Faerie Dreamthief〔9 デッキ〕を 1 位にしていた）
+            return normal_results[:top_k]
 
         # HyDE ベクトル検索（hyde_text を embedding してベクトル検索）
         fmt_sql  = format_filter_sql(format)
@@ -1859,11 +2000,15 @@ class MTGHybridSearcherV2:
         # HyDE 単独ヒットは最終マージに入るため、ここに門が無いと非該当が再流入する）
         (_, _, _, _tb, _rm, _cm, _kw_abilities, _neg_kw,
          _kw_only) = extract_keywords(query)
+        # 意図の原文補完（search() 本体と対・2026-07-30 mode 退役）
+        if raw_query and raw_query != query:
+            _rm_raw, _cm_raw = detect_intent_modes(raw_query)
+            _rm = _rm or _rm_raw
+            _cm = _cm or _cm_raw
         # 構造化オンリー直行路なら normal_results が既に SQL 直行の並び＝HyDE を重ねない
         # （重ねると意味検索の並びが play-rate 順を汚す・search() 本体の分岐と対）
         if _kw_only and not (_tb or tournament_boost_override) \
-                and not (_rm or removal_mode_override) \
-                and not (_cm or counter_mode_override):
+                and not _rm and not _cm:
             return normal_results[:top_k]
         # boost クエリ（「最強」「純粋に強い」等）も HyDE を重ねない（2026-07-15）。
         # 根拠: 公平 A/B（eval id=76/77・全行ラベル済み）で boost 5 クエリ全てが
@@ -1877,7 +2022,11 @@ class MTGHybridSearcherV2:
             return normal_results[:top_k]
         attr_sql += keyword_filter_sql(_kw_abilities, _neg_kw)
         # 機構指定つき除去クエリの門は HyDE 腕にも（search() 本体と対・単独ヒット再流入防止）
-        attr_sql += removal_mech_filter_sql(query, _rm or removal_mode_override)
+        attr_sql += removal_mech_filter_sql(query, _rm)
+        # dig ∧ draw の門も HyDE 腕に（search() 本体と対・単独ヒット再流入防止。
+        # 2026-07-27 の型フィルタ漏れ〔Mage Hunters' Onslaught 混入〕と同じ穴の予防）
+        if dig_draw_gate(raw_query or query):
+            attr_sql += dig_draw_filter_sql()
         # P/T 関係・部族・カード名・型否定ゲートも HyDE 腕に（search() 本体と対・
         # 決定的ゲートはルーターの写しでなく原文 gate_q を見る＝search() と同じ理由）
         gate_q = raw_query or query
@@ -1995,8 +2144,6 @@ class MTGHybridSearcherV2:
         self, query: str, top_k: int = 10,
         format: Optional[str] = None,
         tournament_boost_override: bool = False,
-        removal_mode_override: bool = False,
-        counter_mode_override: bool = False,
         type_filter_override: Optional[str] = None,
         cmc_min=None, cmc_max=None,
         power_min=None, power_max=None,
@@ -2007,6 +2154,7 @@ class MTGHybridSearcherV2:
         print(f"\n[{self.model_key}] 検索: 「{query}」"
               + (f" [{format}]" if format else ""))
         t0 = time.perf_counter()
+        self._last_route_direct = None    # 直行路の記録（search_with_hyde が読む）
         # 決定的ゲート（P/T・部族・カード名・型否定・EDH 色/ブラケット）はルーターの
         # 写し（search_query）でなく原文を見る。ルーターが写し間違えると門が不発になる
         # ため（実測: 7B が「非クリーチャー」→「非クリーチタ」と化かして型否定ゲートが
@@ -2046,13 +2194,36 @@ class MTGHybridSearcherV2:
                     print(f"  type_filter: {_en}（原文の末尾ルールで補完）")
                     break
 
-        # override フラグが True の場合は強制的に有効化
+        # override フラグが True の場合は強制的に有効化。
+        # removal/counter の override は 2026-07-30 に退役（本人裁定「mode はどこにも
+        # 要らない」）: LLM ルーターの自己申告 bit を信じる経路は 5/31 の手書き規則
+        # ファイル（7/06 の構造化置換で埋葬済み・コミット 882646e）の消し忘れで、
+        # 幻出の入口だった（実測: 「使われて嫌な気分になるカード」に removal_mode）。
+        # 除去/カウンター意図は extract_keywords の QUERY_EXPAND（決定的・部分一致）
+        # だけが立てる＝部族/セット/P/T ゲートと同じ「検出と動作が同じ場所」の様式。
+        # 意図も原文で補完する（型肯定の 7/27 補完と同じ対）: ルーターが写しを壊すと
+        # 書き換え後クエリの辞書検出が不発になる（実測: 錨ウラモグ→「アトラクサ対策」）
+        if gate_q != query:
+            _rm_raw, _cm_raw = detect_intent_modes(gate_q)
+            removal_mode = removal_mode or _rm_raw
+            counter_mode = counter_mode or _cm_raw
         tournament_boost = tournament_boost or tournament_boost_override
-        removal_mode     = removal_mode     or removal_mode_override
-        counter_mode     = counter_mode     or counter_mode_override
-        # type_filter_override が指定された場合は上書き
+        # type_filter_override が指定された場合は上書き。ただし**関所を通す**
+        # （2026-07-31・型幻出の再演から）: LLM 由来の型申告は、原文にその型を意味する
+        # 語（日本語 or 英語型名）が無ければ捨てる。同じガードは 7/12 に
+        # mtg_rag_agent.rewrite_query 側へ置かれたが「eval キャッシュ経路はこの関数を
+        # 通らないため影響なし」という前提つきだった——直行路が type_filter を WHERE に
+        # 使うようになった時点でその前提が腐り、「ドローしながらフィルタリングできる
+        # カード」に Creature が幻出して思案・定業・選択が門の外に落ちた（実測 0.601→0.122）。
+        # **経路ごとにガードを貼る設計だから貼り忘れた経路で再演する**＝信頼境界は
+        # searcher 側の一点に置く（mode 退役 7/30 の完成形・LLM の申告より決定器が上位）。
         if type_filter_override:
-            type_filter = type_filter_override
+            _tf = str(type_filter_override)
+            _ja = [jp for jp, en in TYPE_WORDS_JA.items() if en == _tf]
+            if any(w in gate_q for w in _ja) or _tf.lower() in gate_q.lower():
+                type_filter = type_filter_override
+            else:
+                print(f"  type_filter: {_tf} を破棄（原文に型語なし・幻出ガード）")
         expanded = expand_query(query)
         if expanded != query:
             print(f"  拡張: {expanded[:80]}")
@@ -2204,14 +2375,34 @@ class MTGHybridSearcherV2:
         # ＝ set_codes && ∧ 型 で正解集合が完全定義・並びは採用率順・2026-07-27）。
         # fuzzy 判定は原文（gate_q）＝セット検出と同じ土俵で行う
         set_direct = set_codes_hit is not None and not has_fuzzy_semantic(gate_q)
-        if not (tournament_boost or removal_mode or counter_mode) and (kw_only or edh_direct or pt_direct or tribal_direct or name_direct or neg_type_direct or mana_direct or set_direct):
+        # 「入れ替えてから引く」＝ dig ∧ draw の共通集合（2026-07-31 本人裁定）。
+        # 判定は原文（gate_q）＝他の決定的ゲートと同じ土俵
+        dig_draw_direct = dig_draw_gate(gate_q)
+        if dig_draw_direct:
+            attr_sql += dig_draw_filter_sql()
+        if not (tournament_boost or removal_mode or counter_mode) and (kw_only or edh_direct or pt_direct or tribal_direct or name_direct or neg_type_direct or mana_direct or set_direct or dig_draw_direct):
             print("  構造化オンリー直行路（意味検索スキップ・"
                   + ("EDH＝edhrec順" if edh_intent else "play-rate順") + "）")
+            # 直行路を通ったことを記録する（search_with_hyde が HyDE を重ねないため。
+            # 2026-07-31・dig∧draw 便で発覚した適用漏れ: removal/counter 直行路と
+            # kw_only/boost には早期リターンがあるのに、構造化オンリー直行路
+            # （マナ/セット/EDH/P-T/部族/カード名/型否定/dig∧draw）には無く、
+            # 決定的な play-rate 順の上に HyDE の意味的並べ替えが乗っていた
+            # ＝「直行の並びは上流信号・意味で汚さない」原則の穴）
+            # 新設経路（dig∧draw）だけを HyDE の重ねから守る。既存の構造化直行路
+            # （マナ/セット/EDH/P-T/部族/カード名/型否定）も原則としては同じ扱いに
+            # すべきだが、実測で EDH が 0.963→0.877（未ラベル 12%）＝**採点が
+            # HyDE 込みの顔ぶれで作られている**ため、切り替えは採点便とセットの
+            # 別便にする（本人裁定待ち・今日の便では既存挙動を一切変えない）
+            self._last_route_direct = 'dig_draw' if dig_draw_direct else 'legacy'
             return self._structured_search(top_k, fmt_sql, type_sql, attr_sql,
                                            edh_order=edh_intent)
 
-        vec     = self._embed(expanded)
-        v_rows  = self._vector_search(vec, top_k, fmt_sql, type_sql, attr_sql)
+        if ABLATE_VECTOR:
+            v_rows = []          # 切除実験（既定オフ）: 埋め込みを作らず腕を空にする
+        else:
+            vec     = self._embed(expanded)
+            v_rows  = self._vector_search(vec, top_k, fmt_sql, type_sql, attr_sql)
         en_rows = self._en_text_search(en_kws, top_k, fmt_sql, type_sql, attr_sql,
                                           removal_mode=removal_mode)
         ja_rows = self._ja_text_search(ja_kws, top_k, fmt_sql, type_sql, attr_sql)

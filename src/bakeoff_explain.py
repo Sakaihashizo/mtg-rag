@@ -84,8 +84,8 @@ QUERIES = [
     {"query": "ブラケット2で使えるラクドスカラーのマナ加速",
      "kwargs": {"filters": {"mana_producer": True}}},
     {"query": "コンボに使えるカード", "kwargs": {}},
-    {"query": "最強の単体除去", "kwargs": {"tournament_boost": True, "removal_mode": True}},
-    {"query": "条件付きカウンター呪文", "kwargs": {"counter_mode": True}},
+    {"query": "最強の単体除去", "kwargs": {"tournament_boost": True}},  # removal は辞書検出（mode 退役 2026-07-30）
+    {"query": "条件付きカウンター呪文", "kwargs": {}},  # counter は辞書検出（mode 退役 2026-07-30）
     # 統率者クエリ改訂版（2026-07-11 本人設計）: EDH 意図を明示し、候補は固有色（赤緑）で
     # 揃えた手組みプール＋引っ掛け1枚。「発現する浅瀬」は青入り＝怒りの座の固有色違反だが
     # エレメンタルシナジー的には魅力満点＝解説レイヤーが固有色ルールを適用できるかを突く罠。
