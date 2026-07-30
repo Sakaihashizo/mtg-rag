@@ -1,0 +1,184 @@
+﻿query,format,category,system_rank,card_name,japanese_name,type_line,japanese_oracle_text,oracle_text,human_grade,note
+ミッドレンジといえば,,semantic,1,Mind Roots,精神の根,Sorcery,プレイヤー１人を対象とする。そのプレイヤーはカード２枚を捨てる。これにより捨てられた土地・カード最大１枚をあなたのコントロール下でタップ状態で戦場に出す。,Target player discards two cards. Put up to one land card discarded this way onto the battlefield tapped under your control.,0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+ミッドレンジといえば,,semantic,2,Esper Origins // Summon: Esper Maduin,幻獣との交わり // 召喚：幻獣マディン,Sorcery // Enchantment Creature — Saga Elemental,"諜報２を行う。２点のライフを得る。この呪文が墓地から唱えられたなら、これを追放し、その後、オーナーのコントロール下で変身させた状態かつ最終カウンター１個が置かれた状態で戦場に出す。
+フラッシュバック{3}{G} // I — あなたのライブラリーの一番上にあるカード１枚を公開する。それがパーマネント・カードなら、それをあなたの手札に加える。
+II — {G}{G}を加える。
+III — ターン終了時まで、あなたがコントロールしていてこれでないすべてのクリーチャーは＋２/＋２の修整を受けトランプルを得る。","Surveil 2. You gain 2 life. If this spell was cast from a graveyard, exile it, then put it onto the battlefield transformed under its owner's control with a finality counter on it. (If a creature with a finality counter on it would die, exile it instead.)
+Flashback {3}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.) // (As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)
+I — Reveal the top card of your library. If it's a permanent card, put it into your hand.
+II — Add {G}{G}.
+III — Other creatures you control get +2/+2 and gain trample until end of turn.",1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+ミッドレンジといえば,,semantic,3,"Jace, the Mind Sculptor",精神を刻む者、ジェイス,Legendary Planeswalker — Jace,"+2：プレイヤー１人を対象とする。そのプレイヤーのライブラリーの一番上にあるカード１枚を見る。そのカードをそのプレイヤーのライブラリーの一番下に置いてもよい。
+0：カード３枚を引く。その後、あなたの手札にあるカード２枚をあなたのライブラリーの一番上に望む順番で置く。
+-1：クリーチャー１体を対象とする。それをオーナーの手札に戻す。
+-12：プレイヤー１人を対象とする。そのプレイヤーのライブラリーにあるすべてのカードを追放する。その後、そのプレイヤーは、自分の手札を自分のライブラリーに加えて切り直す。","+2: Look at the top card of target player's library. You may put that card on the bottom of that player's library.
+0: Draw three cards, then put two cards from your hand on top of your library in any order.
+−1: Return target creature to its owner's hand.
+−12: Exile all cards from target player's library, then that player shuffles their hand into their library.",0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+ミッドレンジといえば,,semantic,4,"Raph & Mikey, Troublemakers",トラブルメーカー、ラフとマイキー,Legendary Creature — Mutant Ninja Turtle,"トランプル、速攻
+これが攻撃するたび、クリーチャー・カード１枚が公開されるまで、あなたのライブラリーの一番上から１枚ずつ公開していく。そのカードをタップ状態かつ攻撃している状態で戦場に出し、残りをあなたのライブラリーの一番下に無作為の順番で置く。","Trample, haste
+Whenever Raph & Mikey attack, reveal cards from the top of your library until you reveal a creature card. Put that card onto the battlefield tapped and attacking and the rest on the bottom of your library in a random order.",0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+ミッドレンジといえば,,semantic,5,"Bristly Bill, Spine Sower",棘を播く者、逆棘のビル,Legendary Creature — Plant Druid,"上陸 ― 土地１つがあなたのコントロール下で戦場に出るたび、クリーチャー１体を対象とする。それの上に＋１/＋１カウンター１個を置く。
+{3}{G}{G}：あなたがコントロールしている各クリーチャーの上にある＋１/＋１カウンターの個数をそれぞれ２倍にする。","Landfall — Whenever a land you control enters, put a +1/+1 counter on target creature.
+{3}{G}{G}: Double the number of +1/+1 counters on each creature you control.",2,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+ミッドレンジといえば,,semantic,6,"Dennick, Pious Apprentice // Dennick, Pious Apparition",敬虔な新米、デニック // 敬虔な心霊、デニック,Legendary Creature — Human Soldier // Legendary Creature — Spirit Soldier,"絆魂 墓地にあるすべてのカードは呪文や能力の対象にならない。 降霊(２)(白)(青)（あなたはあなたの墓地にあるこのカードを変身させた状態で降霊コストで唱えてもよい。） // 飛行 １枚以上のクリーチャー・カードがいずこかから墓地に置かれるたび、調査を行う。この能力は、毎ターン１回しか誘発しない。（手掛かり(Clue)トークン１つを生成する。それは、「(２),このアーティファクトを生け贄に捧げる：カード１枚を引く。」を持つアーティファクトである。） 敬虔な心霊、デニックがいずこかから墓地に置かれるなら、代わりにこれを追放する。","Lifelink
+Cards in graveyards can't be the targets of spells or abilities.
+Disturb {2}{W}{U} (You may cast this card from your graveyard transformed for its disturb cost.) // Flying
+Whenever one or more creature cards are put into graveyards from anywhere, investigate. This ability triggers only once each turn. (Create a Clue token. It's an artifact with ""{2}, Sacrifice this token: Draw a card."")
+If Dennick would be put into a graveyard from anywhere, exile it instead.",2,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+ミッドレンジといえば,,semantic,7,Forget,忘却,Sorcery,プレイヤー１人を対象とする。そのプレイヤーはカードを２枚捨てる。その後そのプレイヤーは、これにより自分が捨てたカードと同じ枚数のカードを引く。,"Target player discards two cards, then draws as many cards as they discarded this way.",0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+ミッドレンジといえば,,semantic,8,The Wandering Minstrel,異邦の詩人,Legendary Creature — Human Bard,"あなたがコントロールしているすべての土地はアンタップ状態で戦場に出る。
+究極幻想 ― あなたのターンの戦闘の開始時に、あなたが５つ以上の街をコントロールしている場合、すべての色である２/２のエレメンタル・クリーチャー・トークン１体を生成する。
+{3}{W}{U}{B}{R}{G}：ターン終了時まで、あなたがコントロールしていてこれでないすべてのクリーチャーは＋Ｘ/＋Ｘの修整を受ける。Ｘは、あなたがコントロールしている街の数に等しい。","Lands you control enter untapped.
+The Minstrel's Ballad — At the beginning of combat on your turn, if you control five or more Towns, create a 2/2 Elemental creature token that's all colors.
+{3}{W}{U}{B}{R}{G}: Other creatures you control get +X/+X until end of turn, where X is the number of Towns you control.",0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+ミッドレンジといえば,,semantic,9,Violent Eruption,激発,Instant,"クリーチャーやプレインズウォーカーやプレイヤー、望む数を対象とする。激発はそれらに４点のダメージをあなたの望むように分割して与える。
+マッドネス{1}{R}{R}（あなたがこのカードを捨てるなら、これを追放領域に捨てる。そうしたとき、マッドネス・コストでこれを唱えるか、これをあなたの墓地に置く。）","Violent Eruption deals 4 damage divided as you choose among any number of targets.
+Madness {1}{R}{R} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)",1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+ミッドレンジといえば,,semantic,10,Midnight Oil,夜更かし,Enchantment,"夜更かしは時刻カウンターが７個置かれた状態で戦場に出る。
+あなたのドロー・ステップの開始時に、あなたはカードを追加で１枚引き、夜更かしの上から時刻カウンターを２個取り除く。
+あなたの手札の上限は、夜更かしの上に置かれている時刻カウンターの数に等しい。
+あなたがカードを１枚捨てるたび、あなたは１点のライフを失う。","This enchantment enters with seven hour counters on it.
+At the beginning of your draw step, draw an additional card and remove two hour counters from this enchantment.
+Your maximum hand size is equal to the number of hour counters on this enchantment.
+Whenever you discard a card, you lose 1 life.",0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+ミッドレンジといえば,,semantic,11,Tragic Lesson,悲劇的教訓,Instant,カード２枚を引く。その後、あなたがコントロールしている土地１つをオーナーの手札に戻さないかぎり、カード１枚を捨てる。,Draw two cards. Then discard a card unless you return a land you control to its owner's hand.,0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+ミッドレンジといえば,,semantic,12,Gibbering Descent,不明の下降,Enchantment,"各プレイヤーのアップキープの開始時に、そのプレイヤーは１点のライフを失い、カードを１枚捨てる。
+ 暴勇 ― あなたの手札にカードが無い場合、あなたのアップキープ･ステップを飛ばす。
+ マッドネス {2}{B}{B} （あなたがこのカードを捨てる場合、あなたはそれをあなたの墓地に置く代わりに、マッドネス・コストでそれをプレイしてもよい。）","At the beginning of each player's upkeep, that player loses 1 life and discards a card.
+Hellbent — Skip your upkeep step if you have no cards in hand.
+Madness {2}{B}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)",0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+ミッドレンジといえば,,semantic,13,Skophos Reaver,スコフォスの肉裂き,Creature — Minotaur Warrior,"このターンがあなたのターンであるかぎり、スコフォスの肉裂きは＋２/＋０の修整を受ける。
+マッドネス{1}{R}（あなたがこのカードを捨てるなら、これを追放領域に捨てる。そうしたとき、マッドネス・コストでこれを唱えるか、これをあなたの墓地に置く。）","During your turn, this creature gets +2/+0.
+Madness {1}{R} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)",1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+ミッドレンジといえば,,semantic,14,Borrowed Knowledge,借り物の知識,Sorcery,"以下から１つを選ぶ。
+・対戦相手１人を対象とする。あなたの手札を捨てる。その後、そのプレイヤーの手札にあるカードの枚数に等しい枚数のカードを引く。
+・あなたの手札を捨てる。その後、これにより捨てられたカードの枚数に等しい枚数のカードを引く。","Choose one —
+• Discard your hand, then draw cards equal to the number of cards in target opponent's hand.
+• Discard your hand, then draw cards equal to the number of cards discarded this way.",0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+ミッドレンジといえば,,semantic,15,Dark Deal,闇取引,Sorcery,各プレイヤーはそれぞれ、自分の手札にあるカードをすべて捨てる。その後、その枚数から１を引いた枚数のカードを引く。,"Each player discards all the cards in their hand, then draws that many cards minus one.",0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+ミッドレンジといえば,,semantic,16,Nagging Thoughts,収まらぬ思い,Sorcery,"あなたのライブラリーの一番上から２枚のカードを見る。そのうち１枚をあなたの手札に加え、もう１枚をあなたの墓地に置く。
+マッドネス{1}{U}（あなたがこのカードを捨てるなら、これを追放領域に捨てる。あなたがそうしたとき、マッドネス・コストでこれを唱えるか、これをあなたの墓地に置く。）","Look at the top two cards of your library. Put one of them into your hand and the other into your graveyard.
+Madness {1}{U} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)",0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+ミッドレンジといえば,,semantic,17,Truce,休戦,Instant,各プレイヤーは、カードを最大２枚まで引いてもよい。これによりプレイヤーが引かなかったカード１枚につき、そのプレイヤーは２点のライフを得る。,"Each player may draw up to two cards. For each card less than two a player draws this way, that player gains 2 life.",0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+ミッドレンジといえば,,semantic,18,Bad Deal,悪い取引,Sorcery,あなたはカードを２枚引き、各対戦相手はそれぞれカード２枚を捨てる。各プレイヤーはそれぞれ２点のライフを失う。,You draw two cards and each opponent discards two cards. Each player loses 2 life.,1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+ミッドレンジといえば,,semantic,19,Gisa's Bidding,ギサの召集,Sorcery,"黒の２/２のゾンビ・クリーチャー・トークンを２体戦場に出す。
+マッドネス{2}{B}（あなたがこのカードを捨てるなら、これを追放領域に捨てる。あなたがそうしたとき、マッドネス・コストでこれを唱えるか、これをあなたの墓地に置く。）","Create two 2/2 black Zombie creature tokens.
+Madness {2}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)",1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+ミッドレンジといえば,,semantic,20,"Nadu, Winged Wisdom",有翼の叡智、ナドゥ,Legendary Creature — Bird Wizard,"飛行
+あなたがコントロールしているすべてのクリーチャーは「このクリーチャーが呪文や能力の対象になるたび、あなたのライブラリーの一番上にあるカード１枚を公開する。それが土地・カードなら、それを戦場に出す。そうでないなら、それをあなたの手札に加える。この能力は、毎ターン２回しか誘発しない。」を持つ。","Flying
+Creatures you control have ""Whenever this creature becomes the target of a spell or ability, reveal the top card of your library. If it's a land card, put it onto the battlefield. Otherwise, put it into your hand. This ability triggers only twice each turn.""",1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,1,Parting Thoughts,別れの思い,Sorcery,クリーチャー１体を対象とし、それを破壊する。あなたはカードをＸ枚引き、あなたはＸ点のライフを失う。Ｘはそのクリーチャーの上に置かれているカウンターの総数に等しい。,"Destroy target creature. You draw X cards and you lose X life, where X is the number of counters on that creature.",0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,2,Thoughtseize,思考囲い,Sorcery,プレイヤー１人を対象とする。そのプレイヤーは自分の手札を公開する。あなたはその中から土地でないカード１枚を選ぶ。そのプレイヤーはそのカードを捨てる。あなたは２点のライフを失う。,Target player reveals their hand. You choose a nonland card from it. That player discards that card. You lose 2 life.,2,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,3,Torch the Tower,塔の点火,Instant,"協約（この呪文を唱えるに際し、アーティファクトやエンチャントやトークンのうち１つを生け贄に捧げてもよい。）
+クリーチャーやプレインズウォーカーのうち１体を対象とする。塔の点火はそれに２点のダメージを与える。この呪文が協約されていたなら、代わりに、これはそのパーマネントに３点のダメージを与え、あなたは占術１を行う。
+このターン、塔の点火からダメージを受けたパーマネントが死亡するなら、代わりにそれを追放する。","Bargain (You may sacrifice an artifact, enchantment, or token as you cast this spell.)
+Torch the Tower deals 2 damage to target creature or planeswalker. If this spell was bargained, instead it deals 3 damage to that permanent and you scry 1.
+If a permanent dealt damage by Torch the Tower would die this turn, exile it instead.",1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,4,Psychic Frog,超能力蛙,Creature — Frog,"超能力蛙がプレイヤーやプレインズウォーカーである１つに戦闘ダメージを与えるたび、カード１枚を引く。
+カード１枚を捨てる：超能力蛙の上に＋１/＋１カウンター１個を置く。
+あなたの墓地にあるカード３枚を追放する：ターン終了時まで、超能力蛙は飛行を得る。","Whenever this creature deals combat damage to a player or planeswalker, draw a card.
+Discard a card: Put a +1/+1 counter on this creature.
+Exile three cards from your graveyard: This creature gains flying until end of turn.",1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,5,Get Lost,失せろ,Instant,"クリーチャーやエンチャントやプレインズウォーカーである１つを対象とする。それを破壊する。それのコントローラーは地図・トークン２つを生成する。（それは「{1}, {T}, このアーティファクトを生け贄に捧げる：あなたがコントロールしているクリーチャー１体を対象とする。それは探検を行う。起動はソーサリーとしてのみ行う。」を持つアーティファクトである。）","Destroy target creature, enchantment, or planeswalker. Its controller creates two Map tokens. (They're artifacts with ""{1}, {T}, Sacrifice this token: Target creature you control explores. Activate only as a sorcery."")",1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,6,"Ajani, Nacatl Pariah // Ajani, Nacatl Avenger",ナカティルの最下層民、アジャニ // ナカティルの報復者、アジャニ,Legendary Creature — Cat Warrior // Legendary Planeswalker — Ajani,"ナカティルの最下層民、アジャニが戦場に出たとき、白の２/１の猫・戦士・クリーチャー・トークン１体を生成する。
+あなたがコントロールしていてこれでない１体以上の猫が死亡するたび、「これを追放し、その後、オーナーのコントロール下で変身させた状態で戦場に戻す。」を選んでもよい。 // +2：あなたがコントロールしている各猫の上にそれぞれ＋１/＋１カウンター１個を置く。
+0：白の２/１の猫・戦士・クリーチャー・トークン１体を生成する。そうしたとき、あなたがナカティルの報復者、アジャニでない赤のパーマネントをコントロールしている場合、１つを対象とする。これはそれに、あなたがコントロールしているクリーチャーの数に等しい点数のダメージを与える。
+-4：各対戦相手はそれぞれ、自分がコントロールしていて土地でないパーマネントの中からアーティファクト１つとクリーチャー１体とエンチャント１つとプレインズウォーカー１体を選び、その後、残りを生け贄に捧げる。","When Ajani enters, create a 2/1 white Cat Warrior creature token.
+Whenever one or more other Cats you control die, you may exile Ajani, then return him to the battlefield transformed under his owner's control. // +2: Put a +1/+1 counter on each Cat you control.
+0: Create a 2/1 white Cat Warrior creature token. When you do, if you control a red permanent other than Ajani, he deals damage equal to the number of creatures you control to any target.
+−4: Each opponent chooses an artifact, a creature, an enchantment, and a planeswalker from among the nonland permanents they control, then sacrifices the rest.",2,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,7,Traumatic Critique,傷残す批評,Instant,１つを対象とする。傷残す批評はそれにＸ点のダメージを与える。カード２枚を引く。その後、カード１枚を捨てる。,"Traumatic Critique deals X damage to any target. Draw two cards, then discard a card.",1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,8,Thraben Charm,スレイベンの魔除け,Instant,"以下から１つを選ぶ。
+・クリーチャー１体を対象とする。スレイベンの魔除けはそれに、あなたがコントロールしているクリーチャーの数の２倍に等しい点数のダメージを与える。
+・エンチャント１つを対象とする。それを破壊する。
+・望む数のプレイヤーを対象とする。それらのプレイヤーの墓地を追放する。","Choose one —
+• Thraben Charm deals damage equal to twice the number of creatures you control to target creature.
+• Destroy target enchantment.
+• Exile any number of target players' graveyards.",0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,9,Grief,悲嘆,Creature — Elemental Incarnation,"威迫
+悲嘆が戦場に出たとき、対戦相手１人を対象とする。そのプレイヤーは自分の手札を公開する。あなたはその中から土地でないカード１枚を選ぶ。そのプレイヤーはそのカードを捨てる。
+想起―あなたの手札から黒のカード１枚を追放する。","Menace
+When this creature enters, target opponent reveals their hand. You choose a nonland card from it. That player discards that card.
+Evoke—Exile a black card from your hand.",2,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,10,Statute of Denial,否定の法典,Instant,呪文１つを対象とし、それを打ち消す。あなたが青のクリーチャーをコントロールしているなら、カードを１枚引き、その後カードを１枚捨てる。,"Counter target spell. If you control a blue creature, draw a card, then discard a card.",0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,11,Stonesplitter Bolt,石断ちの稲妻,Instant,"協約（この呪文を唱えるに際し、アーティファクトやエンチャントやトークンのうち１つを生け贄に捧げてもよい。）
+クリーチャーやプレインズウォーカーのうち１体を対象とする。石断ちの稲妻はそれにＸ点のダメージを与える。この呪文が協約されていたなら、代わりに、これはそのパーマネントにＸの２倍の点数のダメージを与える。","Bargain (You may sacrifice an artifact, enchantment, or token as you cast this spell.)
+Stonesplitter Bolt deals X damage to target creature or planeswalker. If this spell was bargained, it deals twice X damage to that permanent instead.",0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,12,Shellshock,シェル・ショック,Instant,"各対戦相手につきそれぞれ、そのプレイヤーがコントロールしているクリーチャー最大１体を対象とする。シェル・ショックはそれらの各クリーチャーにそれぞれＸ点のダメージを与える。あなたは、これによりダメージを与えられたクリーチャー１体につき１つのミュータンジェン・トークンを生成する。（それらは、「{1}, {T}, このトークンを生け贄に捧げる：クリーチャー１体を対象とする。それの上に＋１/＋１カウンター１個を置く。起動はソーサリーとしてのみ行う。」を持つアーティファクトである。）","For each opponent, choose up to one target creature that player controls. Shellshock deals X damage to each of those creatures. You create a Mutagen token for each creature dealt damage this way. (They're artifacts with ""{1}, {T}, Sacrifice this token: Put a +1/+1 counter on target creature. Activate only as a sorcery."")",0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,13,"Nicol Bolas, Planeswalker",プレインズウォーカー、ニコル・ボーラス,Legendary Planeswalker — Bolas,＋３：クリーチャーでないパーマネント１つを対象とし、それを破壊する。－２：クリーチャー１体を対象とし、それのコントロールを得る。－９：プレイヤー１人を対象とする。プレインズウォーカー、ニコル・ボーラスはそのプレイヤーに７点のダメージを与える。そのプレイヤーはカードを７枚捨て、その後、パーマネントを７つ生け贄に捧げる。,"+3: Destroy target noncreature permanent.
+−2: Gain control of target creature.
+−9: Nicol Bolas deals 7 damage to target player or planeswalker. That player or that planeswalker's controller discards seven cards, then sacrifices seven permanents of their choice.",2,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,14,Mutual Destruction,相互破壊,Sorcery,"あなたが瞬速を持つパーマネントをコントロールしているかぎり、この呪文は瞬速を持つ。
+この呪文を唱えるための追加コストとして、クリーチャー１体を生け贄に捧げる。
+クリーチャー１体を対象とし、それを破壊する。","This spell has flash as long as you control a permanent with flash.
+As an additional cost to cast this spell, sacrifice a creature.
+Destroy target creature.",0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,15,March of Wretched Sorrow,不憫な悲哀の行進,Instant,"この呪文を唱えるための追加コストとして、あなたはあなたの手札にある望む枚数の黒のカードを追放してもよい。この呪文を唱えるためのコストは、これにより追放されたカード１枚につき{2}少なくなる。
+クリーチャーやプレインズウォーカーのうち１体を対象とする。不憫な悲哀の行進はそれにＸ点のダメージを与え、あなたはＸ点のライフを得る。","As an additional cost to cast this spell, you may exile any number of black cards from your hand. This spell costs {2} less to cast for each card exiled this way.
+March of Wretched Sorrow deals X damage to target creature or planeswalker and you gain X life.",1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,16,Unleash the Inferno,豪火を放て,Instant,クリーチャーやプレインズウォーカーのうち１体を対象とする。豪火を放てはそれに７点のダメージを与える。この方法でこれが余剰のダメージを与えたとき、対戦相手１人がコントロールしていてマナ総量がその余剰のダメージの点数以下であるアーティファクトやエンチャントのうち１つを対象とする。それを破壊する。,"Unleash the Inferno deals 7 damage to target creature or planeswalker. When it deals excess damage this way, destroy target artifact or enchantment an opponent controls with mana value less than or equal to that amount of excess damage.",1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,17,Heart of Bogardan,ボガーダンの中心,Enchantment,累加アップキープ(２)（あなたのアップキープの開始時に、このパーマネントの上に経年(age)カウンターを１個置く。その後あなたがこの上に置かれている経年カウンター１個につきアップキープ・コストを１回支払わないかぎり、それを生け贄に捧げる。） プレイヤー１人がボガーダンの中心の累加アップキープを支払わなかったとき、プレイヤー１人かプレインズウォーカー１体を対象とする。これはそのプレイヤーかそのプレインズウォーカーと、そのプレイヤーかそのプレインズウォーカーのコントローラーがコントロールするすべてのクリーチャーにＸ点のダメージを与える。Ｘは、ボガーダンの中心の上に置かれた経年カウンターの数の２倍から２を引いた点数である。,"Cumulative upkeep {2} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)
+When a player doesn't pay this enchantment's cumulative upkeep, this enchantment deals X damage to target player or planeswalker and each creature that player or that planeswalker's controller controls, where X is twice the number of age counters on this enchantment minus 2.",1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,18,Path to the World Tree,世界樹への道,Enchantment,"世界樹への道が戦場に出たとき、あなたはあなたのライブラリーから基本土地・カード１枚を探し、公開し、あなたの手札に加える。その後、ライブラリーを切り直す。
+{2}{W}{U}{B}{R}{G}, 世界樹への道を生け贄に捧げる：対戦相手１人とクリーチャー最大１体を対象とする。あなたは２点のライフを得てカード２枚を引く。そのプレイヤーは２点のライフを失う。世界樹への道はそのクリーチャーに２点のダメージを与える。あなたは緑の２/２の熊・クリーチャー・トークン１体を生成する。","When this enchantment enters, search your library for a basic land card, reveal it, put it into your hand, then shuffle.
+{2}{W}{U}{B}{R}{G}, Sacrifice this enchantment: You gain 2 life and draw two cards. Target opponent loses 2 life. This enchantment deals 2 damage to up to one target creature. You create a 2/2 green Bear creature token.",0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,19,"Rowan, Scholar of Sparks // Will, Scholar of Frost",火花の学者、ローアン // 霜の学者、ウィル,Legendary Planeswalker — Rowan // Legendary Planeswalker — Will,"あなたがインスタントやソーサリーである呪文を唱えるためのコストは{1}少なくなる。
++1：火花の学者、ローアンは各対戦相手にそれぞれ１点のダメージを与える。あなたがこのターンに３枚以上のカードを引いていたなら、代わりにこれは各対戦相手にそれぞれ３点のダメージを与える。
+-4：あなたは「あなたがインスタントやソーサリーである呪文を唱えるたび、あなたは『{2}を支払い、その呪文をコピーする。あなたはそのコピーの新しい対象を選んでもよい。』を選んでもよい。」を持つ紋章を得る。
+ウィル
+{4}{U} // あなたがインスタントやソーサリーである呪文を唱えるためのコストは{1}少なくなる。
++1：クリーチャー最大１体を対象とする。次のあなたのターンまで、それの基本のパワーとタフネスは０/２になる。
+-3：カード２枚を引く。
+-7：パーマネント最大５つを対象とする。それらを追放する。それらのコントローラーは、自分がコントロールしていてこれにより追放されたパーマネントと同数の、青赤の４/４のエレメンタル・クリーチャー・トークンを生成する。
+ローアン
+{2}{R}","Instant and sorcery spells you cast cost {1} less to cast.
++1: Rowan deals 1 damage to each opponent. If you've drawn three or more cards this turn, she deals 3 damage to each opponent instead.
+−4: You get an emblem with ""Whenever you cast an instant or sorcery spell, you may pay {2}. If you do, copy that spell. You may choose new targets for the copy."" // Instant and sorcery spells you cast cost {1} less to cast.
++1: Up to one target creature has base power and toughness 0/2 until your next turn.
+−3: Draw two cards.
+−7: Exile up to five target permanents. For each permanent exiled this way, its controller creates a 4/4 blue and red Elemental creature token.",1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+使われて嫌な気分になるカード,,semantic,20,"Angrath, Minotaur Pirate",ミノタウルスの海賊、アングラス,Legendary Planeswalker — Angrath,"+2：対戦相手１人を対象とする。ミノタウルスの海賊、アングラスはそのプレイヤーとそのプレイヤーがコントロールしている各クリーチャーにそれぞれ１点のダメージを与える。
+-3：あなたの墓地から海賊・カード１枚を対象とし、それを戦場に戻す。
+-11：対戦相手１人を対象とする。そのプレイヤーがコントロールしているクリーチャーをすべて破壊する。ミノタウルスの海賊、アングラスはそのプレイヤーに、それらのパワーの合計に等しい点数のダメージを与える。","+2: Angrath deals 1 damage to target opponent or planeswalker and each creature that player or that planeswalker's controller controls.
+−3: Return target Pirate card from your graveyard to the battlefield.
+−11: Destroy all creatures target opponent controls. Angrath deals damage to that player equal to their total power.",1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,1,Search for Survivors,生存者の捜索,Sorcery,あなたの墓地を無作為に並べ替える。いずれかの対戦相手は、あなたの墓地にあるカードを１枚無作為に選ぶ。それがクリーチャー・カードである場合、そのカードをあなたのコントロール下で戦場に出す。そうでない場合、それを追放する。,"Reorder your graveyard at random. An opponent chooses a card at random in your graveyard. If it's a creature card, put it onto the battlefield. Otherwise, exile it.",1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,2,Pull from the Grave,墓場からの引き戻し,Sorcery,あなたの墓地にあるクリーチャー・カード最大２枚を対象とする。それらをあなたの手札に戻す。２点のライフを得る。,Return up to two target creature cards from your graveyard to your hand. You gain 2 life.,1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,3,Defy Death,死の超克,Sorcery,あなたの墓地にあるクリーチャー・カード１枚を対象とする。それを戦場に戻す。それが天使であるなら、それの上に＋１/＋１カウンター２個を置く。,"Return target creature card from your graveyard to the battlefield. If it's an Angel, put two +1/+1 counters on it.",2,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,4,Cemetery Recruitment,墓地からの徴用,Sorcery,あなたの墓地にあるクリーチャー・カード１枚を対象とする。それをあなたの手札に戻す。それがゾンビ・カードなら、カード１枚を引く。,"Return target creature card from your graveyard to your hand. If it's a Zombie card, draw a card.",1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,5,Recover,復活,Sorcery,"あなたの墓地からクリーチャー・カード１枚を対象とし、それをあなたの手札に戻す。
+カードを１枚引く。","Return target creature card from your graveyard to your hand.
+Draw a card.",1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,6,Defossilize,非化石化,Sorcery,あなたの墓地にあるクリーチャー・カード１枚を対象とする。それを戦場に戻す。そのクリーチャーは探検を行う。その後、それはもう１回探検を行う。（あなたのライブラリーの一番上にあるカード１枚を公開する。それが土地なら、そのカードをあなたの手札に加える。そうでないなら、このクリーチャーの上に+1/+1カウンター１個を置く。その後、そのカードを戻すかあなたの墓地に置く。その後、この手順を繰り返す。）,"Return target creature card from your graveyard to the battlefield. That creature explores, then it explores again. (Reveal the top card of your library. Put that card into your hand if it's a land. Otherwise, put a +1/+1 counter on that creature, then put the card back or put it into your graveyard. Then repeat this process.)",2,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,7,Disentomb,墓暴き,Sorcery,あなたの墓地からクリーチャー・カード１枚を対象とし、それをあなたの手札に戻す。,Return target creature card from your graveyard to your hand.,1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,8,Thwart the Grave,墓入りの妨害,Sorcery,"この呪文を唱えるためのコストは、あなたのパーティーを構成しているクリーチャー１体につき{1}少なくなる。（あなたのパーティーは、ウィザードとクレリックと戦士とならず者それぞれ最大１体から構成される。）
+あなたの墓地にある、クリーチャー・カード１枚とウィザードやクレリックや戦士やならず者であるクリーチャー・カード最大１枚を対象とする。それらを戦場に戻す。","This spell costs {1} less to cast for each creature in your party. (Your party consists of up to one each of Cleric, Rogue, Warrior, and Wizard.)
+Return target creature card and up to one target Cleric, Rogue, Warrior, or Wizard creature card from your graveyard to the battlefield.",2,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,9,"Too Greedily, Too Deep",あまりにも貪欲に、あまりにも深く,Sorcery,墓地にあるクリーチャー・カード１枚を対象とする。それをあなたのコントロール下で戦場に出す。そのクリーチャーはそれでない各クリーチャーにそれぞれ、それのパワーに等しい点数のダメージを与える。,Put target creature card from a graveyard onto the battlefield under your control. That creature deals damage equal to its power to each other creature.,2,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,10,Grave Exchange,墓の入れ替え,Sorcery,"あなたの墓地にあるクリーチャー・カード１
+枚とプレイヤー１人を対象とする。その前者
+をあなたの手札に戻し、その後者はクリー
+チャーを１体生け贄に捧げる。",Return target creature card from your graveyard to your hand. Target player sacrifices a creature of their choice.,1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,11,Abhorrent Oculus,忌まわしき眼魔,Creature — Eye,"この呪文を唱えるための追加コストとして、あなたの墓地にあるカード６枚を追放する。
+飛行
+各対戦相手のアップキープの開始時に、あなたは戦慄予示する。（あなたのライブラリーの一番上にあるカード２枚を見る。それらのうち１枚を２/２のクリーチャーとして裏向きで戦場に出し、残りをあなたの墓地に置く。それがクリーチャー・カードなら、そのマナ・コストで、いつでも表向きにしてよい。）","As an additional cost to cast this spell, exile six cards from your graveyard.
+Flying
+At the beginning of each opponent's upkeep, manifest dread. (Look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)",0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,12,Return to Battle,戦場への復帰,Sorcery,あなたの墓地にあるクリーチャー・カード１枚を対象とし、それをあなたの手札に戻す。,Return target creature card from your graveyard to your hand.,1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,13,Necratog,ネクロエイトグ,Creature — Atog,あなたの墓地の一番上のクリーチャー・カードを１枚追放する：ネクロエイトグはターン終了時まで+2/+2の修整を受ける。,Exile the top creature card of your graveyard: this creature gets +2/+2 until end of turn.,0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,14,Corpse Appraiser,死体鑑定士,Creature — Vampire Rogue,死体鑑定士が戦場に出たとき、墓地にあるクリーチャー・カード最大１枚を対象とする。それを追放する。これによりカード１枚が追放領域に置かれたなら、あなたのライブラリーの一番上にあるカード３枚を見る。その後、それらのカードのうち１枚を手札に加え、残りをあなたの墓地に置く。,"When this creature enters, exile up to one target creature card from a graveyard. If a card is put into exile this way, look at the top three cards of your library, then put one of those cards into your hand and the rest into your graveyard.",1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,15,Grim Return,不気味な帰還,Instant,このターンに戦場からいずれかの墓地に置かれた、いずれかの墓地にあるクリーチャー・カード１枚を対象とする。そのカードをあなたのコントロール下で戦場に出す。,Choose target creature card in a graveyard that was put there from the battlefield this turn. Put that card onto the battlefield under your control.,2,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,16,Fight On!,更に闘う者達,Instant,あなたの墓地にあるクリーチャー・カード最大２枚を対象とする。それらをあなたの手札に戻す。,Return up to two target creature cards from your graveyard to your hand.,1,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,17,"Emet-Selch, Unsundered // Hades, Sorcerer of Eld",オリジナル、アシエン・エメトセルク // 最古の魔道士、ハーデス,Legendary Creature — Elder Wizard // Legendary Creature — Avatar,"警戒
+これが戦場に出るか攻撃するたび、カード１枚を引き、その後、カード１枚を捨てる。
+あなたのアップキープの開始時に、あなたの墓地に１４枚以上のカードがある場合、これを変身させてもよい。 // 警戒
+エコー・オブ・ザ・ロスト ― あなたのターンの間、あなたの墓地にあるカードをプレイしてもよい。
+カードやトークンがいずこかからあなたの墓地に置かれるなら、代わりに、それを追放する。","Vigilance
+Whenever Emet-Selch enters or attacks, draw a card, then discard a card.
+At the beginning of your upkeep, if there are fourteen or more cards in your graveyard, you may transform Emet-Selch. // Vigilance
+Echo of the Lost — During your turn, you may play cards from your graveyard.
+If a card or token would be put into your graveyard from anywhere, exile it instead.",2,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,18,Continue?,コンティニュー？,Instant,このターンに戦場からあなたの墓地に置かれてそこにあるクリーチャー・カード最大４枚を対象とする。それらを戦場に戻す。,Choose up to four target creature cards in your graveyard that were put there from the battlefield this turn. Return them to the battlefield.,2,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,19,Resurrection,蘇生,Sorcery,あなたの墓地からクリーチャー・カード１枚を対象とし、それを戦場に戻す。,Return target creature card from your graveyard to the battlefield.,2,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）
+墓地からクリーチャーを釣り上げるカード,,semantic,20,Alms,喜捨,Enchantment,"(１),あなたの墓地の一番上のカードを１枚追放する：クリーチャー１体を対象とする。このターン、それに与えられる次のダメージを１点軽減する。","{1}, Exile the top card of your graveyard: Prevent the next 1 damage that would be dealt to target creature this turn.",0,2026-07-29 本人採点（意味トラック初回便・top-20 被覆）

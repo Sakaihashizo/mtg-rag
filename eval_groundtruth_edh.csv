@@ -96,7 +96,7 @@ Remove a +1/+1 counter from this creature: It deals 1 damage to any target.",2,2
 Exile target creature.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
 ラスリルで使える単体除去,commander,edh_removal,9,Aetherflux Reservoir,霊気貯蔵器,Artifact,"あなたが呪文を唱えるたび、あなたは、このターンにあなたが唱えた呪文１つにつき１点のライフを得る。
 50点のライフを支払う：クリーチャーやプレインズウォーカーやプレイヤーのうち１つを対象とする。霊気貯蔵器はそれに50点のダメージを与える。","Whenever you cast a spell, you gain 1 life for each spell you've cast this turn.
-Pay 50 life: This artifact deals 50 damage to any target.",2,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離）
+Pay 50 life: This artifact deals 50 damage to any target.",1,2026-07-24 本人採点（EDH 初回便・現行規約=定義ベースで統一・質の軸は PHASE2 §11 に分離） | 2026-07-28 本人裁定の全行適用: 霊気貯蔵器は除去文脈では 1（アトラクサ/クレンコの 7/28 裁定をラスリル行にも掃く＝裁定は全行に効かせる）
 ラスリルで使える単体除去,commander,edh_removal,10,Mana Vault,魔力の櫃,Artifact,"魔力の櫃は、あなたのアンタップ・ステップにアンタップしない。
 あなたのアップキープの開始時に、あなたは{4}を支払ってもよい。そうしたなら、魔力の櫃をアンタップする。
 あなたのドロー・ステップの開始時に、魔力の櫃がタップ状態である場合、これはあなたに１点のダメージを与える。

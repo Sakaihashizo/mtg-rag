@@ -744,11 +744,11 @@ Whenever you cast a noncreature spell, put a +1/+1 counter on Vivi Ornitier and 
 カード１枚を引く。","You may play an additional land this turn.
 Draw a card.",1,
 土地をサーチするカード,,ramp,4,Lay of the Land,地勢,Sorcery,あなたのライブラリーから基本土地・カード１枚を探し、それを公開してあなたの手札に加え、その後あなたのライブラリーを切り直す。,"Search your library for a basic land card, reveal it, put it into your hand, then shuffle.",2,
-土地をサーチするカード,,ramp,5,Seek the Horizon,地平の探求,Sorcery,あなたのライブラリーから基本土地・カード最大３枚を探し、それらを公開し、あなたの手札に加える。その後あなたのライブラリーを切り直す。,"Search your library for up to three basic land cards, reveal them, put them into your hand, then shuffle.",1,
+土地をサーチするカード,,ramp,5,Seek the Horizon,地平の探求,Sorcery,あなたのライブラリーから基本土地・カード最大３枚を探し、それらを公開し、あなたの手札に加える。その後あなたのライブラリーを切り直す。,"Search your library for up to three basic land cards, reveal them, put them into your hand, then shuffle.",2, | 2026-07-31 本人裁定「ブレですね。全部 2 にしましょう」＝土地サーチは機能ベースで統一（実用性・効率・行き先で下げない＝R14補足a/R15 と同じ線）。クエリにマナ加速の意図は無いのでフェッチランド型も 2
 土地をサーチするカード,,ramp,6,Cartographer's Survey,地図作りの調査,Sorcery,あなたのライブラリーの一番上にあるカード７枚を見る。その中から土地・カード最大２枚をタップ状態で戦場に出す。残りをあなたのライブラリーの一番下に無作為の順番で置く。,Look at the top seven cards of your library. Put up to two land cards from among them onto the battlefield tapped. Put the rest on the bottom of your library in a random order.,2,
 土地をサーチするカード,,ramp,7,Slimefoot's Survey,スライムフットの調査,Sorcery,版図 ― あなたのライブラリーから基本土地タイプを持つ土地・カード最大２枚を探し、タップ状態で戦場に出す。その後、あなたのライブラリーを切り直す。あなたのライブラリーの一番上にあるカードＸ枚を見る。Ｘはあなたがコントロールしている土地の中の基本土地タイプの種類数に等しい。そのうち最大１枚をあなたのライブラリーの一番上に、残りをあなたのライブラリーの一番下に無作為の順番で置く。,"Domain — Search your library for up to two land cards that each have a basic land type, put them onto the battlefield tapped, then shuffle. Look at the top X cards of your library, where X is the number of basic land types among lands you control. Put up to one of them on top of your library and the rest on the bottom of your library in a random order.",2,
 土地をサーチするカード,,ramp,8,Boundless Realms,境界なき領土,Sorcery,あなたのライブラリーから基本土地カードを最大Ｘ枚まで探し、それらをタップ状態で戦場に出す。Xはあなたがコントロールする土地の総数に等しい。その後あなたのライブラリーを切り直す。,"Search your library for up to X basic land cards, where X is the number of lands you control, put them onto the battlefield tapped, then shuffle.",2,
-土地をサーチするカード,,ramp,9,Environmental Sciences,環境科学,Sorcery — Lesson,あなたのライブラリーから基本土地・カード１枚を探し、公開し、あなたの手札に加える。その後、ライブラリーを切り直す。あなたは２点のライフを得る。,"Search your library for a basic land card, reveal it, put it into your hand, then shuffle. You gain 2 life.",1,
+土地をサーチするカード,,ramp,9,Environmental Sciences,環境科学,Sorcery — Lesson,あなたのライブラリーから基本土地・カード１枚を探し、公開し、あなたの手札に加える。その後、ライブラリーを切り直す。あなたは２点のライフを得る。,"Search your library for a basic land card, reveal it, put it into your hand, then shuffle. You gain 2 life.",2, | 2026-07-31 本人裁定「ブレですね。全部 2 にしましょう」＝土地サーチは機能ベースで統一（実用性・効率・行き先で下げない＝R14補足a/R15 と同じ線）。クエリにマナ加速の意図は無いのでフェッチランド型も 2
 土地をサーチするカード,,ramp,10,Reshape the Earth,大地の作り直し,Sorcery,あなたのライブラリーから土地・カード最大10枚を探し、タップ状態で戦場に出す。その後、あなたのライブラリーを切り直す。,"Search your library for up to ten land cards, put them onto the battlefield tapped, then shuffle.",2,
 1マナのマナクリーチャー,,ramp,1,Badgermole Cub,アナグマモグラの仔,Creature — Badger Mole,"このクリーチャーが戦場に出たとき、土の技１を行う。（あなたがコントロールしている土地１つを対象とする。それは速攻を持つ０/０のクリーチャーになり、土地でもある。それの上に＋１/＋１カウンター１個を置く。それが死亡したか追放されたとき、それをタップ状態で戦場に戻す。）
 あなたがマナを引き出す目的でクリーチャー１体をタップするたび、追加で{G}を加える。","When this creature enters, earthbend 1. (Target land you control becomes a 0/0 creature with haste that's still a land. Put a +1/+1 counter on it. When it dies or is exiled, return it to the battlefield tapped.)
@@ -1321,12 +1321,12 @@ When Enduring Innocence dies, if it was a creature, return it to the battlefield
 行き届いた書庫が戦場に出たとき、諜報１を行う。","({T}: Add {W} or {U}.)
 This land enters tapped.
 When this land enters, surveil 1. (Look at the top card of your library. You may put it into your graveyard.)",0,
-土地をサーチするカード,,ramp,3,Open the Gates,開門,Sorcery,あなたのライブラリーから基本土地や門であるカード１枚を探し、公開し、あなたの手札に加える。その後、ライブラリーを切り直す。,"Search your library for a basic land card or Gate card, reveal it, put it into your hand, then shuffle.",1,
+土地をサーチするカード,,ramp,3,Open the Gates,開門,Sorcery,あなたのライブラリーから基本土地や門であるカード１枚を探し、公開し、あなたの手札に加える。その後、ライブラリーを切り直す。,"Search your library for a basic land card or Gate card, reveal it, put it into your hand, then shuffle.",2, | 2026-07-31 本人裁定「ブレですね。全部 2 にしましょう」＝土地サーチは機能ベースで統一（実用性・効率・行き先で下げない＝R14補足a/R15 と同じ線）。クエリにマナ加速の意図は無いのでフェッチランド型も 2
 土地をサーチするカード,,ramp,4,Unexpected Results,予想外の結果,Sorcery,あなたのライブラリーを切り直し、その後一番上のカードを公開する。それが土地でないカードである場合、あなたはそれをそのマナ・コストを支払うことなく唱えてもよい。それが土地カードである場合、あなたはそれを戦場に出し、予想外の結果をオーナーの手札に戻してもよい。,"Shuffle your library, then reveal the top card. If it's a nonland card, you may cast it without paying its mana cost. If it's a land card, you may put it onto the battlefield and return Unexpected Results to its owner's hand.",0,
-土地をサーチするカード,,ramp,5,Seek the Wilds,未開地の捜索,Sorcery,あなたのライブラリーの一番上から４枚のカードを見る。あなたはその中からクリーチャー・カード１枚か土地・カード１枚を公開してあなたの手札に加えてもよい。残りをあなたのライブラリーの一番下に望む順番で置く。,Look at the top four cards of your library. You may reveal a creature or land card from among them and put it into your hand. Put the rest on the bottom of your library in any order.,1,
-土地をサーチするカード,,ramp,6,Fork in the Road,分かれ道,Sorcery,あなたのライブラリーから基本土地・カード最大２枚を探し、それらを公開する。そのうち１枚をあなたの手札に加え、もう１枚をあなたの墓地に置く。その後あなたのライブラリーを切り直す。,Search your library for up to two basic land cards and reveal them. Put one into your hand and the other into your graveyard. Then shuffle.,1,
+土地をサーチするカード,,ramp,5,Seek the Wilds,未開地の捜索,Sorcery,あなたのライブラリーの一番上から４枚のカードを見る。あなたはその中からクリーチャー・カード１枚か土地・カード１枚を公開してあなたの手札に加えてもよい。残りをあなたのライブラリーの一番下に望む順番で置く。,Look at the top four cards of your library. You may reveal a creature or land card from among them and put it into your hand. Put the rest on the bottom of your library in any order.,2, | 2026-07-31 本人裁定「ブレですね。全部 2 にしましょう」＝土地サーチは機能ベースで統一（実用性・効率・行き先で下げない＝R14補足a/R15 と同じ線）。クエリにマナ加速の意図は無いのでフェッチランド型も 2
+土地をサーチするカード,,ramp,6,Fork in the Road,分かれ道,Sorcery,あなたのライブラリーから基本土地・カード最大２枚を探し、それらを公開する。そのうち１枚をあなたの手札に加え、もう１枚をあなたの墓地に置く。その後あなたのライブラリーを切り直す。,Search your library for up to two basic land cards and reveal them. Put one into your hand and the other into your graveyard. Then shuffle.,2, | 2026-07-31 本人裁定「ブレですね。全部 2 にしましょう」＝土地サーチは機能ベースで統一（実用性・効率・行き先で下げない＝R14補足a/R15 と同じ線）。クエリにマナ加速の意図は無いのでフェッチランド型も 2
 土地をサーチするカード,,ramp,7,Land Grant,土地譲渡,Sorcery,,"If you have no land cards in hand, you may reveal your hand rather than pay this spell's mana cost.
-Search your library for a Forest card, reveal that card, put it into your hand, then shuffle.",1,
+Search your library for a Forest card, reveal that card, put it into your hand, then shuffle.",2, | 2026-07-31 本人裁定「ブレですね。全部 2 にしましょう」＝土地サーチは機能ベースで統一（実用性・効率・行き先で下げない＝R14補足a/R15 と同じ線）。クエリにマナ加速の意図は無いのでフェッチランド型も 2
 土地をサーチするカード,,ramp,8,Surveyor's Scope,山師の器具,Artifact,"{T}, 山師の器具を追放する：あなたのライブラリーから基本土地カードを最大Ｘ枚まで探す。Ｘはあなたより土地カードを２枚以上多くコントロールしているプレイヤーの数に等しい。それらのカードを戦場に出し、その後あなたのライブラリーを切り直す。","{T}, Exile this artifact: Search your library for up to X basic land cards, where X is the number of players who control at least two more lands than you. Put those cards onto the battlefield, then shuffle.",2,
 1マナのマナクリーチャー,,ramp,1,Orochi Leafcaller,大蛇の葉詠み,Creature — Snake Shaman,{G}：あなたのマナ・プールに、好きな色１色のマナ１点を加える。,{G}: Add one mana of any color.,0,
 1マナのマナクリーチャー,,ramp,2,Loam Dryad,壌土のドライアド,Creature — Dryad Horror,"{T}, あなたがコントロールするアンタップ状態のクリーチャー１体をタップする：あなたのマナ・プールに、好きな色１色のマナ１点を加える。","{T}, Tap an untapped creature you control: Add one mana of any color.",2,
@@ -1632,7 +1632,7 @@ When this land enters, surveil 1. (Look at the top card of your library. You may
 パイオニアのマナ加速,pioneer,ramp,10,Blighted Woodland,荒廃した森林,Land,"{T}：{C}を加える。
 {3}{G}, {T}, 荒廃した森林を生け贄に捧げる：あなたのライブラリーから基本土地・カード最大２枚を探し、タップ状態で戦場に出す。その後、ライブラリーを切り直す。","{T}: Add {C}.
 {3}{G}, {T}, Sacrifice this land: Search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.",1,
-土地をサーチするカード,,ramp,7,Scouting Trek,偵察行,Sorcery,あなたのライブラリーから、望む枚数の基本土地カードを探し、それらを公開する。その後、ライブラリーを切り直し、それらを一番上に置く。,"Search your library for any number of basic land cards, reveal those cards, then shuffle and put them on top.",1,
+土地をサーチするカード,,ramp,7,Scouting Trek,偵察行,Sorcery,あなたのライブラリーから、望む枚数の基本土地カードを探し、それらを公開する。その後、ライブラリーを切り直し、それらを一番上に置く。,"Search your library for any number of basic land cards, reveal those cards, then shuffle and put them on top.",2, | 2026-07-31 本人裁定「ブレですね。全部 2 にしましょう」＝土地サーチは機能ベースで統一（実用性・効率・行き先で下げない＝R14補足a/R15 と同じ線）。クエリにマナ加速の意図は無いのでフェッチランド型も 2
 1マナのマナクリーチャー,,ramp,6,Ceta Disciple,シータの信奉者,Creature — Merfolk Wizard,"(赤),(Ｔ)：クリーチャー１体を対象とする。ターン終了時まで、それは+2/+0の修整を受ける。 (緑),(Ｔ)：好きな色のマナ１点を加える。","{R}, {T}: Target creature gets +2/+0 until end of turn.
 {G}, {T}: Add one mana of any color.",0,
 1マナのマナクリーチャー,,ramp,7,Blood Celebrant,血の執行司祭,Creature — Human Cleric,"(黒),１点のライフを支払う：好きな色のマナ１点を加える。","{B}, Pay 1 life: Add one mana of any color.",0,
@@ -5032,3 +5032,118 @@ Whenever you cast a colorless spell, exile up to one target permanent that's one
 Whenever you cast a spell with mana value 4 or greater, untap this creature.",2,2026-07-26 本人採点（マナ便18枚）
 1マナのマナクリーチャー,,ramp,7,Wild Cantor,野生の朗詠者,Creature — Human Druid,野生の朗詠者を生け贄に捧げる：好きな色１色のマナ１点を加える。,"({R/G} can be paid with either {R} or {G}.)
 Sacrifice this creature: Add one mana of any color.",2,2026-07-26 本人採点（マナ便18枚）
+counter target spell,,,,Desertion,奪取,Instant,呪文１つを対象とし、それを打ち消す。これによりアーティファクト・呪文かクリーチャー・呪文が打ち消されたなら、そのカードをオーナーの墓地に置く代わりに、それをあなたのコントロール下で戦場に出す。,"Counter target spell. If an artifact or creature spell is countered this way, put that card onto the battlefield under your control instead of into its owner's graveyard.",2,2026-07-31 本人口頭採点（英語キー追補で湧いた新顔・全部 2）
+counter target spell,,,,Remand,差し戻し,Instant,"呪文１つを対象とする。それを打ち消す。その呪文がこれにより打ち消されたなら、それをそのプレイヤーの墓地に置く代わりにオーナーの手札に加える。
+カード１枚を引く。","Counter target spell. If that spell is countered this way, put it into its owner's hand instead of into that player's graveyard.
+Draw a card.",2,2026-07-31 本人口頭採点（英語キー追補で湧いた新顔・全部 2）
+counter target spell,,,,Reinterpret,再解釈,Instant,呪文１つを対象とする。それを打ち消す。あなたはあなたの手札からマナ総量がそれ以下の呪文１つをマナ・コストを支払うことなく唱えてもよい。,Counter target spell. You may cast a spell with equal or lesser mana value from your hand without paying its mana cost.,2,2026-07-31 本人口頭採点（英語キー追補で湧いた新顔・全部 2）
+flying creature,,,,Quantum Riddler,量子の謎かけ屋,Creature — Sphinx,飛行 このクリーチャーが戦場に出たとき、カード１枚を引く。 あなたの手札にあるカードが１枚以下であるかぎり、あなたが１枚以上のカードを引くなら、代わりにその枚数に１を足した枚数のカードを引く。 ワープ(１)(青),"Flying
+When this creature enters, draw a card.
+As long as you have one or fewer cards in hand, if you would draw one or more cards, you draw that many cards plus one instead.
+Warp {1}{U}",2,2026-07-31 本人口頭採点（英語キー追補で湧いた新顔・全部 2）
+flying creature,,,,Mockingbird,マネドリ,Creature — Bird Bard,"飛行
+あなたは、マネドリを、他のタイプに加えて鳥であり飛行を持つことを除き、戦場にありマナ総量がマネドリを唱えるために支払ったマナの点数以下であるクリーチャー１体のコピーとして戦場に出してもよい。","Flying
+You may have this creature enter as a copy of any creature on the battlefield with mana value less than or equal to the amount of mana spent to cast this creature, except it's a Bird in addition to its other types and it has flying.",2,2026-07-31 本人口頭採点（英語キー追補で湧いた新顔・全部 2）
+flying creature,,,,Subtlety,緻密,Creature — Elemental Incarnation,"瞬速
+飛行
+緻密が戦場に出たとき、クリーチャー・呪文かプレインズウォーカー・呪文、最大１つを対象とする。それのオーナーはそれを自分のライブラリーの一番上か一番下に置く。
+想起―あなたの手札から青のカード１枚を追放する。","Flash
+Flying
+When this creature enters, choose up to one target creature spell or planeswalker spell. Its owner puts it on their choice of the top or bottom of their library.
+Evoke—Exile a blue card from your hand.",2,2026-07-31 本人口頭採点（英語キー追補で湧いた新顔・全部 2）
+flying creature,,,,Murktide Regent,濁浪の執政,Creature — Dragon,"探査（この呪文を唱える段階であなたがあなたの墓地から追放した各カードは、{1}を支払う。）
+飛行
+濁浪の執政は、これによって追放されてインスタントやソーサリーであるカードの枚数に等しい数の＋１/＋１カウンターが置かれた状態で戦場に出る。
+インスタントやソーサリーであるカード１枚があなたの墓地を離れるたび、濁浪の執政の上に＋１/＋１カウンター１個を置く。","Delve (Each card you exile from your graveyard while casting this spell pays for {1}.)
+Flying
+This creature enters with a +1/+1 counter on it for each instant and sorcery card exiled with it.
+Whenever an instant or sorcery card leaves your graveyard, put a +1/+1 counter on this creature.",2,2026-07-31 本人口頭採点（英語キー追補で湧いた新顔・全部 2）
+flying creature,,,,Abhorrent Oculus,忌まわしき眼魔,Creature — Eye,"この呪文を唱えるための追加コストとして、あなたの墓地にあるカード６枚を追放する。
+飛行
+各対戦相手のアップキープの開始時に、あなたは戦慄予示する。（あなたのライブラリーの一番上にあるカード２枚を見る。それらのうち１枚を２/２のクリーチャーとして裏向きで戦場に出し、残りをあなたの墓地に置く。それがクリーチャー・カードなら、そのマナ・コストで、いつでも表向きにしてよい。）","As an additional cost to cast this spell, exile six cards from your graveyard.
+Flying
+At the beginning of each opponent's upkeep, manifest dread. (Look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)",2,2026-07-31 本人口頭採点（英語キー追補で湧いた新顔・全部 2）
+flying creature,,,,Flickerwisp,ちらつき鬼火,Creature — Elemental,"飛行
+ちらつき鬼火が戦場に出たとき、これでないパーマネント１つを対象とする。それを追放する。次の終了ステップの開始時に、そのカードをオーナーのコントロール下で戦場に戻す。","Flying
+When this creature enters, exile another target permanent. Return that card to the battlefield under its owner's control at the beginning of the next end step.",2,2026-07-31 本人口頭採点（英語キー追補で湧いた新顔・全部 2）
+flying creature,,,,"Atraxa, Grand Unifier",偉大なる統一者、アトラクサ,Legendary Creature — Phyrexian Angel,"飛行、警戒、接死、絆魂
+これが戦場に出たとき、あなたのライブラリーの一番上にあるカード１０枚を公開する。各カード・タイプにつきそれぞれ、それらの公開されたカードの中からそのタイプであるカード１枚をあなたの手札に加えてもよい。残りをあなたのライブラリーの一番下に無作為の順番で置く。","Flying, vigilance, deathtouch, lifelink
+When Atraxa enters, reveal the top ten cards of your library. For each card type, you may put a card of that type from among the revealed cards into your hand. Put the rest on the bottom of your library in a random order. (Artifact, battle, creature, enchantment, instant, land, planeswalker, and sorcery are card types.)",2,2026-07-31 本人口頭採点（英語キー追補で湧いた新顔・全部 2）
+flying creature,,,,Slickshot Show-Off,精鋭射手団の目立ちたがり,Creature — Bird Wizard,"飛行、速攻
+あなたがクリーチャーでない呪文１つを唱えるたび、ターン終了時まで、精鋭射手団の目立ちたがりは＋２/＋０の修整を受ける。
+計画{1}{R}（{1}{R}を支払ってあなたの手札にあるこのカードを追放してもよい。後のターンに、これをソーサリーとしてマナ・コストを支払うことなく唱えてもよい。計画はソーサリーとしてのみ行う。）","Flying, haste
+Whenever you cast a noncreature spell, this creature gets +2/+0 until end of turn.
+Plot {1}{R} (You may pay {1}{R} and exile this card from your hand. Cast it as a sorcery on a later turn without paying its mana cost. Plot only as a sorcery.)",2,2026-07-31 本人口頭採点（英語キー追補で湧いた新顔・全部 2）
+flying creature,,,,Brazen Borrower // Petty Theft,厚かましい借り手 // 些細な盗み,Creature — Faerie Rogue // Instant — Adventure,"瞬速
+飛行
+このクリーチャーでは飛行を持つクリーチャーしかブロックできない。","Flash
+Flying
+This creature can block only creatures with flying. // Return target nonland permanent an opponent controls to its owner's hand.",2,2026-07-31 本人口頭採点（英語キー追補で湧いた新顔・全部 2）
+ドローしながらフィルタリングできるカード,,,,Ponder,思案,Sorcery,"あなたのライブラリーの一番上にあるカード３枚を見て、その後、望む順番で戻す。ライブラリーを切り直してもよい。
+カード１枚を引く。","Look at the top three cards of your library, then put them back in any order. You may shuffle.
+Draw a card.",2,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
+ドローしながらフィルタリングできるカード,,,,Preordain,定業,Sorcery,占術２を行う。その後、カード１枚を引く。,"Scry 2, then draw a card. (To scry 2, look at the top two cards of your library, then put any number of them on the bottom and the rest on top in any order.)",2,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
+ドローしながらフィルタリングできるカード,,,,Opt,選択,Instant,"占術１を行う。（あなたのライブラリーの一番上にあるカード１枚を見る。そのカードを一番下に置いてもよい。）
+カード１枚を引く。","Scry 1. (Look at the top card of your library. You may put that card on the bottom.)
+Draw a card.",2,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
+ドローしながらフィルタリングできるカード,,,,Consider,考慮,Instant,"諜報１を行う。（あなたのライブラリーの一番上にあるカード１枚を見る。それをあなたの墓地に置いてもよい。）
+カード１枚を引く。","Surveil 1. (Look at the top card of your library. You may put it into your graveyard.)
+Draw a card.",2,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
+ドローしながらフィルタリングできるカード,,,,Sensei's Divining Top,師範の占い独楽,Artifact,"{1}：あなたのライブラリーの一番上にあるカード３枚を見て、その後、それらを望む順番で戻す。
+{T}：カード１枚を引き、その後、師範の占い独楽をオーナーのライブラリーの一番上に置く。","{1}: Look at the top three cards of your library, then put them back in any order.
+{T}: Draw a card, then put this artifact on top of its owner's library.",2,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
+ドローしながらフィルタリングできるカード,,,,Prismari Charm,プリズマリの魔除け,Instant,"以下から１つを選ぶ。
+・諜報２を行う。その後、カード１枚を引く。
+・１つか２つを対象とする。プリズマリの魔除けはそれらにそれぞれ１点のダメージを与える。
+・土地でないパーマネント１つを対象とする。それをオーナーの手札に戻す。","Choose one —
+• Surveil 2, then draw a card.
+• Prismari Charm deals 1 damage to each of one or two targets.
+• Return target nonland permanent to its owner's hand.",2,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
+ドローしながらフィルタリングできるカード,,,,Lembas,レンバス,Artifact — Food,"レンバスが戦場に出たとき、占術１を行う。その後、カード１枚を引く。
+{2}, {T}, レンバスを生け贄に捧げる：あなたは３点のライフを得る。
+レンバスが戦場から墓地に置かれたとき、オーナーはこれを自分のライブラリーに加えて切り直す。","When this artifact enters, scry 1, then draw a card.
+{2}, {T}, Sacrifice this artifact: You gain 3 life.
+When this artifact is put into a graveyard from the battlefield, its owner shuffles it into their library.",2,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
+ドローしながらフィルタリングできるカード,,,,Candy Trail,キャンディーの道標,Artifact — Food Clue,"キャンディーの道標が戦場に出たとき、占術２を行う。
+{2}, {T}, キャンディーの道標を生け贄に捧げる：あなたは３点のライフを得、カード１枚を引く。","When this artifact enters, scry 2.
+{2}, {T}, Sacrifice this artifact: You gain 3 life and draw a card.",2,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
+ドローしながらフィルタリングできるカード,,,,Behold the Multiverse,多元宇宙の警告,Instant,"占術２を行い、その後カード２枚を引く。
+予顕{1}{U}（あなたのターンの間、あなたは{2}を支払って、あなたの手札からこのカードを裏向きに追放してもよい。後のターンに、これの予顕コストでこれを唱えてもよい。）","Scry 2, then draw two cards.
+Foretell {1}{U} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",2,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
+ドローしながらフィルタリングできるカード,,,,Glimmer of Genius,天才の片鱗,Instant,占術２を行い、その後、カード２枚を引く。{E}{E}（エネルギー・カウンター２個）を得る。,"Scry 2, then draw two cards. You get {E}{E} (two energy counters).",2,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
+ドローしながらフィルタリングできるカード,,,,Omen of the Sea,海の神のお告げ,Enchantment,"瞬速（この呪文を、あなたがインスタントを唱えられるときならいつでも唱えてよい。）
+海の神のお告げが戦場に出たとき、占術２を行い、その後、カード１枚を引く。
+{2}{U}, 海の神のお告げを生け贄に捧げる：占術２を行う。（あなたのライブラリーの一番上にあるカード２枚を見て、そのうちの望む枚数を一番下に、残りを一番上に、それぞれ望む順番で置く。）","Flash (You may cast this spell any time you could cast an instant.)
+When this enchantment enters, scry 2, then draw a card.
+{2}{U}, Sacrifice this enchantment: Scry 2. (Look at the top two cards of your library, then put any number of them on the bottom and the rest on top in any order.)",2,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
+ドローしながらフィルタリングできるカード,,,,Rowan's Grim Search,ローアンの陰惨な調査,Instant,"協約（この呪文を唱えるに際し、アーティファクトやエンチャントやトークンのうち１つを生け贄に捧げてもよい。）
+この呪文が協約されていたなら、あなたのライブラリーの一番上にあるカード４枚を見る。その後、そのうち最大２枚をあなたのライブラリーの一番上に望む順番で戻し、残りをあなたの墓地に置く。
+カード２枚を引き、２点のライフを失う。","Bargain (You may sacrifice an artifact, enchantment, or token as you cast this spell.)
+If this spell was bargained, look at the top four cards of your library, then put up to two of them back on top of your library in any order and the rest into your graveyard.
+You draw two cards and you lose 2 life.",2,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
+ドローしながらフィルタリングできるカード,,,,Mazemind Tome,精神迷わせの秘本,Artifact — Book,"{T}, 精神迷わせの秘本の上にページ・カウンター１個を置く：占術１を行う。
+{2}, {T}, 精神迷わせの秘本の上にページ・カウンター１個を置く：カード１枚を引く。
+精神迷わせの秘本の上に４個以上のページ・カウンターがあるとき、これを追放する。そうしたなら、あなたは４点のライフを得る。","{T}, Put a page counter on this artifact: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)
+{2}, {T}, Put a page counter on this artifact: Draw a card.
+When there are four or more page counters on this artifact, exile it. If you do, you gain 4 life.",1,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
+ドローしながらフィルタリングできるカード,,,,Faerie Dreamthief,フェアリーの夢泥棒,Creature — Faerie Warlock,"飛行
+フェアリーの夢泥棒が戦場に出たとき、諜報１を行う。（あなたのライブラリーの一番上にあるカード１枚を見る。そのカードをあなたの墓地に置いてもよい。）
+{2}{B}, あなたの墓地にあるフェアリーの夢泥棒を追放する：カード１枚を引き、１点のライフを失う。","Flying
+When this creature enters, surveil 1. (Look at the top card of your library. You may put it into your graveyard.)
+{2}{B}, Exile this card from your graveyard: You draw a card and you lose 1 life.",1,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
+ドローしながらフィルタリングできるカード,,,,Elven Farsight,エルフの遠見,Sorcery,占術３を行う。その後、あなたはあなたのライブラリーの一番上にあるカード１枚を公開してもよい。それがクリーチャー・カードであるなら、カード１枚を引く。,"Scry 3, then you may reveal the top card of your library. If it's a creature card, draw a card.",2,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
+ドローしながらフィルタリングできるカード,,,,The Legend of Kuruk // Avatar Kuruk,クルクの伝説 // アバター・クルク,Enchantment — Saga // Legendary Creature — Avatar,"（この英雄譚(Saga)が出た際とあなたのドロー・ステップの後に、伝承(lore)カウンター１個を加える。） I,II ― 占術２を行う。その後、カード１枚を引く。 III ― この英雄譚を追放する。その後、これを変身させた状態であなたのコントロール下で戦場に戻す。 // あなたが呪文１つを唱えるたび、「このトークンではスピリット(Spirit)でないクリーチャーをブロックできず、スピリットでないクリーチャーにはブロックされない。」を持つ無色の1/1のスピリット・クリーチャー・トークン１体を生成する。 消尽 ― 水の技(20)を行う：このターンに続いて追加の１ターンを行う。（あなたのアーティファクトやクリーチャーをタップすると、水の技コストを支払う助けとなる。１つにつきそれぞれ(１)を支払う。消尽能力はそれぞれ１回しか起動できない。）","(As this Saga enters and after your draw step, add a lore counter.)
+I, II — Scry 2, then draw a card.
+III — Exile this Saga, then return it to the battlefield transformed under your control. // Whenever you cast a spell, create a 1/1 colorless Spirit creature token with ""This token can't block or be blocked by non-Spirit creatures.""
+Exhaust — Waterbend {20}: Take an extra turn after this one. (While paying a waterbend cost, you can tap your artifacts and creatures to help. Each one pays for {1}. Activate each exhaust ability only once.)",2,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
+ドローしながらフィルタリングできるカード,,,,Palantír of Orthanc,オルサンクのパランティール,Legendary Artifact,あなたの終了ステップの開始時に、対戦相手１人を対象とする。オルサンクのパランティールの上に影響カウンター１個を置き、占術２を行う。その後、そのプレイヤーは「あなたはカード１枚を引く。」を選んでもよい。そのプレイヤーがそうしないなら、あなたはカードＸ枚を切削する。Ｘはオルサンクのパランティールの上にある影響カウンターの個数に等しい。そのプレイヤーは、それらのカードのマナ総量の合計に等しい点数のライフを失う。,"At the beginning of your end step, put an influence counter on Palantír of Orthanc and scry 2. Then target opponent may have you draw a card. If that player doesn't, you mill X cards, where X is the number of influence counters on Palantír of Orthanc, and that player loses life equal to the total mana value of those cards.",2,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
+ドローしながらフィルタリングできるカード,,,,Political Triumph,政治的勝利,Enchantment — Plan,あなたがコントロールしているクリーチャー１体が戦場に出るたび、占術１を行い、このエンチャントの上にプラン(plan)・カウンター１個を置く。 このエンチャントの上に４個目のプラン・カウンターが置かれたとき、これを生け贄に捧げ、カード１枚を引き、あなたがコントロールしている各クリーチャーの上にそれぞれ+1/+1カウンター１個を置く。,"Whenever a creature you control enters, scry 1 and put a plan counter on this enchantment.
+When the fourth plan counter is put on this enchantment, sacrifice it, draw a card, and put a +1/+1 counter on each creature you control.",2,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
+ドローしながらフィルタリングできるカード,,,,"Kaya, Intangible Slayer",無形の処刑者、ケイヤ,Legendary Planeswalker — Kaya,"呪禁
++2：各対戦相手はそれぞれ３点のライフを失い、あなたは３点のライフを得る。
+0：あなたはカード２枚を引く。その後、各対戦相手はそれぞれ占術１を行なってもよい。
+-3：クリーチャーやエンチャントのうち１つを対象とする。それを追放する。それがオーラでないなら、他のタイプに加えて白の１/１のスピリット・クリーチャーであり飛行を持つことを除きそのカードのコピーであるトークン１体を生成する。","Hexproof
++2: Each opponent loses 3 life and you gain 3 life.
+0: You draw two cards. Then each opponent may scry 1.
+−3: Exile target creature or enchantment. If it wasn't an Aura, create a token that's a copy of it, except it's a 1/1 white Spirit creature with flying in addition to its other types.",2,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
+ドローしながらフィルタリングできるカード,,,,Discovery // Dispersal,発見 // 発散,Sorcery // Instant,諜報２を行う。その後、カード１枚を引く。（諜報２を行うとは、あなたのライブラリーの一番上にあるカード２枚を見て、そのうちの望む枚数をあなたの墓地に、残りをあなたのライブラリーの一番上に望む順番で置くことである。） // 各対戦相手はそれぞれ、自分がコントロールしているパーマネントの中で最大のマナ総量を持ち土地でないパーマネント１つをオーナーの手札に戻す。その後、カード１枚を捨てる。,"Surveil 2, then draw a card. (To surveil 2, look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.) // Each opponent returns a nonland permanent they control with the greatest mana value among permanents they control to its owner's hand, then discards a card.",2,2026-07-31 本人口頭採点（dig∧draw 直行路で湧いた新顔・フェアリーの夢泥棒と精神迷わせの秘本のみ 1・他は 2）
