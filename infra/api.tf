@@ -51,10 +51,13 @@ resource "aws_apigatewayv2_stage" "default" {
   name        = "$default"
   auto_deploy = true
 
-  # 暴走とレート事故の歯止め（DDoS 対策の一次防衛。Shield Standard は自動・無料）
+  # 暴走とレート事故の歯止め（DDoS 対策の一次防衛。Shield Standard は自動・無料）。
+  # 2026-07-31 に 10/20 → 2/5 へ引き下げ（README に URL を公開した日の蓋の締め直し）:
+  # 人力のデモ利用は 2 req/s に届かない＝正規利用者の速度で天井を切る。
+  # スクリプトによる全力連打の理論天井が約 1/5（Lambda+Nova 費で日額百ドル級→数十ドル級）に。
   default_route_settings {
-    throttling_burst_limit = 20
-    throttling_rate_limit  = 10
+    throttling_burst_limit = 5
+    throttling_rate_limit  = 2
   }
 
   access_log_settings {
