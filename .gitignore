@@ -108,3 +108,6 @@ migration/
 # bin/dbq のような公開して困らない小道具は追跡を続ける
 bin/terraform
 bin/fable_chat_mirror.py
+
+# ルール原文（WotC 配布物・リポジトリに含めない）
+data/rules/
