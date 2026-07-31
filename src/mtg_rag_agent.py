@@ -36,7 +36,8 @@ sys.path.insert(0, '/mnt/mtg_rag/src')
 from mtg_hybrid_search_v2 import (MTGHybridSearcherV2, extract_keywords,
                                   detect_pt_relation, detect_tribal,
                                   detect_name_search, detect_neg_type,
-                                  has_fuzzy_semantic, TYPE_WORDS_JA)
+                                  has_fuzzy_semantic, TYPE_WORDS_JA,
+                                  dig_draw_gate)
 from removal_direct import removal_direct_gate
 from counter_direct import counter_direct_gate
 
@@ -93,7 +94,24 @@ def structured_direct_gate(query: str) -> bool:
                and not has_fuzzy_semantic(query))
     neg_type_ok = (detect_neg_type(query) is not None
                    and not has_fuzzy_semantic(query))
-    return ((kw_only or pt_ok or tribal_ok or name_ok or neg_type_ok)
+    # dig∧draw（2026-07-31 入口追加）: 門関数自身が「説明できる語を引いた残り」で
+    # fuzzy を見る設計のため has_fuzzy_semantic で包まない（包むと「ドロー」が
+    # QUERY_EXPAND に居る時点で必ず True＝入口が永久に閉じる・門内コメント参照）。
+    # 新旧 live A/B で顔ぶれ完全一致を実証済み（dig_draw 経路は HyDE の重ねから
+    # 早期リターンで守られている＝ルーターを切っても並びが動かない）
+    dig_draw_ok = dig_draw_gate(query)
+    # ★入口に置けない直行路（2026-07-31 A/B の実測で確定・安易に足さないこと）:
+    #   - セット（detect_set_ja）: 門は searcher 側で立つが、旧経路は直行の並びに
+    #     ルーター産 HyDE の意味的並べ替えが乗る（7/31 発覚の適用漏れ・EDH で
+    #     0.963→0.877 の実測があり「HyDE を剥がす」は採点便とセットの別便＝
+    #     本人裁定待ち）。入口でルーターを切ると HyDE が消えて並びが変わる＝
+    #     裁定待ちの挙動変更の密輸になる。live A/B で DIFF を実測済み。
+    #     EDH/マナも同じ HyDE の重ね問題を持つ＝同枠。
+    #   - マナ（mana_direct_gate）: 第二引数 mana_producer がルーター（LLM）出力で、
+    #     辞書は「ランプ/土地加速」の多義性ゆえ意図的にキーを持たない＝ルーターを
+    #     切ると門ごと消える。決定的なマナ意図キー新設（誤発動ゼロ試験つき）が先
+    return ((kw_only or pt_ok or tribal_ok or name_ok or neg_type_ok
+             or dig_draw_ok)
             and not (tb or rm or cm)
             and not re.search(r'[0-9０-９一二三四五六七八九十]', query))
 
