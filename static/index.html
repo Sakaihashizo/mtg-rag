@@ -315,6 +315,27 @@ function cardHtml(c) {
   </div>`;
 }
 
+// コールドスタート対策の再試行つき fetch（2026-07-31）:
+// 自動停止からの復帰（Lambda 起動 20〜30 秒 + Aurora 目覚め 15 秒）が API Gateway の
+// 天井約 30 秒を超えると、裏では起動が進んでいるのにゲートウェイが先に 504 を返す。
+// 5xx とネットワーク断だけを再試行し（4xx=クエリ自身の問題は即表示）、
+// 利用者には「エラー」でなく「起動中」と正直に見せる。
+async function fetchWithWarmup(url, options) {
+  const RETRIES = 3, WAIT_MS = 3000;
+  for (let i = 0; ; i++) {
+    try {
+      const resp = await fetch(url, options);
+      if (resp.status < 500) return resp;          // 成功 or 4xx はそのまま返す
+      if (i >= RETRIES) return resp;
+    } catch (e) {                                   // ネットワーク断（504 含む）
+      if (i >= RETRIES) throw e;
+    }
+    $status.textContent =
+      `システム起動中です…（初回アクセスは最大 1 分ほどかかります・再試行 ${i + 1}/${RETRIES}）`;
+    await new Promise(r => setTimeout(r, WAIT_MS));
+  }
+}
+
 async function search() {
   const query = $q.value.trim();
   if (!query) return;
@@ -323,7 +344,7 @@ async function search() {
   $status.textContent = "検索中…（ルーター解析が入る場合は十数秒かかります）";
   const t0 = performance.now();
   try {
-    const resp = await fetch(API_BASE + "/search", {
+    const resp = await fetchWithWarmup(API_BASE + "/search", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -359,6 +380,12 @@ async function search() {
 $go.addEventListener("click", search);
 $q.addEventListener("keydown", e => { if (e.key === "Enter") search(); });
 $q.focus();
+
+// 予熱（2026-07-31）: ページを開いた時点で裏から /health?deep=true を一発叩き、
+// Lambda の初期化と Aurora の目覚めを先に始めておく。ユーザーがクエリを打ち終わる
+// 頃には温まっている算段。失敗しても握る（予熱は主業務でない・search 側の
+// 再試行が受け止める）。deep=true が肝＝DB まで実疎通するので Aurora も起きる。
+fetch(API_BASE + "/health?deep=true").catch(() => {});
 </script>
 </body>
 </html>
