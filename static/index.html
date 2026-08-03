@@ -381,11 +381,12 @@ $go.addEventListener("click", search);
 $q.addEventListener("keydown", e => { if (e.key === "Enter") search(); });
 $q.focus();
 
-// 予熱（2026-07-31）: ページを開いた時点で裏から /health?deep=true を一発叩き、
-// Lambda の初期化と Aurora の目覚めを先に始めておく。ユーザーがクエリを打ち終わる
-// 頃には温まっている算段。失敗しても握る（予熱は主業務でない・search 側の
-// 再試行が受け止める）。deep=true が肝＝DB まで実疎通するので Aurora も起きる。
-fetch(API_BASE + "/health?deep=true").catch(() => {});
+// 予熱は撤去（2026-08-01 本人裁定「質問を投げてもらってからお金発生」）:
+// 7/31 に「ページを開いた時点で /health?deep=true」を仕込んだが、実測で
+// 検索しない訪問者（クローラー含む）1 人あたり Lambda コールド 30 秒級＋
+// Aurora 起床の費用が発生すると確認（WORKLOG 7/31-8/1 の一見さん事件）。
+// 課金の発火点は利用者の検索実行のみとする。初回の遅さは fetchWithWarmup の
+// 再試行と「起動中です」表示が受け止める。
 </script>
 </body>
 </html>
