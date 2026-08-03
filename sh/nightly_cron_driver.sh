@@ -93,5 +93,13 @@ while :; do
   sleep "$INTERVAL"
 done
 
+# EDH 共起 v2 の洗い替え（2026-08-01 本人依頼「共起を取り込むのも Cron の中で」）:
+# build_edh_cooccurrence.py は TRUNCATE→INSERT の冪等・実測 83 秒。ループを抜けた
+# 時点でこのドライバが起動したレーンは全部完了済み＝夜の新入りデッキ込みで再集計できる。
+# 失敗しても夜間便全体は失敗扱いにしない（共起は検索本線でなく壁打ち道具箱の材料）。
+dlog "--- EDH 共起 v2 洗い替え開始 ---"
+/mnt/new_hdd/my_rag_env/bin/python "$REPO/src/build_edh_cooccurrence.py" >> "$LOGDIR/cooccurrence.log" 2>&1
+dlog "--- EDH 共起 v2 洗い替え完了 rc=$? ---"
+
 dlog "=== ドライバ終了（総パス $pass）==="
 exit 0
